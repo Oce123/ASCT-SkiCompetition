@@ -1,18 +1,28 @@
-// On écoute le scroll de la page
+// HEADER scroll
 window.addEventListener("scroll", function() {
-
-    // On récupère le header
     let header = document.getElementById("header");
 
-    // Si on a scrollé de plus de 50px
     if (window.scrollY > 50) {
-        
-        // On ajoute la classe "shrink"
         header.classList.add("shrink");
-
     } else {
-        
-        // Sinon on enlève la classe
         header.classList.remove("shrink");
     }
 });
+
+// ANIMATION SECTIONS
+const sections = document.querySelectorAll(".section");
+
+function checkScroll() {
+    const triggerBottom = window.innerHeight * 0.8;
+
+    sections.forEach(section => {
+        const boxTop = section.getBoundingClientRect().top;
+
+        if (boxTop < triggerBottom) {
+            section.classList.add("visible");
+        }
+    });
+}
+
+window.addEventListener("scroll", checkScroll);
+window.addEventListener("load", checkScroll);
