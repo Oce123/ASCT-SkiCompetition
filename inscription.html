@@ -1,0 +1,209 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="UTF-8">
+    <title>Inscription - ASCT</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body class="inscription-page">
+
+<header id="header">
+    <div class="header-container">
+        <img src="logo.png" class="logo">
+        <h1>Inscription</h1>
+    </div>
+	
+	<nav>
+        <a href="index.html">Accueil</a>
+        <a href="galerie.html">Galerie</a>
+        <a href="sorties.html">Sorties</a>
+        <a href="exercices.html">Exercices</a>
+        <a href="contact.html">Contact</a>
+    </nav>
+	
+</header>
+
+<main>
+
+<section class="section visible">
+
+    <!-- INTRO -->
+    <div class="form-intro">
+        <h2>Inscription au Club</h2>
+        <p>
+            Petit texte explicatif à compléter plus tard.
+        </p>
+    </div>
+
+    <!-- PROGRESSION -->
+    <div class="progress-bar">
+        <div class="progress"></div>
+    </div>
+
+    <form id="form">
+
+        <!-- SECTION 1 -->
+        <div class="form-step active">
+
+            <h3>Informations du participant</h3>
+
+            <div class="form-row">
+                <input id="nom" type="text" placeholder="Nom" required>
+                <input id="prenom" type="text" placeholder="Prénom" required>
+            </div>
+
+            <div class="form-row">
+                <input id="email" type="email" placeholder="Email">
+                <input id="telephone" type="tel" placeholder="Téléphone">
+            </div>
+
+            <div class="form-row">
+                <input type="date" id="birthdate">
+                <select>
+                    <option>Sexe</option>
+                    <option>F</option>
+                    <option>M</option>
+                </select>
+            </div>
+
+            <div class="form-row">
+                <input type="text" placeholder="Adresse" style="width:100%;">
+            </div>
+
+            <div class="form-row">
+                <select>
+                    <option>Scolarité</option>
+                    <option>École</option>
+                    <option>Collège</option>
+                    <option>Lycée</option>
+                    <option>Étudiant</option>
+					<option>/</option>
+                </select>
+            </div>
+			
+			<div class="form-row"> 
+				<select id="materiel"> 
+					<option value="">Location matériel ?</option> 
+					<option value="oui">Oui</option> 
+					<option value="non">Non</option> 
+				</select> 
+				
+				<select id="federaux"> 
+					<option value="">Participation fédéraux ?</option> 
+					<option value="oui">Oui</option> 
+					<option value="non">Non</option> 
+				</select> 
+			</div>
+
+            <button type="button" class="next">Suivant</button>
+
+        </div>
+
+        <!-- DERNIERE ETAPE -->
+        <div class="form-step">
+
+            <h3>Validation</h3>
+
+            <button type="button" class="prev">Précédent</button>
+            <button type="submit">Valider</button>
+
+        </div>
+
+        <!-- SECTION MINEUR -->
+        <div class="form-step" id="mineur-section">
+
+            <h3>Représentant légal</h3>
+
+            <div class="form-row">
+                <input type="text" placeholder="Nom">
+                <input type="text" placeholder="Prénom">
+            </div>
+
+            <div class="form-row">
+                <input type="tel" placeholder="Téléphone">
+                <input type="email" placeholder="Email">
+            </div>
+
+            <button type="button" class="next">Suivant</button>
+			<button type="button" class="prev">Précédent</button>
+
+        </div>
+
+        <!-- SECTION MATERIEL -->
+        <div class="form-step" id="materiel-section">
+            <h3>Location matériel</h3>
+            <p>Section à compléter plus tard</p>
+            <button type="button" class="next">Suivant</button>
+			<button type="button" class="prev">Précédent</button>
+        </div>
+
+        <!-- SECTION FEDERAUX -->
+        <div class="form-step" id="federaux-section">
+            <h3>Participation fédéraux</h3>
+            <p>Section à compléter plus tard</p>
+			<button type="button" class="prev">Précédent</button>
+			<button type="button" class="next">Suivant</button>
+            <button type="submit">Valider</button>
+        </div>
+
+    </form>
+
+</section>
+
+</main>
+
+<!-- Firebase -->
+<script type="module">
+
+import { initializeApp } from "https://www.gstatic.com/firebasejs/12.12.0/firebase-app.js";
+import { getFirestore, collection, addDoc } from "https://www.gstatic.com/firebasejs/12.12.0/firebase-firestore.js";
+
+const firebaseConfig = {
+  apiKey: "AIzaSy...",
+  authDomain: "asct-ski.firebaseapp.com",
+  projectId: "asct-ski",
+  storageBucket: "asct-ski.firebasestorage.app",
+  messagingSenderId: "845391150142",
+  appId: "1:845391150142:web:c7d808016344cfafad256f"
+};
+
+const app = initializeApp(firebaseConfig);
+const db = getFirestore(app);
+
+document.addEventListener("DOMContentLoaded", () => {
+
+    const form = document.getElementById("form");
+
+    form.addEventListener("submit", async (e) => {
+        e.preventDefault();
+
+        const data = {
+            nom: document.getElementById("nom").value,
+            prenom: document.getElementById("prenom").value,
+            email: document.getElementById("email").value,
+            telephone: document.getElementById("telephone").value,
+            dateNaissance: document.getElementById("birthdate").value
+        };
+
+        try {
+            await addDoc(collection(db, "inscriptions"), data);
+
+            form.reset();
+
+            alert("Merci pour votre inscription 🎉");
+
+        } catch (error) {
+            console.error("Erreur Firebase :", error);
+        }
+    });
+
+});
+
+</script>
+
+<script src="script.js"></script>
+
+</body>
+</html>
