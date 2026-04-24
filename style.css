@@ -663,5 +663,140 @@ nav a:hover {
     }
 }
 
+/* =========================
+   TELEPHONE
+========================= */
 
+@media (max-width: 768px) {
 
+    header {
+        flex-direction: column;
+        align-items: center;
+        height: auto;
+        padding: 10px;
+    }
+
+    .header-container {
+        flex-direction: column;
+        gap: 5px;
+    }
+
+    nav {
+        flex-wrap: wrap;
+        justify-content: center;
+        gap: 10px;
+    }
+
+    nav a {
+        font-size: 14px;
+    }
+}
+
+@media (max-width: 768px) {
+
+    .hero-text {
+        font-size: 28px;
+        text-align: center;
+        padding: 0 10px;
+    }
+}
+
+@media (max-width: 768px) {
+
+    .cards {
+        flex-direction: column;
+        align-items: center;
+    }
+
+    .card, .card-bg {
+        width: 90%;
+    }
+}
+
+@media (max-width: 768px) {
+
+    .section-flex {
+        flex-direction: column;
+        text-align: center;
+    }
+
+    .section-text {
+        text-align: center;
+    }
+
+    .section-img {
+        width: 80%;
+    }
+}
+
+@media (max-width: 768px) {
+
+    .form-row {
+        flex-direction: column;
+    }
+
+    form {
+        width: 90%;
+        padding: 20px;
+    }
+}
+
+@media (max-width: 768px) {
+
+    .contact-cards {
+        flex-direction: column;
+        align-items: center;
+    }
+
+    .cta-buttons {
+        flex-direction: column;
+    }
+}
+
+/* =========================
+   MENU BURGER
+========================= */
+
+.burger {
+    display: none;
+    font-size: 30px;
+    color: white;
+    cursor: pointer;
+}
+
+/* MOBILE */
+@media (max-width: 768px) {
+
+    .burger {
+        display: block;
+    }
+
+    nav {
+        position: fixed;
+        top: 0;
+        right: -100%;
+        width: 250px;
+        height: 100%;
+
+        background: rgba(0, 0, 0, 0.95);
+        backdrop-filter: blur(10px);
+
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+
+        gap: 30px;
+
+        transition: right 0.3s ease;
+        z-index: 999;
+    }
+
+    nav.active {
+        right: 0;
+    }
+
+    nav a {
+        font-size: 20px;
+    }
+}
