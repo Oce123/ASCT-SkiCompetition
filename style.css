@@ -419,7 +419,7 @@ nav a:hover {
 
     z-index: -1;
 }
-}
+
 
 /* Formulaire visible et propre */
 .inscription-page form {
@@ -670,25 +670,28 @@ nav a:hover {
 @media (max-width: 768px) {
 
     header {
-        flex-direction: column;
+        flex-direction: row;
+        justify-content: space-between;
         align-items: center;
-        height: auto;
-        padding: 10px;
+        height: 70px;
+        padding: 10px 15px;
     }
 
     .header-container {
-        flex-direction: column;
-        gap: 5px;
-    }
-
-    nav {
-        flex-wrap: wrap;
-        justify-content: center;
+        flex-direction: row;
         gap: 10px;
     }
 
-    nav a {
-        font-size: 14px;
+    header h1 {
+        font-size: 16px;
+    }
+
+    .logo {
+        height: 40px;
+    }
+
+    nav {
+        display: none; /* caché par défaut */
     }
 }
 
