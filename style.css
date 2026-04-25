@@ -184,9 +184,9 @@ nav a:hover {
 ========================= */
 .section-flex {
     display: flex;
-    align-items: center;
+    align-items: flex-start;
     justify-content: center;
-    gap: 40px;
+    gap: 50px;
 
     flex-wrap: wrap;
 }
@@ -201,8 +201,20 @@ nav a:hover {
 }
 
 .section-text {
-    max-width: 500px;
-    text-align: left;
+    max-width: 650px;
+    text-align: justify;
+	line-height: 1.7;
+    font-size: 18px;
+	flex: 2;
+	
+	background: white;
+    padding: 25px;
+    border-radius: 15px;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.08);
+}
+
+.section-text h2 {
+    text-align: center;
 }
 
 /* =========================
@@ -634,28 +646,6 @@ nav a:hover {
    GOOGLE MAP
 ========================= */
 
-.map-container {
-    width: 400px;
-    height: 300px;
-
-    border-radius: 15px;
-    overflow: hidden;
-
-    box-shadow: 0 10px 30px rgba(0,0,0,0.2);
-
-    transition: transform 0.3s;
-}
-
-.map-container:hover {
-    transform: scale(1.03);
-}
-
-.map-container iframe {
-    width: 100%;
-    height: 100%;
-    border: none;
-}
-
 @media (max-width: 768px) {
     .map-container {
         width: 100%;
@@ -720,15 +710,16 @@ nav a:hover {
 
     .section-flex {
         flex-direction: column;
-        text-align: center;
+        text-align: justify;
     }
 
     .section-text {
-        text-align: center;
+        text-align: justify;
     }
 
     .section-img {
-        width: 80%;
+        width: 200px;
+		flex: 1;
     }
 }
 
@@ -801,5 +792,144 @@ nav a:hover {
 
     nav a {
         font-size: 20px;
+    }
+}
+
+/* =========================
+   SECTION ENTRAINEMENTS MODERNE
+========================= */
+
+.fade-up {
+    opacity: 1;
+    transform: none;
+}
+
+.entrainements-modern {
+	opacity: 1 !important;
+    transform: none !important;
+    max-width: 1200px;
+    margin: auto;
+}
+
+/* TITRE */
+.section-title {
+    text-align: center;
+    font-size: 40px;
+    margin-bottom: 50px;
+}
+
+/* GRID */
+.entrainements-grid {
+    display: grid;
+    grid-template-columns: 2fr 1fr; /* texte dominant */
+    gap: 50px;
+    align-items: start;
+}
+
+/* TEXTE */
+.entrainements-text {
+    background: rgba(255,255,255,0.75);
+    backdrop-filter: blur(10px);
+
+    padding: 35px;
+    border-radius: 20px;
+
+    text-align: justify;
+    line-height: 1.8;
+    font-size: 18px;
+
+    box-shadow: 0 20px 50px rgba(0,0,0,0.1);
+
+    border: 1px solid rgba(255,255,255,0.4);
+}
+
+.entrainements-modern {
+    position: relative;
+    max-width: 1200px;
+    margin: auto;
+}
+
+/* texture légère */
+.entrainements-modern::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+
+    background: linear-gradient(
+        180deg,
+        rgba(0, 195, 255, 0.05),
+        rgba(0, 64, 128, 0.05)
+    );
+
+    z-index: -1;
+    border-radius: 30px;
+}
+
+/* COLONNE DROITE */
+.entrainements-side {
+    display: flex;
+    flex-direction: column;
+    gap: 30px;
+}
+
+/* LOGO */
+.entrainements-logo {
+    width: 200px;
+    margin: 0 auto;
+
+    opacity: 0.95;
+
+    filter: drop-shadow(0 5px 15px rgba(0,0,0,0.2));
+
+    transition: transform 0.4s ease, opacity 0.3s;
+}
+
+.entrainements-logo:hover {
+    transform: scale(1.08) rotate(-1deg);
+    opacity: 1;
+}
+
+/* CARTE */
+.map-container {
+    width: 100%;
+    height: 220px;
+
+    border-radius: 20px;
+    overflow: hidden;
+
+    box-shadow: 0 20px 50px rgba(0,0,0,0.2);
+	transition: transform 0.4s ease, box-shadow 0.4s;
+}
+
+.map-container:hover {
+    transform: translateY(-5px) scale(1.02);
+    box-shadow: 0 25px 60px rgba(0,0,0,0.25);
+}
+
+.map-container iframe {
+    width: 100%;
+    height: 100%;
+    border: none;
+}
+
+/* BOUTON */
+.map-btn {
+    display: block;
+    margin: 15px auto 0;
+    text-align: center;
+}
+
+/* RESPONSIVE */
+@media (max-width: 900px) {
+    .entrainements-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .entrainements-text {
+        font-size: 17px;
+    }
+
+    .entrainements-logo {
+        width: 140px;
     }
 }

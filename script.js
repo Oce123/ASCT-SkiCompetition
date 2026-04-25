@@ -183,3 +183,19 @@ document.querySelectorAll("#nav a").forEach(link => {
         nav.classList.remove("active");
     });
 });
+
+document.addEventListener("DOMContentLoaded", () => {
+
+    const faders = document.querySelectorAll('.fade-up');
+
+    const observer = new IntersectionObserver(entries => {
+        entries.forEach(entry => {
+            if (entry.isIntersecting) {
+                entry.target.classList.add('visible');
+            }
+        });
+    });
+
+    faders.forEach(el => observer.observe(el));
+
+});
