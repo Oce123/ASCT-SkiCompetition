@@ -783,11 +783,12 @@ nav a:hover {
         gap: 30px;
 
         transition: right 0.3s ease;
-        z-index: 999;
+        z-index: 2000;
     }
 
     nav.active {
         right: 0;
+		background: red !important;
     }
 
     nav a {
