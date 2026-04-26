@@ -199,3 +199,9 @@ document.addEventListener("DOMContentLoaded", () => {
     faders.forEach(el => observer.observe(el));
 
 });
+
+document.addEventListener("click", (e) => {
+    if (!nav.contains(e.target) && !burger.contains(e.target)) {
+        nav.classList.remove("active");
+    }
+});

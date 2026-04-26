@@ -681,7 +681,7 @@ nav a:hover {
     }
 
     nav {
-        display: none; /* caché par défaut */
+        display: flex; /* caché par défaut */
     }
 }
 
@@ -997,15 +997,29 @@ nav a:hover {
 
 /* RESPONSIVE */
 @media (max-width: 900px) {
+
     .modern-grid {
         grid-template-columns: 1fr;
+        gap: 30px;
     }
 
     .modern-images {
-        flex-direction: row;
+        flex-direction: column; /* 🔥 empile au lieu de compresser */
     }
 
-    .modern-images img {
-        width: 50%;
+    .modern-images img,
+    .modern-images video {
+        width: 100%;
+    }
+
+    .modern-text {
+        padding: 20px;
+        font-size: 16px;
+    }
+}
+
+@media (max-width: 768px) {
+    .hero {
+        background-attachment: scroll;
     }
 }
