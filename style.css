@@ -933,3 +933,79 @@ nav a:hover {
         width: 140px;
     }
 }
+
+/* =========================
+   SECTIONS MODERNES (club + compet)
+========================= */
+
+/* GRID */
+.modern-grid {
+	max-width: 1200px;
+    margin: auto;
+    display: grid;
+    grid-template-columns: 1fr 2fr;
+    gap: 50px;
+    align-items: center;
+}
+
+/* IMAGES */
+.modern-images {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+.modern-images img {
+    width: 100%;
+    border-radius: 15px;
+    object-fit: cover;
+
+    box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+
+    transition: transform 0.3s;
+}
+
+.modern-images img:hover {
+    transform: scale(1.03);
+}
+
+.modern-images video {
+    width: 100%;
+    border-radius: 15px;
+    object-fit: cover;
+
+    box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+}
+
+/* même effet hover que les images */
+.modern-images video:hover {
+    transform: scale(1.03);
+}
+
+/* TEXTE */
+.modern-text {
+    background: white;
+    padding: 30px;
+    border-radius: 20px;
+
+    text-align: justify;
+    line-height: 1.8;
+    font-size: 18px;
+
+    box-shadow: 0 15px 40px rgba(0,0,0,0.1);
+}
+
+/* RESPONSIVE */
+@media (max-width: 900px) {
+    .modern-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .modern-images {
+        flex-direction: row;
+    }
+
+    .modern-images img {
+        width: 50%;
+    }
+}
