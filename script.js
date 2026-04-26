@@ -143,28 +143,32 @@ if (steps.length > 0) {
 
 let allData = [];
 
-onSnapshot(collection(db, "inscriptions"), (snapshot) => {
+if (typeof onSnapshot !== "undefined") {
 
-    liste.innerHTML = "";
-    allData = [];
+    onSnapshot(collection(db, "inscriptions"), (snapshot) => {
 
-    snapshot.forEach(doc => {
-        const data = doc.data();
-        allData.push(data);
+        liste.innerHTML = "";
+        allData = [];
 
-        const div = document.createElement("div");
-        div.classList.add("card");
+        snapshot.forEach(doc => {
+            const data = doc.data();
+            allData.push(data);
 
-        div.innerHTML = `
-            <strong>${data.prenom} ${data.nom}</strong><br>
-            📧 ${data.email || "—"}<br>
-            📱 ${data.telephone || "—"}<br>
-            🎂 ${data.dateNaissance || "—"}
-        `;
+            const div = document.createElement("div");
+            div.classList.add("card");
 
-        liste.appendChild(div);
+            div.innerHTML = `
+                <strong>${data.prenom} ${data.nom}</strong><br>
+                📧 ${data.email || "—"}<br>
+                📱 ${data.telephone || "—"}<br>
+                🎂 ${data.dateNaissance || "—"}
+            `;
+
+            liste.appendChild(div);
+        });
     });
-});
+
+}
 
 // =========================
 // MENU BURGER
@@ -177,6 +181,11 @@ if (burger && nav) {
         nav.classList.toggle("active");
     });
 }
+
+burger.addEventListener("click", () => {
+    alert("CLICK OK");
+    nav.classList.toggle("active");
+});
 
 document.querySelectorAll("#nav a").forEach(link => {
     link.addEventListener("click", () => {
