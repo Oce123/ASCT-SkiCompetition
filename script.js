@@ -143,37 +143,33 @@ if (steps.length > 0) {
 
 let allData = [];
 
-if (typeof onSnapshot !== "undefined") {
+onSnapshot(collection(db, "inscriptions"), (snapshot) => {
 
-    onSnapshot(collection(db, "inscriptions"), (snapshot) => {
+    liste.innerHTML = "";
+    allData = [];
 
-        liste.innerHTML = "";
-        allData = [];
+    snapshot.forEach(doc => {
+        const data = doc.data();
+        allData.push(data);
 
-        snapshot.forEach(doc => {
-            const data = doc.data();
-            allData.push(data);
+        const div = document.createElement("div");
+        div.classList.add("card");
 
-            const div = document.createElement("div");
-            div.classList.add("card");
+        div.innerHTML = `
+            <strong>${data.prenom} ${data.nom}</strong><br>
+            📧 ${data.email || "—"}<br>
+            📱 ${data.telephone || "—"}<br>
+            🎂 ${data.dateNaissance || "—"}
+        `;
 
-            div.innerHTML = `
-                <strong>${data.prenom} ${data.nom}</strong><br>
-                📧 ${data.email || "—"}<br>
-                📱 ${data.telephone || "—"}<br>
-                🎂 ${data.dateNaissance || "—"}
-            `;
-
-            liste.appendChild(div);
-        });
+        liste.appendChild(div);
     });
-
-}
+});
 
 // =========================
 // MENU BURGER
 // =========================
-const burger = document.getElementById("burger");
+/*const burger = document.getElementById("burger");
 const nav = document.getElementById("nav");
 
 if (burger && nav) {
@@ -181,11 +177,6 @@ if (burger && nav) {
         nav.classList.toggle("active");
     });
 }
-
-burger.addEventListener("click", () => {
-    alert("CLICK OK");
-    nav.classList.toggle("active");
-});
 
 document.querySelectorAll("#nav a").forEach(link => {
     link.addEventListener("click", () => {
@@ -213,4 +204,4 @@ document.addEventListener("click", (e) => {
     if (!nav.contains(e.target) && !burger.contains(e.target)) {
         nav.classList.remove("active");
     }
-});
+});*/

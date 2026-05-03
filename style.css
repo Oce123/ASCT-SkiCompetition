@@ -184,9 +184,9 @@ nav a:hover {
 ========================= */
 .section-flex {
     display: flex;
-    align-items: flex-start;
+    align-items: center;
     justify-content: center;
-    gap: 50px;
+    gap: 40px;
 
     flex-wrap: wrap;
 }
@@ -201,20 +201,8 @@ nav a:hover {
 }
 
 .section-text {
-    max-width: 650px;
-    text-align: justify;
-	line-height: 1.7;
-    font-size: 18px;
-	flex: 2;
-	
-	background: white;
-    padding: 25px;
-    border-radius: 15px;
-    box-shadow: 0 10px 30px rgba(0,0,0,0.08);
-}
-
-.section-text h2 {
-    text-align: center;
+    max-width: 500px;
+    text-align: left;
 }
 
 /* =========================
@@ -265,8 +253,10 @@ nav a:hover {
     border-radius: 15px;
 
     display: flex;
-    justify-content: center;
-    align-items: center;
+    justify-content: space-between;
+    flex-direction: column;
+	align-items: center;
+	padding: 0px;
 
     overflow: hidden;
 
@@ -285,23 +275,55 @@ nav a:hover {
     background: linear-gradient(
         to bottom,
         rgba(0,0,0,0.2),
-        rgba(0,0,0,0.6)
+        rgba(0,0,0,0.4)
     );
 	
-	z-index: 1;
+	z-index: 2;
 }
 
 /* Texte */
-.card-bg h3,
+.card-bg h3
 .card-bg p {
     text-shadow: 2px 2px 12px rgba(0,0,0,1);
 	position: relative;
-    z-index: 2;
+    z-index: 10;
 }
 
 /* Hover */
 .card-bg:hover {
     transform: scale(1.05);
+}
+
+.card-content {
+    position: relative;
+    z-index: 10;
+
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+
+    height: 100%;
+}
+
+/* TITRE EN HAUT */
+.card-content h3 {
+	position : absolute;
+	top : 25px;
+    align-self: center;
+	
+    color: #59a4f0;
+    font-size: 20px;	
+    text-shadow: 2px 2px 10px rgba(0,0,0,0.9);
+}
+
+/* DESCRIPTION EN BAS */
+.card-content p {
+    align-self: flex-start;
+
+    color: #ddd;
+    font-size: 20px;
+
+    text-shadow: 2px 2px 10px rgba(0,0,0,0.9);
 }
 
 /* =========================
@@ -431,7 +453,7 @@ nav a:hover {
 
     z-index: -1;
 }
-
+}
 
 /* Formulaire visible et propre */
 .inscription-page form {
@@ -643,162 +665,6 @@ nav a:hover {
 }
 
 /* =========================
-   GOOGLE MAP
-========================= */
-
-@media (max-width: 768px) {
-    .map-container {
-        width: 100%;
-        height: 250px;
-    }
-}
-
-/* =========================
-   TELEPHONE
-========================= */
-
-@media (max-width: 768px) {
-
-    header {
-        flex-direction: row;
-        justify-content: space-between;
-        align-items: center;
-        height: 70px;
-        padding: 10px 15px;
-    }
-
-    .header-container {
-        flex-direction: row;
-        gap: 10px;
-    }
-
-    header h1 {
-        font-size: 16px;
-    }
-
-    .logo {
-        height: 40px;
-    }
-
-    nav {
-        display: flex; /* caché par défaut */
-    }
-}
-
-@media (max-width: 768px) {
-
-    .hero-text {
-        font-size: 28px;
-        text-align: center;
-        padding: 0 10px;
-    }
-}
-
-@media (max-width: 768px) {
-
-    .cards {
-        flex-direction: column;
-        align-items: center;
-    }
-
-    .card, .card-bg {
-        width: 90%;
-    }
-}
-
-@media (max-width: 768px) {
-
-    .section-flex {
-        flex-direction: column;
-        text-align: justify;
-    }
-
-    .section-text {
-        text-align: justify;
-    }
-
-    .section-img {
-        width: 200px;
-		flex: 1;
-    }
-}
-
-@media (max-width: 768px) {
-
-    .form-row {
-        flex-direction: column;
-    }
-
-    form {
-        width: 90%;
-        padding: 20px;
-    }
-}
-
-@media (max-width: 768px) {
-
-    .contact-cards {
-        flex-direction: column;
-        align-items: center;
-    }
-
-    .cta-buttons {
-        flex-direction: column;
-    }
-}
-
-/* =========================
-   MENU BURGER
-========================= */
-
-.burger {
-    display: none;
-    font-size: 30px;
-    color: white;
-    cursor: pointer;
-}
-
-/* MOBILE */
-@media (max-width: 768px) {
-
-    .burger {
-        display: block;
-		z-index: 2100;
-    }
-
-    nav {
-        position: fixed;
-        top: 0;
-        right: -100%;
-        width: 250px;
-        height: 100vh;
-
-        background: rgba(0, 0, 0, 0.95);
-        /*backdrop-filter: blur(10px);*/
-
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        justify-content: center;
-
-        gap: 30px;
-
-        transition: right 0.3s ease;
-        z-index: 2000;
-    }
-
-    nav.active {
-        right: 0;
-		background: red !important;
-    }
-
-    nav a {
-		color: white;
-        font-size: 20px;
-    }
-}
-
-/* =========================
    SECTION ENTRAINEMENTS MODERNE
 ========================= */
 
@@ -937,6 +803,7 @@ nav a:hover {
     }
 }
 
+
 /* =========================
    SECTIONS MODERNES (club + compet)
 ========================= */
@@ -1025,4 +892,33 @@ nav a:hover {
     .hero {
         background-attachment: scroll;
     }
+}
+
+//* =========================
+   TARIFS
+========================= */
+
+.tarif-list {
+    list-style: none;
+    padding: 0;
+    margin-top: 15px;
+}
+
+.tarif-list li {
+    display: flex;
+    justify-content: space-between;
+    padding: 10px 0;
+
+    border-bottom: 1px solid rgba(0,0,0,0.1);
+    font-size: 16px;
+}
+
+.tarif-list li span {
+    color: #00c3ff;
+    font-weight: bold;
+}
+
+.contact-card h3 {
+    text-align: center;
+    color: #004080;
 }
