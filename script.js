@@ -25,65 +25,84 @@ const nextBtn = document.querySelector(".next-lightbox");
 
 let currentIndex = 0;
 
-// OUVRIR
-images.forEach((img, index) => {
-    img.addEventListener("click", () => {
-        currentIndex = index;
-        showImage();
-        lightbox.style.display = "flex";
+if (images.length > 0 && lightbox && lightboxImg) {
+
+    images.forEach((img, index) => {
+        img.addEventListener("click", () => {
+            currentIndex = index;
+            showImage();
+            lightbox.style.display = "flex";
+        });
     });
-});
 
-// AFFICHER IMAGE
-function showImage() {
-    lightboxImg.src = images[currentIndex].src;
-}
-
-// SUIVANT
-function nextImage() {
-    currentIndex++;
-    if (currentIndex >= images.length) {
-        currentIndex = 0;
+    function showImage() {
+        lightboxImg.src = images[currentIndex].src;
     }
-    showImage();
-}
 
-// PRÉCÉDENT
-function prevImage() {
-    currentIndex--;
-    if (currentIndex < 0) {
-        currentIndex = images.length - 1;
+    function changeImage(direction) {
+
+        lightboxImg.classList.add(
+            direction === "next" ? "slide-out-left" : "slide-out-right"
+        );
+
+        setTimeout(() => {
+
+            if (direction === "next") {
+                currentIndex = (currentIndex + 1) % images.length;
+            } else {
+                currentIndex = (currentIndex - 1 + images.length) % images.length;
+            }
+
+            lightboxImg.src = images[currentIndex].src;
+
+            lightboxImg.classList.remove("slide-out-left", "slide-out-right");
+            lightboxImg.classList.add("slide-in");
+
+        }, 300);
     }
-    showImage();
-}
 
-// EVENTS
-if (nextBtn && prevBtn) {
-    nextBtn.addEventListener("click", nextImage);
-    prevBtn.addEventListener("click", prevImage);
-}
+    if (nextBtn) nextBtn.addEventListener("click", () => changeImage("next"));
+    if (prevBtn) prevBtn.addEventListener("click", () => changeImage("prev"));
 
-// CLAVIER
-document.addEventListener("keydown", (e) => {
-    if (lightbox.style.display === "flex") {
-        if (e.key === "ArrowRight") nextImage();
-        if (e.key === "ArrowLeft") prevImage();
-        if (e.key === "Escape") lightbox.style.display = "none";
-    }
-});
-
-// FERMER
-if (closeBtn) {
-    closeBtn.addEventListener("click", () => {
-        lightbox.style.display = "none";
+    document.addEventListener("keydown", (e) => {
+        if (lightbox.style.display === "flex") {
+            if (e.key === "ArrowRight") changeImage("next");
+            if (e.key === "ArrowLeft") changeImage("prev");
+            if (e.key === "Escape") lightbox.style.display = "none";
+        }
     });
-}
 
-// CLICK FOND
-if (lightbox) {
+    if (closeBtn) {
+        closeBtn.addEventListener("click", () => {
+            lightbox.style.display = "none";
+        });
+    }
+
     lightbox.addEventListener("click", (e) => {
         if (e.target !== lightboxImg) {
             lightbox.style.display = "none";
+        }
+    });
+
+    // SWIPE MOBILE
+    let startX = 0;
+    let endX = 0;
+
+    lightbox.addEventListener("touchstart", (e) => {
+        startX = e.touches[0].clientX;
+    });
+
+    lightbox.addEventListener("touchend", (e) => {
+        endX = e.changedTouches[0].clientX;
+
+        const diff = startX - endX;
+
+        if (Math.abs(diff) < 50) return;
+
+        if (diff > 0) {
+            changeImage("next");
+        } else {
+            changeImage("prev");
         }
     });
 }

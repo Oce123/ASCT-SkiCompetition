@@ -1006,8 +1006,8 @@ nav a:hover {
 }
 
 /* FLÈCHES */
-.prev,
-.next {
+.prev-lightbox,
+.next-lightbox {
     position: absolute;
     top: 50%;
     transform: translateY(-50%);
@@ -1022,15 +1022,41 @@ nav a:hover {
     transition: 0.3s;
 }
 
-.prev {
+.prev-lightbox {
     left: 30px;
 }
 
-.next {
+.next-lightbox {
     right: 30px;
 }
 
-.prev:hover,
-.next:hover {
+.prev-lightbox:hover,
+.next-lightbox:hover {
     color: #00c3ff;
+}
+
+/* IMAGE ANIMÉE */
+.lightbox-img {
+    max-width: 90%;
+    max-height: 80%;
+    border-radius: 10px;
+
+    transition: transform 0.3s ease, opacity 0.3s ease;
+}
+
+/* SORTIE */
+.slide-out-left {
+    transform: translateX(-100%);
+    opacity: 0;
+}
+
+.slide-out-right {
+    transform: translateX(100%);
+    opacity: 0;
+}
+
+/* ENTRÉE */
+.slide-in {
+    transform: translateX(0);
+    opacity: 1;
 }
