@@ -14,6 +14,81 @@ if (header) {
 }
 
 // =========================
+// GALERIE LIGHTBOX
+// =========================
+const images = document.querySelectorAll(".gallery-grid img");
+const lightbox = document.getElementById("lightbox");
+const lightboxImg = document.getElementById("lightbox-img");
+const closeBtn = document.querySelector(".close");
+const prevBtn = document.querySelector(".prev-lightbox");
+const nextBtn = document.querySelector(".next-lightbox");
+
+let currentIndex = 0;
+
+// OUVRIR
+images.forEach((img, index) => {
+    img.addEventListener("click", () => {
+        currentIndex = index;
+        showImage();
+        lightbox.style.display = "flex";
+    });
+});
+
+// AFFICHER IMAGE
+function showImage() {
+    lightboxImg.src = images[currentIndex].src;
+}
+
+// SUIVANT
+function nextImage() {
+    currentIndex++;
+    if (currentIndex >= images.length) {
+        currentIndex = 0;
+    }
+    showImage();
+}
+
+// PRÉCÉDENT
+function prevImage() {
+    currentIndex--;
+    if (currentIndex < 0) {
+        currentIndex = images.length - 1;
+    }
+    showImage();
+}
+
+// EVENTS
+if (nextBtn && prevBtn) {
+    nextBtn.addEventListener("click", nextImage);
+    prevBtn.addEventListener("click", prevImage);
+}
+
+// CLAVIER
+document.addEventListener("keydown", (e) => {
+    if (lightbox.style.display === "flex") {
+        if (e.key === "ArrowRight") nextImage();
+        if (e.key === "ArrowLeft") prevImage();
+        if (e.key === "Escape") lightbox.style.display = "none";
+    }
+});
+
+// FERMER
+if (closeBtn) {
+    closeBtn.addEventListener("click", () => {
+        lightbox.style.display = "none";
+    });
+}
+
+// CLICK FOND
+if (lightbox) {
+    lightbox.addEventListener("click", (e) => {
+        if (e.target !== lightboxImg) {
+            lightbox.style.display = "none";
+        }
+    });
+}
+
+// =========================
 // ANIMATION SECTIONS
 // =========================
 const sections = document.querySelectorAll(".section");
@@ -165,6 +240,7 @@ onSnapshot(collection(db, "inscriptions"), (snapshot) => {
         liste.appendChild(div);
     });
 });
+
 
 // =========================
 // MENU BURGER
