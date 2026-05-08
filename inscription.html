@@ -136,15 +136,61 @@
 				</select>
 			</div>
 			
+			<h3>Lien avec Safran HE</h3>
+
+			<div class="form-row">
+				<select id="safran-status">
+					<option value="">Sélectionner</option>
+					<option value="exterieur">Extérieur</option>
+					<option value="salarie">Salarié</option>
+					<option value="retraite">Retraité TM</option>
+					<option value="regie">Régie</option>
+				</select>
+			</div>
+
+			<div id="safran-fields" style="display:none;">
+
+				<div class="form-row">
+					<input type="text" id="qf" placeholder="QF">
+					<input type="text" id="service" placeholder="Service">
+				</div>
+
+				<div class="form-row">
+					<input type="text" id="correspondant" placeholder="Correspondant TM">
+				</div>
+
+				<div class="form-row">
+					<input type="tel" id="tel-tm" placeholder="Téléphone TM">
+					<input type="email" id="mail-tm" placeholder="Mail TM">
+				</div>
+
+			</div>
+			
+			<h3>Carte N'Py</h3>
+
+			<div class="form-row">
+
+				<select id="npy">
+					<option value="">Commander/Recharger ?</option>
+					<option value="oui">Oui</option>
+					<option value="non">Non</option>
+				</select>
+
+			</div>
+
+			<div class="form-row" id="npy-number" style="display:none;">
+				<input type="text" placeholder="N° de la carte N'Py">
+</div>
+			
 			<h3>Personne à prévenir en cas d'urgence</h3>
 			
 			<div class="form-row">
-                <input id="nom" type="text" placeholder="Nom">
-                <input id="prenom" type="text" placeholder="Prénom">
+                <input id="nom-urgence" type="text" placeholder="Nom">
+                <input id="prenom-urgence" type="text" placeholder="Prénom">
             </div>
 
             <div class="form-row">
-                <input id="telephone" type="tel" placeholder="Téléphone">
+                <input id="telephone-urgence" type="tel" placeholder="Téléphone">
 				<select id="lien"> 
 					<option value="">Lien avec le participant</option> 
 					<option>Père</option>
@@ -168,16 +214,6 @@
 
 
             <button type="button" class="next">Suivant</button>
-
-        </div>
-
-        <!-- DERNIERE ETAPE -->
-        <div class="form-step">
-
-            <h3>Validation</h3>
-
-            <button type="button" class="prev">Précédent</button>
-            <button type="submit">Valider</button>
 
         </div>
 
@@ -228,6 +264,16 @@
 			<button type="button" class="prev">Précédent</button>
 			<button type="button" class="next">Suivant</button>
             <button type="submit">Valider</button>
+        </div>
+		
+		<!-- DERNIERE ETAPE -->
+        <div class="form-step">
+
+            <h3>Validation</h3>
+
+            <button type="button" class="prev">Précédent</button>
+            <button type="submit">Valider</button>
+
         </div>
 
     </form>

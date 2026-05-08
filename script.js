@@ -130,9 +130,70 @@ if (sections.length > 0) {
 }
 
 // =========================
+// SAFRAN HE
+// =========================
+
+const safranStatus = document.getElementById("safran-status");
+const safranFields = document.getElementById("safran-fields");
+
+const qfInput = document.getElementById("qf");
+const serviceInput = document.getElementById("service");
+const correspondantInput = document.getElementById("correspondant");
+
+if (safranStatus) {
+
+    safranStatus.addEventListener("change", function () {
+
+        const value = this.value;
+
+        safranFields.style.display =
+            value ? "block" : "none";
+
+        // reset
+        serviceInput.parentElement.style.display = "none";
+        correspondantInput.parentElement.style.display = "none";
+
+        // Salarié / Retraité
+        if (value === "salarie" || value === "retraite") {
+
+            serviceInput.parentElement.style.display = "flex";
+
+        }
+
+        // Régie / Extérieur
+        if (value === "regie" || value === "exterieur") {
+
+            correspondantInput.parentElement.style.display = "flex";
+
+        }
+    });
+}
+
+// =========================
+// NPY
+// =========================
+
+const npy = document.getElementById("npy");
+const npyNumber = document.getElementById("npy-number");
+
+if (npy) {
+
+    npy.addEventListener("change", function () {
+
+        npyNumber.style.display =
+            this.value === "oui" ? "flex" : "none";
+    });
+}
+
+// =========================
 // FORMULAIRE MULTI-ETAPES
 // =========================
 const steps = document.querySelectorAll(".form-step");
+steps.forEach(step => {
+    if (!step.dataset.enabled) {
+        step.dataset.enabled = "true";
+    }
+});
 
 if (steps.length > 0) {
 
@@ -156,10 +217,17 @@ if (steps.length > 0) {
     }
 
     function showStep(index) {
-        steps.forEach(step => step.classList.remove("active"));
+
+    steps.forEach(step => {
+        step.classList.remove("active");
+    });
+
+    if (steps[index]) {
         steps[index].classList.add("active");
-        updateProgress();
     }
+
+    updateProgress();
+}
 
     // NEXT
     nextBtns.forEach(btn => {
@@ -204,33 +272,63 @@ if (steps.length > 0) {
     // CONDITIONS
 
     const birthdate = document.getElementById("birthdate");
-    if (birthdate) {
-        birthdate.addEventListener("change", function () {
-            const age = new Date().getFullYear() - new Date(this.value).getFullYear();
 
-            if (mineurSection) {
-                mineurSection.style.display = age < 18 ? "block" : "none";
-            }
-        });
-    }
+	if (birthdate) {
+
+		birthdate.addEventListener("change", function () {
+
+			const today = new Date();
+			const birth = new Date(this.value);
+
+			let age = today.getFullYear() - birth.getFullYear();
+
+			const monthDiff = today.getMonth() - birth.getMonth();
+
+			if (
+				monthDiff < 0 ||
+				(monthDiff === 0 && today.getDate() < birth.getDate())
+			) {
+				age--;
+			}
+
+			if (mineurSection) {
+				mineurSection.style.display =
+					age < 18 ? "block" : "none";
+			}
+		});
+	}
 
     const materiel = document.getElementById("materiel");
-    if (materiel) {
-        materiel.addEventListener("change", function () {
-            if (materielSection) {
-                materielSection.style.display = this.value === "oui" ? "block" : "none";
-            }
-        });
-    }
+
+	if (materiel) {
+
+		materiel.addEventListener("change", function () {
+
+			if (materielSection) {
+
+				materielSection.style.display =
+					this.value === "oui"
+						? "block"
+						: "none";
+			}
+		});
+	}
 
     const federaux = document.getElementById("federaux");
-    if (federaux) {
-        federaux.addEventListener("change", function () {
-            if (federauxSection) {
-                federauxSection.style.display = this.value === "oui" ? "block" : "none";
-            }
-        });
-    }
+
+	if (federaux) {
+
+		federaux.addEventListener("change", function () {
+
+			if (federauxSection) {
+
+				federauxSection.style.display =
+					this.value === "oui"
+						? "block"
+						: "none";
+			}
+		});
+	}
 
     showStep(currentStep);
 }
