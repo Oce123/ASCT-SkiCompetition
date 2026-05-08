@@ -61,7 +61,7 @@
             </div>
 
             <div class="form-row">
-                <input type="date" id="birthdate">
+                <input type="date" id="birthdate" required>
                 <select>
                     <option>Sexe</option>
                     <option>F</option>
@@ -70,17 +70,49 @@
             </div>
 
             <div class="form-row">
-                <input type="text" placeholder="Adresse" style="width:100%;">
+                <input type="text" placeholder="Adresse" style="width:100%;" required>
+				<input type="text" placeholder="Code Postal" style="width:100%;" required>
+				<input type="text" placeholder="Ville" style="width:100%;" required>
+				
             </div>
 
             <div class="form-row">
-                <select>
+                <select id="scolarite">
                     <option>Scolarité</option>
                     <option>École</option>
                     <option>Collège</option>
                     <option>Lycée</option>
                     <option>Étudiant</option>
 					<option>/</option>
+                </select>
+				
+				<select id="niveau_ski">
+                    <option>Niveau de ski</option>
+                    <option>Débutant</option>
+                    <option>1*</option>
+                    <option>2*</option>
+                    <option>3*</option>
+					<option>Etoile bronze</option>
+					<option>Etoile or</option>
+                    <option>Fléchette</option>
+                    <option>Flèche bronze</option>
+                    <option>Flèche argent</option>
+                    <option>Flèche vermeil</option>
+					<option>Flèche or</option>
+					<option>Compétition</option>
+                </select>
+				
+				<select id="niveau_snow">
+                    <option>Niveau de snow</option>
+                    <option>Goomie Rider</option>
+                    <option>Snow Decouverte</option>
+                    <option>Rookie Rider</option>
+                    <option>1er snow</option>
+					<option>Izzy Rider</option>
+					<option>2nd snow</option>
+                    <option>3eme snow</option>
+                    <option>FSnow Expert</option>
+					<option>Compétition</option>
                 </select>
             </div>
 			
@@ -96,7 +128,44 @@
 					<option value="oui">Oui</option> 
 					<option value="non">Non</option> 
 				</select> 
+				
+				<select id="encadrant"> 
+					<option value="">Encadrant ?</option> 
+					<option value="oui">Oui</option> 
+					<option value="non">Non</option> 
+				</select>
 			</div>
+			
+			<h3>Personne à prévenir en cas d'urgence</h3>
+			
+			<div class="form-row">
+                <input id="nom" type="text" placeholder="Nom">
+                <input id="prenom" type="text" placeholder="Prénom">
+            </div>
+
+            <div class="form-row">
+                <input id="telephone" type="tel" placeholder="Téléphone">
+				<select id="lien"> 
+					<option value="">Lien avec le participant</option> 
+					<option>Père</option>
+                    <option>Mère</option>
+                    <option>Tuteur légal</option>
+                    <option>Grand-Père</option>
+                    <option>Grand-Mère</option>
+					<option>Frère</option>
+					<option>Soeur</option>
+                    <option>Oncle</option>
+                    <option>Tante</option>
+                    <option>Parrain</option>
+                    <option>Marraine</option>
+					<option>Ami</option>
+					<option>Conjoint</option>
+					<option>Epou</option>
+					<option>Epouse</option>
+					<option>Voisin</option>
+				</select>
+            </div>
+
 
             <button type="button" class="next">Suivant</button>
 
@@ -115,7 +184,19 @@
         <!-- SECTION MINEUR -->
         <div class="form-step" id="mineur-section">
 
-            <h3>Représentant légal</h3>
+            <h3>Représentant légal 1</h3>
+
+            <div class="form-row">
+                <input type="text" placeholder="Nom">
+                <input type="text" placeholder="Prénom">
+            </div>
+
+            <div class="form-row">
+                <input type="tel" placeholder="Téléphone">
+                <input type="email" placeholder="Email">
+            </div>
+			
+			<h3>Représentant légal 2</h3>
 
             <div class="form-row">
                 <input type="text" placeholder="Nom">
