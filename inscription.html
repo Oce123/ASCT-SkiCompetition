@@ -258,13 +258,84 @@
         </div>
 
         <!-- SECTION FEDERAUX -->
-        <div class="form-step" id="federaux-section">
-            <h3>Participation fédéraux</h3>
-            <p>Section à compléter plus tard</p>
+		<div class="form-step" id="federaux-section">
+
+			<h3>Participation aux fédéraux</h3>
+
+			<div class="federaux-info">
+				<h4>
+					Informations sur les championnats de France saison 2026/2027
+					à Châtel (Haute-Savoie) en mars 2027.
+				</h4>
+
+				<p>
+					Les dates exactes et les informations complémentaires
+					seront communiquées ultérieurement.
+				</p>
+			</div>
+
+			<!-- Ligne principale -->
+			<div class="federaux-grid federaux-head">
+				<div>Participant</div>
+				<div>En tant que</div>
+				<div>Discipline</div>
+				<div>Licence</div>
+				<div>Catégorie course</div>
+			</div>
+
+			<div class="federaux-grid federaux-row">
+
+				<!-- Nom prénom auto -->
+				<div>
+					<input
+						type="text"
+						id="federaux-nom"
+						readonly
+					>
+				</div>
+
+				<!-- rôle -->
+				<div>
+					<select id="federaux-role">
+						<option value="">Choisir</option>
+						<option value="Coureur">Coureur</option>
+						<option value="Officiel">Officiel</option>
+						<option value="Accompagnant">Accompagnant</option>
+					</select>
+				</div>
+
+				<!-- discipline -->
+				<div>
+					<select id="federaux-discipline">
+						<option value="">Choisir</option>
+						<option value="Ski">Ski</option>
+						<option value="Snow">Snow</option>
+					</select>
+				</div>
+
+				<!-- licence -->
+				<div>
+					<input
+						type="text"
+						id="federaux-licence"
+						placeholder="Licence ESF / FFS / FIS"
+					>
+				</div>
+
+				<!-- catégorie -->
+				<div>
+					<textarea
+						id="federaux-categorie"
+						readonly
+					></textarea>
+				</div>
+
+			</div>
+
 			<button type="button" class="prev">Précédent</button>
-			<button type="button" class="next">Suivant</button>
-            <button type="submit">Valider</button>
-        </div>
+			<button type="submit">Valider</button>
+
+		</div>
 		
 		<!-- DERNIERE ETAPE -->
         <div class="form-step">

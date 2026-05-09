@@ -329,6 +329,146 @@ if (steps.length > 0) {
 			}
 		});
 	}
+	
+	// =========================
+	// FEDERAUX AUTO
+	// =========================
+
+	const nomInput = document.getElementById("nom");
+	const prenomInput = document.getElementById("prenom");
+
+	const federauxNom = document.getElementById("federaux-nom");
+	const federauxRole = document.getElementById("federaux-role");
+	const federauxDiscipline = document.getElementById("federaux-discipline");
+	const federauxCategorie = document.getElementById("federaux-categorie");
+
+	// auto nom prénom
+	function updateFederauxNom() {
+
+		if (!federauxNom) return;
+
+		federauxNom.value =
+			`${prenomInput.value} ${nomInput.value}`;
+	}
+
+	if (nomInput) {
+		nomInput.addEventListener("input", updateFederauxNom);
+	}
+
+	if (prenomInput) {
+		prenomInput.addEventListener("input", updateFederauxNom);
+	}
+
+	// catégorie auto
+	function updateCategorie() {
+
+		if (!federauxCategorie) return;
+
+		const role = federauxRole.value;
+		const discipline = federauxDiscipline.value;
+
+		const birthdate = document.getElementById("birthdate").value;
+
+		let texte = "";
+
+		// =========================
+		// CALCUL AGE
+		// =========================
+
+		let age = null;
+
+		if (birthdate) {
+
+			const naissance = new Date(birthdate);
+
+			const today = new Date();
+
+			age = today.getFullYear() - naissance.getFullYear();
+
+			const m = today.getMonth() - naissance.getMonth();
+
+			if (
+				m < 0 ||
+				(m === 0 && today.getDate() < naissance.getDate())
+			) {
+				age--;
+			}
+		}
+
+		// =========================
+		// CATEGORIES
+		// =========================
+
+		let categorieFFS = "";
+		let categorieFSGT = "";
+
+		// FFS / FIS
+		if (age !== null) {
+
+			if (age <= 12) categorieFFS = "U12";
+			else if (age <= 14) categorieFFS = "U14";
+			else if (age <= 16) categorieFFS = "U16";
+			else if (age <= 18) categorieFFS = "U18";
+			else if (age <= 21) categorieFFS = "U21";
+			else if (age <= 30) categorieFFS = "U30";
+			else if (age <= 40) categorieFFS = "Master";
+			else categorieFFS = "Master+";
+		}
+
+		// FSGT
+		if (age !== null) {
+
+			if (age <= 10) categorieFSGT = "Poussin";
+			else if (age <= 12) categorieFSGT = "Benjamin";
+			else if (age <= 14) categorieFSGT = "Minime";
+			else if (age <= 16) categorieFSGT = "Cadet";
+			else if (age <= 20) categorieFSGT = "Junior";
+			else if (age <= 30) categorieFSGT = "Senior";
+			else if (age <= 40) categorieFSGT = "Master";
+			else categorieFSGT = "Vétéran";
+		}
+
+		// =========================
+		// TEXTE FINAL
+		// =========================
+
+		if (role === "Coureur") {
+
+			texte =
+	`FSGT HAUTES-PYRENNEES & CHAMPIONNAT FSGT: ${categorieFSGT} 
+FIS SKI & FFS SKI : ${categorieFFS}`;
+
+		}
+
+		else if (role === "Officiel") {
+
+			texte =
+	`Participation en tant qu'officiel`;
+
+		}
+
+		else if (role === "Accompagnant") {
+
+			texte =
+	`Participation en tant qu'accompagnant`;
+
+		}
+
+		federauxCategorie.value = texte;
+	}
+
+	if (federauxRole) {
+		federauxRole.addEventListener("change", updateCategorie);
+	}
+
+	if (federauxDiscipline) {
+		federauxDiscipline.addEventListener("change", updateCategorie);
+	}
+	const birthdateInput = document.getElementById("birthdate");
+
+	if (birthdateInput) {
+		birthdateInput.addEventListener("change", updateCategorie);
+	}
 
     showStep(currentStep);
 }
