@@ -186,6 +186,44 @@ if (npy) {
 }
 
 // =========================
+// MENU BURGER
+// =========================
+
+const burger = document.getElementById("burger");
+const nav = document.getElementById("nav");
+
+if (burger && nav) {
+
+    burger.addEventListener("click", () => {
+
+        burger.classList.toggle("active");
+        nav.classList.toggle("active");
+    });
+
+    // ferme menu quand on clique un lien
+    document.querySelectorAll("#nav a").forEach(link => {
+
+        link.addEventListener("click", () => {
+
+            burger.classList.remove("active");
+            nav.classList.remove("active");
+        });
+    });
+
+    // ferme si clic extérieur
+    document.addEventListener("click", (e) => {
+
+        if (
+            !nav.contains(e.target) &&
+            !burger.contains(e.target)
+        ) {
+            burger.classList.remove("active");
+            nav.classList.remove("active");
+        }
+    });
+}
+
+// =========================
 // FORMULAIRE MULTI-ETAPES
 // =========================
 const steps = document.querySelectorAll(".form-step");
@@ -499,42 +537,3 @@ onSnapshot(collection(db, "inscriptions"), (snapshot) => {
 });
 
 
-// =========================
-// MENU BURGER
-// =========================
-/*const burger = document.getElementById("burger");
-const nav = document.getElementById("nav");
-
-if (burger && nav) {
-    burger.addEventListener("click", () => {
-        nav.classList.toggle("active");
-    });
-}
-
-document.querySelectorAll("#nav a").forEach(link => {
-    link.addEventListener("click", () => {
-        nav.classList.remove("active");
-    });
-});
-
-document.addEventListener("DOMContentLoaded", () => {
-
-    const faders = document.querySelectorAll('.fade-up');
-
-    const observer = new IntersectionObserver(entries => {
-        entries.forEach(entry => {
-            if (entry.isIntersecting) {
-                entry.target.classList.add('visible');
-            }
-        });
-    });
-
-    faders.forEach(el => observer.observe(el));
-
-});
-
-document.addEventListener("click", (e) => {
-    if (!nav.contains(e.target) && !burger.contains(e.target)) {
-        nav.classList.remove("active");
-    }
-});*/

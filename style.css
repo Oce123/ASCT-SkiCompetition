@@ -1386,40 +1386,150 @@ nav a:hover {
 }
 
 
-/* =========================================
-   PETITS TELEPHONES
-========================================= */
+	/* =========================================
+	   PETITS TELEPHONES
+	========================================= */
 
-@media (max-width: 500px) {
+	@media (max-width: 500px) {
 
-    header h1 {
-        font-size: 17px;
-    }
+		header h1 {
+			font-size: 17px;
+		}
 
-    nav a {
-        font-size: 14px;
-    }
+		nav a {
+			font-size: 14px;
+		}
 
-    .hero-text {
-        font-size: 28px;
-    }
+		.hero-text {
+			font-size: 28px;
+		}
 
-    .section h2,
-    .section-title {
-        font-size: 24px;
-    }
+		.section h2,
+		.section-title {
+			font-size: 24px;
+		}
 
-    .modern-text,
-    .entrainements-text {
-        font-size: 15px;
-    }
+		.modern-text,
+		.entrainements-text {
+			font-size: 15px;
+		}
 
-    .contact-card img {
-        width: 90px;
-        height: 90px;
-    }
+		.contact-card img {
+			width: 90px;
+			height: 90px;
+		}
 
-    .gallery-grid img {
-        height: 200px;
-    }
-}
+		.gallery-grid img {
+			height: 200px;
+		}
+	}
+
+	/* =========================================
+	   MENU BURGER
+	========================================= */
+
+	.burger {
+		display: none;
+
+		flex-direction: column;
+		gap: 5px;
+
+		cursor: pointer;
+
+		z-index: 2001;
+	}
+
+	.burger span {
+		width: 28px;
+		height: 3px;
+
+		background: white;
+		border-radius: 10px;
+
+		transition: 0.3s;
+	}
+
+	/* =========================================
+	   MOBILE
+	========================================= */
+
+	@media (max-width: 900px) {
+
+		.burger {
+			display: flex;
+		}
+
+		header {
+			flex-direction: row;
+			justify-content: space-between;
+			align-items: center;
+
+			padding: 15px 20px;
+		}
+
+		.header-container {
+			gap: 10px;
+		}
+
+		.logo {
+			height: 42px;
+		}
+
+		header h1 {
+			font-size: 18px;
+		}
+
+		/* =========================
+		   MENU MOBILE
+		========================= */
+
+		nav {
+			position: fixed;
+
+			top: 0;
+			right: -100%;
+
+			width: 280px;
+			height: 100vh;
+
+			background: rgba(0,0,0,0.96);
+
+			backdrop-filter: blur(10px);
+
+			display: flex;
+			flex-direction: column;
+
+			justify-content: center;
+			align-items: center;
+
+			gap: 30px;
+
+			transition: right 0.4s ease;
+
+			z-index: 2000;
+		}
+
+		nav.active {
+			right: 0;
+		}
+
+		nav a {
+			font-size: 22px;
+		}
+
+		/* =========================
+		   ANIMATION BURGER
+		========================= */
+
+		.burger.active span:nth-child(1) {
+			transform: rotate(45deg) translateY(11px);
+		}
+
+		.burger.active span:nth-child(2) {
+			opacity: 0;
+		}
+
+		.burger.active span:nth-child(3) {
+			transform: rotate(-45deg) translateY(-11px);
+		}
+	}
