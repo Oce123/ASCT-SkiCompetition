@@ -186,6 +186,163 @@ if (npy) {
 }
 
 // =========================
+// FICHE SANITAIRE AUTO
+// =========================
+
+const sanitaireNom =
+    document.getElementById("sanitaire-nom");
+
+const sanitairePrenom =
+    document.getElementById("sanitaire-prenom");
+
+const sanitaireTel =
+    document.getElementById("sanitaire-tel");
+
+const sanitaireAdresse =
+    document.getElementById("sanitaire-adresse");
+
+const sanitaireContactUrgence =
+    document.getElementById("sanitaire-contact-urgence");
+
+const sanitaireContactTel =
+    document.getElementById("sanitaire-contact-tel");
+
+// INPUTS EXISTANTS
+const nom =
+    document.getElementById("nom");
+
+const prenom =
+    document.getElementById("prenom");
+
+const telephone =
+    document.getElementById("telephone");
+
+const adresse =
+    document.getElementById("adresse");
+
+// adapte avec tes ids existants
+const urgenceNom =
+    document.getElementById("nom-urgence");
+
+const urgenceTel =
+    document.getElementById("telephone-urgence");
+
+function updateSanitaire() {
+
+    if (sanitaireNom)
+        sanitaireNom.value = nom.value;
+
+    if (sanitairePrenom)
+        sanitairePrenom.value = prenom.value;
+
+    if (sanitaireTel)
+        sanitaireTel.value = telephone.value;
+
+    if (sanitaireAdresse)
+        sanitaireAdresse.value = adresse.value;
+
+    if (urgenceNom && sanitaireContactUrgence)
+        sanitaireContactUrgence.value = urgenceNom.value;
+
+    if (urgenceTel && sanitaireContactTel)
+        sanitaireContactTel.value = urgenceTel.value;
+}
+
+if (nom) nom.addEventListener("input", updateSanitaire);
+if (prenom) prenom.addEventListener("input", updateSanitaire);
+if (telephone) telephone.addEventListener("input", updateSanitaire);
+if (adresse) adresse.addEventListener("input", updateSanitaire);
+
+if (urgenceNom)
+    urgenceNom.addEventListener("input", updateSanitaire);
+
+if (urgenceTel)
+    urgenceTel.addEventListener("input", updateSanitaire);
+
+updateSanitaire();
+
+// =========================
+// RECAP FICHE SANITAIRE
+// =========================
+
+const recapNom =
+    document.getElementById("recap-nom");
+
+const recapPrenom =
+    document.getElementById("recap-prenom");
+
+const recapNaissance =
+    document.getElementById("recap-naissance");
+
+const signatureNom =
+    document.getElementById("signature-nom");
+
+const signatureDate =
+    document.getElementById("signature-date");
+
+function updateRecap() {
+
+    if (recapNom)
+        recapNom.textContent = nom.value;
+
+    if (recapPrenom)
+        recapPrenom.textContent = prenom.value;
+
+    if (recapNaissance)
+        recapNaissance.textContent = birthdate.value;
+
+    if (signatureNom)
+        signatureNom.textContent =
+            prenom.value + " " + nom.value;
+
+    if (signatureDate) {
+
+        const today = new Date();
+
+        signatureDate.textContent =
+            today.toLocaleDateString("fr-FR");
+    }
+}
+
+if (nom)
+    nom.addEventListener("input", updateRecap);
+
+if (prenom)
+    prenom.addEventListener("input", updateRecap);
+
+if (birthdate)
+    birthdate.addEventListener("change", updateRecap);
+
+updateRecap();
+
+// =========================
+// SIGNATURE DYNAMIQUE
+// =========================
+
+const accordSelect =
+    document.getElementById("accord-select");
+
+const signatureArea =
+    document.getElementById("signature-area");
+
+if (accordSelect && signatureArea) {
+
+    accordSelect.addEventListener("change", function () {
+
+        signatureArea.textContent = this.value;
+
+        if (this.value === "REFUS POUR ACCORD") {
+
+            signatureArea.style.color = "#c62828";
+
+        } else {
+
+            signatureArea.style.color = "#13a113";
+        }
+    });
+}
+
+// =========================
 // MENU BURGER
 // =========================
 

@@ -15,7 +15,13 @@
         <h1>Inscription</h1>
     </div>
 	
-	<nav>
+	<div class="burger" id="burger">
+		<span></span>
+		<span></span>
+		<span></span>
+	</div>
+		
+	<nav id="nav">
         <a href="index.html">Accueil</a>
 		<a href="infos.html">Infos Saison</a>
         <a href="galerie.html">Galerie</a>
@@ -70,7 +76,7 @@
             </div>
 
             <div class="form-row">
-                <input type="text" placeholder="Adresse" style="width:100%;" required>
+                <input id="adresse" type="text" placeholder="Adresse" style="width:100%;" required>
 				<input type="text" placeholder="Code Postal" style="width:100%;" required>
 				<input type="text" placeholder="Ville" style="width:100%;" required>
 				
@@ -337,6 +343,393 @@
 
 		</div>
 		
+		<!-- =========================
+			 ETAPE FICHE SANITAIRE
+		========================= -->
+		<div class="form-step">
+
+			<h2>Fiche Sanitaire</h2>
+
+			<div class="cerfa-header">
+
+			<div class="cerfa-top">
+				<div>
+					<strong>MINISTÈRE DE LA JEUNESSE ET DES SPORTS</strong><br>
+					Code de l'Action Sociale et des Familles
+				</div>
+
+				<div class="cerfa-box">
+					Cerfa<br>
+					N°10008*02
+				</div>
+			</div>
+
+			<div class="cerfa-main">
+
+				<div class="cerfa-logo">
+					<img src="logo.png" alt="">
+				</div>
+
+				<div class="cerfa-title">
+					<h3>ASCT Ski Compétition</h3>
+					<h1>FICHE SANITAIRE</h1>
+					<span>SAISON 2025/2026</span>
+				</div>
+
+				<div class="cerfa-identite">
+
+					<p>
+						<strong>NOM :</strong>
+						<span id="recap-nom"></span>
+					</p>
+
+					<p>
+						<strong>Prénom :</strong>
+						<span id="recap-prenom"></span>
+					</p>
+
+					<p>
+						<strong>Né(e) le :</strong>
+						<span id="recap-naissance"></span>
+					</p>
+
+				</div>
+
+			</div>
+
+			<div class="cerfa-text">
+				CETTE FICHE PERMET DE RECUEILLIR LES INFORMATIONS UTILES
+				PENDANT LE SÉJOUR ET SERA RENDUE EN FIN DE SAISON.
+			</div>
+
+		</div>
+
+			<!-- =========================
+				 VACCINS
+			========================= -->
+			<div class="form-block">
+				<h3>1 - Vaccinations</h3>
+
+				<div class="form-group">
+					<label>Vaccins à jour ?</label>
+
+					<select name="vaccins">
+						<option value="">Choisir</option>
+						<option>Oui</option>
+						<option>Non</option>
+					</select>
+				</div>
+			</div>
+
+			<!-- =========================
+				 TRAITEMENT
+			========================= -->
+			<div class="form-block">
+				<h3>2 - Renseignements médicaux</h3>
+
+				<div class="form-group">
+					<label>Suivez-vous un traitement ?</label>
+
+					<select name="traitement">
+						<option value="">Choisir</option>
+						<option>Oui</option>
+						<option>Non</option>
+					</select>
+				</div>
+
+				<div class="form-group">
+					<label>Détails du traitement</label>
+
+					<textarea
+						name="details-traitement"
+						rows="4"></textarea>
+				</div>
+			</div>
+
+			<!-- =========================
+				 MALADIES
+			========================= -->
+			<div class="form-block">
+				<h3>Maladies déjà contractées</h3>
+
+				<div class="medical-grid">
+
+					<label><input type="checkbox" name="rubeole"> Rubéole</label>
+					<label><input type="checkbox" name="varicelle"> Varicelle</label>
+					<label><input type="checkbox" name="angine"> Angine</label>
+					<label><input type="checkbox" name="otite"> Otite</label>
+					<label><input type="checkbox" name="rougeole"> Rougeole</label>
+					<label><input type="checkbox" name="oreillons"> Oreillons</label>
+					<label><input type="checkbox" name="coqueluche"> Coqueluche</label>
+					<label><input type="checkbox" name="scarlatine"> Scarlatine</label>
+
+				</div>
+			</div>
+
+			<!-- =========================
+				 ALLERGIES
+			========================= -->
+			<div class="form-block">
+
+				<h3>Allergies</h3>
+
+				<div class="medical-grid">
+
+					<label><input type="checkbox" name="allergie-asthme"> Asthme</label>
+
+					<label><input type="checkbox" name="allergie-alimentaire">
+						Alimentaire
+					</label>
+
+					<label><input type="checkbox" name="allergie-medicamenteuse">
+						Médicamenteuse
+					</label>
+
+				</div>
+
+				<div class="form-group">
+					<label>
+						Précisions / conduite à tenir
+					</label>
+
+					<textarea
+						name="allergies-details"
+						rows="4"></textarea>
+				</div>
+			</div>
+
+			<!-- =========================
+				 ANTECEDENTS
+			========================= -->
+			<div class="form-block">
+
+				<h3>
+					Difficultés de santé / antécédents
+				</h3>
+
+				<div class="form-group">
+					<textarea
+						name="antecedents"
+						rows="5"
+						placeholder="Hospitalisation, opération, blessures, etc."></textarea>
+				</div>
+			</div>
+
+			<!-- =========================
+				 RECOMMANDATIONS
+			========================= -->
+			<div class="form-block">
+
+				<h3>Recommandations utiles</h3>
+
+				<div class="form-group">
+					<textarea
+						name="recommandations"
+						rows="4"
+						placeholder="Lunettes, lentilles, prothèses, etc."></textarea>
+				</div>
+
+				<div class="form-row">
+
+					<div class="form-group">
+						<label>Groupe sanguin</label>
+
+						<select name="groupe-sanguin">
+							<option value="">Choisir</option>
+							<option>A+</option>
+							<option>A-</option>
+							<option>B+</option>
+							<option>B-</option>
+							<option>AB+</option>
+							<option>AB-</option>
+							<option>O+</option>
+							<option>O-</option>
+						</select>
+					</div>
+
+					<div class="form-group">
+						<label>Médecin traitant</label>
+
+						<input
+							type="text"
+							name="medecin">
+					</div>
+
+				</div>
+			</div>
+
+			<!-- =========================
+				 RESPONSABLE
+			========================= -->
+			<div class="form-block">
+
+				<h3>Responsable / Contact</h3>
+
+				<div class="form-row">
+
+					<div class="form-group">
+						<label>Nom</label>
+
+						<input
+							type="text"
+							id="sanitaire-nom"
+							readonly>
+					</div>
+
+					<div class="form-group">
+						<label>Prénom</label>
+
+						<input
+							type="text"
+							id="sanitaire-prenom"
+							readonly>
+					</div>
+
+				</div>
+
+				<div class="form-row">
+
+					<div class="form-group">
+						<label>Téléphone</label>
+
+						<input
+							type="text"
+							id="sanitaire-tel">
+					</div>
+
+					<div class="form-group">
+						<label>Adresse</label>
+
+						<input
+							type="text"
+							id="sanitaire-adresse">
+					</div>
+
+				</div>
+
+				<div class="form-row">
+
+					<div class="form-group">
+						<label>Contact d'urgence</label>
+
+						<input
+							type="text"
+							id="sanitaire-contact-urgence">
+					</div>
+
+					<div class="form-group">
+						<label>Téléphone urgence</label>
+
+						<input
+							type="text"
+							id="sanitaire-contact-tel">
+					</div>
+
+				</div>
+			</div>
+			
+		<div class="signature-block">
+
+			<p>
+				Je soussigné(e),
+				<strong id="signature-nom"></strong>,
+				déclare exacts les renseignements portés sur cette fiche
+				et autorise le responsable de la section à prendre,
+				le cas échéant, toutes mesures nécessaires
+				(traitement médical, hospitalisation, intervention chirurgicale).
+			</p>
+
+			<div class="signature-row">
+
+				<!-- LIEU + DATE -->
+				<div class="signature-date">
+
+					<div class="form-group">
+						<label>Fait à</label>
+
+						<input
+							type="text"
+							id="signature-ville"
+							placeholder="Ville">
+					</div>
+
+					<p class="signature-date-text">
+						Le <span id="signature-date"></span>
+					</p>
+
+				</div>
+
+				<!-- SIGNATURE -->
+				<div class="signature-box">
+
+					<label>Accord</label>
+
+					<select id="accord-select">
+
+						<option value="">
+							Choisir
+						</option>
+
+						<option value="BON POUR ACCORD">
+							Bon pour accord
+						</option>
+
+						<option value="REFUS POUR ACCORD">
+							Refus pour accord
+						</option>
+
+					</select>
+
+					<div
+						class="signature-area"
+						id="signature-area">
+
+					</div>
+
+				</div>
+
+			</div>
+
+		</div>
+				
+		<div class="organisateur-block">
+
+			<h4>À REMPLIR PAR LE DIRECTEUR</h4>
+
+			<div class="orga-grid">
+
+				<div>ASCT Ski Compétition</div>
+				<div>Jérôme BORD</div>
+				<div>asct.skicompetition@gmail.com</div>
+				<div>06 73 28 83 97</div>
+
+			</div>
+
+			<div class="observations">
+
+				<div class="obs-title">OBSERVATIONS</div>
+
+				<div class="obs-box"></div>
+
+			</div>
+
+		</div>
+
+			<!-- BOUTONS -->
+			<div class="form-buttons">
+
+				<button type="button" class="prev btn-secondary">
+					Retour
+				</button>
+
+				<button type="button" class="next btn-submit">
+					Suivant
+				</button>
+
+			</div>
+
+		</div>
+				
 		<!-- DERNIERE ETAPE -->
         <div class="form-step">
 

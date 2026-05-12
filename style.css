@@ -1533,3 +1533,463 @@ nav a:hover {
 			transform: rotate(-45deg) translateY(-11px);
 		}
 	}
+
+	/* =========================================
+	   HERO MOBILE PREMIUM
+	========================================= */
+
+	@media (max-width: 900px) {
+
+		.hero {
+
+			min-height: 100vh;
+
+			display: flex;
+			justify-content: center;
+			align-items: center;
+
+			padding: 120px 20px 40px;
+
+			background-position: center center;
+			background-size: cover;
+			background-repeat: no-repeat;
+
+			text-align: center;
+		}
+
+		.overlay {
+			background: linear-gradient(
+				to bottom,
+				rgba(0,0,0,0.45),
+				rgba(0,0,0,0.55)
+			);
+		}
+
+		.hero-text {
+
+			font-size: clamp(30px, 8vw, 48px);
+
+			line-height: 1.2;
+
+			max-width: 90%;
+
+			text-shadow:
+				0 5px 20px rgba(0,0,0,0.8);
+
+			animation-duration: 1.2s;
+		}
+	}
+
+	/* PETITS TELEPHONES */
+
+	@media (max-width: 500px) {
+
+		.hero {
+			min-height: 85vh;
+			padding-top: 100px;
+		}
+
+		.hero-text {
+			font-size: 28px;
+		}
+	}
+	
+	/* =========================================
+	   FIX MENU BURGER PAGE INSCRIPTION
+	========================================= */
+
+	.inscription-page header {
+		z-index: 5000;
+	}
+
+	.inscription-page nav {
+		z-index: 6000;
+	}
+
+	.inscription-page .burger {
+		z-index: 7000;
+	}
+	
+	/* =========================================
+	   MICRO-ANIMATIONS PREMIUM
+	========================================= */
+
+	/* cartes */
+	.card,
+	.card-bg,
+	.contact-card,
+	.modern-text,
+	.entrainements-text,
+	.inscription-page form {
+
+		transition:
+			transform 0.35s ease,
+			box-shadow 0.35s ease,
+			background 0.35s ease;
+	}
+
+	/* effet hover desktop */
+	.card:hover,
+	.card-bg:hover,
+	.contact-card:hover,
+	.modern-text:hover,
+	.entrainements-text:hover {
+
+		transform: translateY(-6px);
+
+		box-shadow:
+			0 20px 50px rgba(0,0,0,0.18);
+	}
+
+	/* =========================================
+	   TOUCH MOBILE
+	========================================= */
+
+	@media (max-width: 900px) {
+
+		.card:active,
+		.card-bg:active,
+		.btn-primary:active,
+		.btn-secondary:active {
+
+			transform: scale(0.97);
+		}
+	}
+
+	/* =========================================
+	   GLASSMORPHISM
+	========================================= */
+
+	.modern-text,
+	.entrainements-text,
+	.contact-card,
+	.federaux-info {
+
+		background: rgba(255,255,255,0.72);
+
+		backdrop-filter: blur(12px);
+
+		border: 1px solid rgba(255,255,255,0.35);
+	}
+
+	/* =========================================
+	   BOUTONS PREMIUM
+	========================================= */
+
+	.btn-primary,
+	.btn-secondary,
+	.btn-submit,
+	button {
+
+		transition:
+			transform 0.25s ease,
+			box-shadow 0.25s ease,
+			background 0.25s ease;
+	}
+
+	.btn-primary:hover,
+	.btn-submit:hover,
+	button:hover {
+
+		transform: translateY(-2px);
+
+		box-shadow:
+			0 10px 25px rgba(0,0,0,0.2);
+	}
+
+	/* =========================================
+	   INPUTS PREMIUM
+	========================================= */
+
+	input,
+	select,
+	textarea {
+
+		transition:
+			border 0.25s ease,
+			box-shadow 0.25s ease,
+			transform 0.2s ease;
+	}
+
+	input:focus,
+	select:focus,
+	textarea:focus {
+
+		transform: translateY(-1px);
+	}
+
+	/* =========================================
+	   IMAGES
+	========================================= */
+
+	.modern-images img,
+	.modern-images video,
+	.gallery-grid img {
+
+		transition:
+			transform 0.4s ease,
+			box-shadow 0.4s ease,
+			filter 0.4s ease;
+	}
+
+	.modern-images img:hover,
+	.modern-images video:hover,
+	.gallery-grid img:hover {
+
+		filter: brightness(1.03);
+
+		box-shadow:
+			0 20px 45px rgba(0,0,0,0.25);
+	}
+	
+	/* =========================
+	   FICHE SANITAIRE
+	========================= */
+
+	.form-block {
+		background: rgba(255,255,255,0.7);
+
+		border-radius: 15px;
+
+		padding: 20px;
+		margin-bottom: 25px;
+
+		box-shadow: 0 5px 20px rgba(0,0,0,0.08);
+	}
+
+	.form-block h3 {
+		margin-top: 0;
+		color: #004080;
+	}
+
+	.medical-grid {
+		display: grid;
+
+		grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+
+		gap: 12px;
+
+		margin-top: 15px;
+	}
+
+	.medical-grid label {
+		background: rgba(255,255,255,0.9);
+
+		padding: 10px 14px;
+
+		border-radius: 10px;
+
+		border: 1px solid rgba(0,0,0,0.08);
+
+		display: flex;
+		align-items: center;
+		gap: 10px;
+	}
+
+	textarea {
+		width: 100%;
+		box-sizing: border-box;
+
+		border-radius: 10px;
+		border: 1px solid #ccc;
+
+		padding: 12px;
+
+		font-size: 15px;
+
+		resize: vertical;
+	}
+
+	.form-buttons {
+		display: flex;
+		justify-content: space-between;
+		gap: 15px;
+
+		margin-top: 30px;
+	}
+
+	@media (max-width: 768px) {
+
+		.form-buttons {
+			flex-direction: column;
+		}
+	}
+	
+	/* =========================
+	   FICHE SANITAIRE CERFA
+	========================= */
+
+	.cerfa-header {
+		background: white;
+		border-radius: 20px;
+		overflow: hidden;
+		margin-bottom: 40px;
+		color: black;
+	}
+
+	.cerfa-top {
+		display: flex;
+		justify-content: space-between;
+		align-items: center;
+		padding: 15px 25px;
+		border-bottom: 2px solid #ddd;
+		font-size: 14px;
+	}
+
+	.cerfa-box {
+		border: 2px solid black;
+		padding: 10px;
+		text-align: center;
+		font-weight: bold;
+	}
+
+	.cerfa-main {
+		display: grid;
+		grid-template-columns: 120px 1fr 250px;
+		gap: 30px;
+		padding: 30px;
+		align-items: center;
+	}
+
+	.cerfa-logo img {
+		width: 100%;
+	}
+
+	.cerfa-title h3 {
+		color: #1d7c44;
+		margin-bottom: 10px;
+	}
+
+	.cerfa-title h1 {
+		color: #d62b2b;
+		font-size: 38px;
+	}
+
+	.cerfa-title span {
+		font-size: 32px;
+		font-weight: bold;
+		color: #1d7c44;
+	}
+
+	.cerfa-identite {
+		border: 2px solid #ddd;
+		padding: 20px;
+		border-radius: 12px;
+	}
+
+	.cerfa-identite p {
+		margin-bottom: 10px;
+	}
+
+	.cerfa-text {
+		text-align: center;
+		padding: 25px;
+		border-top: 2px solid #eee;
+		font-weight: bold;
+	}
+
+	/* =========================
+	   SIGNATURE
+	========================= */
+
+	.signature-block {
+		margin-top: 50px;
+		background: white;
+		padding: 30px;
+		border-radius: 20px;
+		color: black;
+	}
+
+	.signature-row {
+		display: flex;
+		justify-content: space-between;
+		margin-top: 40px;
+		gap: 40px;
+	}
+
+	.signature-box {
+		flex: 1;
+	}
+
+	.signature-area {
+		border: 2px solid #333;
+		height: 120px;
+		margin-top: 10px;
+		padding: 20px;
+		color: #13a113;
+		font-weight: bold;
+	}
+
+	/* =========================
+	   ORGANISATEUR
+	========================= */
+
+	.organisateur-block {
+		margin-top: 40px;
+		background: white;
+		color: black;
+		border-radius: 20px;
+		padding: 30px;
+	}
+
+	.organisateur-block h4 {
+		text-align: center;
+		margin-bottom: 30px;
+	}
+
+	.orga-grid {
+		display: grid;
+		grid-template-columns: repeat(4, 1fr);
+		border: 2px solid black;
+	}
+
+	.orga-grid div {
+		padding: 15px;
+		border-right: 1px solid black;
+		text-align: center;
+		font-weight: bold;
+	}
+
+	.observations {
+		margin-top: 30px;
+	}
+
+	.obs-title {
+		border: 2px solid black;
+		border-bottom: none;
+		width: fit-content;
+		padding: 10px 20px;
+		font-weight: bold;
+	}
+
+	.obs-box {
+		border: 2px solid black;
+		height: 180px;
+	}
+	
+	.signature-date {
+		display: flex;
+		flex-direction: column;
+		gap: 20px;
+		min-width: 250px;
+	}
+
+	.signature-date-text {
+		font-weight: bold;
+	}
+
+	.signature-box select {
+		width: 100%;
+		margin-top: 10px;
+		margin-bottom: 15px;
+	}
+
+	.signature-area {
+		display: flex;
+		align-items: flex-start;
+		justify-content: flex-start;
+		font-size: 20px;
+		letter-spacing: 1px;
+	}
+
+
