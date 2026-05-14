@@ -279,6 +279,9 @@ const signatureNom =
 
 const signatureDate =
     document.getElementById("signature-date");
+	
+const birthdate =
+    document.getElementById("birthdate");
 
 function updateRecap() {
 
@@ -692,5 +695,4 @@ onSnapshot(collection(db, "inscriptions"), (snapshot) => {
         liste.appendChild(div);
     });
 });
-
 

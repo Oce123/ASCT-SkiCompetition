@@ -1,196 +1,557 @@
 <!DOCTYPE html>
 <html>
+
 <head>
     <meta charset="UTF-8">
-	<meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Admin - Inscriptions</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Admin - ASCT</title>
 
     <style>
-        body {
-            font-family: Arial;
-            background: #f5f5f5;
-            padding: 20px;
+
+        body{
+            font-family:Arial;
+            background:#f5f5f5;
+            margin:0;
+            padding:20px;
         }
 
-        h1 {
-            text-align: center;
+        h1{
+            text-align:center;
+            color:#004080;
         }
 
-        .card {
-            background: white;
-            padding: 15px;
-            margin: 10px auto;
-            max-width: 500px;
-            border-radius: 10px;
-            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+        .topbar{
+            display:flex;
+            gap:10px;
+            justify-content:center;
+            flex-wrap:wrap;
+            margin-bottom:20px;
         }
 
-        button {
-            padding: 8px 12px;
-            border: none;
-            border-radius: 6px;
-            cursor: pointer;
-        }
-
-        #exportPDF {
-            display: block;
-            margin: 20px auto;
-            background: #004080;
-            color: white;
-        }
-
-        .delete {
-            background: red;
-            color: white;
-            margin-top: 10px;
-        }
-
-        #search {
-            display:block;
-            margin:20px auto;
-            padding:10px;
+        input{
+            padding:12px;
+            border-radius:10px;
+            border:none;
             width:300px;
         }
+
+        button{
+            border:none;
+            padding:12px 18px;
+            border-radius:10px;
+            cursor:pointer;
+            font-weight:bold;
+        }
+
+        .export{
+            background:#004080;
+            color:white;
+        }
+
+        .csv{
+            background:#008000;
+            color:white;
+        }
+
+        .card{
+            background:white;
+            border-radius:20px;
+            padding:20px;
+            margin:15px auto;
+            max-width:850px;
+            box-shadow:0 5px 20px rgba(0,0,0,0.08);
+        }
+
+        .card h2{
+            margin-top:0;
+            color:#004080;
+        }
+
+        .grid{
+            display:grid;
+            grid-template-columns:repeat(auto-fit,minmax(250px,1fr));
+            gap:10px;
+        }
+
+        .bloc{
+            background:#f7f9fc;
+            padding:12px;
+            border-radius:12px;
+        }
+
+        .actions{
+            margin-top:20px;
+            display:flex;
+            gap:10px;
+            flex-wrap:wrap;
+        }
+
+        .delete{
+            background:red;
+            color:white;
+        }
+
+        .pdf{
+            background:#004080;
+            color:white;
+        }
+
+        .open{
+            background:#00a86b;
+            color:white;
+        }
+
+        .counter{
+            text-align:center;
+            margin-bottom:20px;
+            font-size:18px;
+            font-weight:bold;
+            color:#444;
+        }
+
+        @media(max-width:700px){
+
+            .topbar{
+                flex-direction:column;
+                align-items:center;
+            }
+
+            input{
+                width:100%;
+                max-width:400px;
+            }
+
+        }
+
     </style>
 </head>
 
 <body>
 
-<h1>📋 Liste des inscriptions</h1>
+<h1>🎿 Administration ASCT</h1>
 
-<input id="search" placeholder="Rechercher...">
+<div class="counter" id="counter">
+    0 inscription
+</div>
+
+<div class="topbar">
+
+    <input id="search" placeholder="Rechercher un participant...">
+
+    <button id="exportPDF" class="export">
+        📄 Export PDF
+    </button>
+
+    <button id="exportCSV" class="csv">
+        📊 Export CSV
+    </button>
+
+</div>
 
 <div id="liste"></div>
-
-<button id="exportPDF">📄 Export PDF</button>
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 
 <script type="module">
 
-// 🔐 MOT DE PASSE
+// =========================
+// MOT DE PASSE
+// =========================
+
 const password = prompt("Mot de passe admin :");
 
-if (password !== "ASCT2025") {
-    document.body.innerHTML = "<h1>Accès refusé ❌</h1>";
+if(password !== "ASCT2025"){
+
+    document.body.innerHTML =
+        "<h1>⛔ Accès refusé</h1>";
+
     throw new Error("Accès refusé");
 }
 
-// 🔥 FIREBASE
-import { initializeApp } from "https://www.gstatic.com/firebasejs/12.12.0/firebase-app.js";
-import { getFirestore, collection, onSnapshot, deleteDoc, doc } from "https://www.gstatic.com/firebasejs/12.12.0/firebase-firestore.js";
+// =========================
+// FIREBASE
+// =========================
+
+import { initializeApp }
+from "https://www.gstatic.com/firebasejs/12.12.0/firebase-app.js";
+
+import {
+    getFirestore,
+    collection,
+    onSnapshot,
+    deleteDoc,
+    doc
+}
+from "https://www.gstatic.com/firebasejs/12.12.0/firebase-firestore.js";
 
 const firebaseConfig = {
-  apiKey: "AIzaSy...",
-  authDomain: "asct-ski.firebaseapp.com",
-  projectId: "asct-ski",
-  storageBucket: "asct-ski.firebasestorage.app",
-  messagingSenderId: "845391150142",
-  appId: "1:845391150142:web:c7d808016344cfafad256f"
+
+    apiKey: "AIzaSy...",
+    authDomain: "asct-ski.firebaseapp.com",
+    projectId: "asct-ski",
+    storageBucket: "asct-ski.firebasestorage.app",
+    messagingSenderId: "845391150142",
+    appId: "1:845391150142:web:c7d808016344cfafad256f"
 };
 
 const app = initializeApp(firebaseConfig);
+
 const db = getFirestore(app);
 
+// =========================
 // HTML
-const liste = document.getElementById("liste");
-const searchInput = document.getElementById("search");
-const exportBtn = document.getElementById("exportPDF");
+// =========================
 
-// stockage global
+const liste =
+    document.getElementById("liste");
+
+const searchInput =
+    document.getElementById("search");
+
+const exportPDF =
+    document.getElementById("exportPDF");
+
+const exportCSV =
+    document.getElementById("exportCSV");
+
+const counter =
+    document.getElementById("counter");
+
+// =========================
+// DATA
+// =========================
+
 let allData = [];
 
-// 🔧 fonction affichage
-function afficherListe(dataArray) {
+// =========================
+// AFFICHAGE
+// =========================
+
+function afficherListe(dataArray){
 
     liste.innerHTML = "";
 
+    counter.innerHTML =
+        `${dataArray.length} inscription(s)`;
+
     dataArray.forEach(person => {
 
-        const div = document.createElement("div");
-        div.classList.add("card");
+        const card =
+            document.createElement("div");
 
-        div.innerHTML = `
-            <strong>${person.prenom} ${person.nom}</strong><br>
-            📧 ${person.email || "—"}<br>
-            📱 ${person.telephone || "—"}<br>
-            🎂 ${person.dateNaissance || "—"}<br>
+        card.classList.add("card");
 
-            <button class="delete">🗑️ Supprimer</button>
+        card.innerHTML = `
+
+            <h2>
+                ${person.prenom || ""} ${person.nom || ""}
+            </h2>
+
+            <div class="grid">
+
+                <div class="bloc">
+                    <strong>📧 Email</strong><br>
+                    ${person.email || "-"}
+                </div>
+
+                <div class="bloc">
+                    <strong>📱 Téléphone</strong><br>
+                    ${person.telephone || "-"}
+                </div>
+
+                <div class="bloc">
+                    <strong>🎂 Naissance</strong><br>
+                    ${person.dateNaissance || "-"}
+                </div>
+
+                <div class="bloc">
+                    <strong>⛷️ Niveau ski</strong><br>
+                    ${person.niveauSki || "-"}
+                </div>
+
+                <div class="bloc">
+                    <strong>🏂 Niveau snow</strong><br>
+                    ${person.niveauSnow || "-"}
+                </div>
+
+                <div class="bloc">
+                    <strong>🚨 Contact urgence</strong><br>
+                    ${person.contactUrgence || "-"}
+                </div>
+
+                <div class="bloc">
+                    <strong>🩺 Allergies</strong><br>
+                    ${person.allergies || "-"}
+                </div>
+
+                <div class="bloc">
+                    <strong>💊 Traitement</strong><br>
+                    ${person.traitement || "-"}
+                </div>
+
+            </div>
+
+            <div class="actions">
+
+                <button class="pdf">
+                    📄 PDF individuel
+                </button>
+
+                ${
+                    person.pdfUrl
+                    ?
+                    `
+                    <a href="${person.pdfUrl}" target="_blank">
+                        <button class="open">
+                            📂 Ouvrir PDF
+                        </button>
+                    </a>
+                    `
+                    :
+                    ""
+                }
+
+                <button class="delete">
+                    🗑️ Supprimer
+                </button>
+
+            </div>
         `;
 
-        div.querySelector(".delete").addEventListener("click", async () => {
-            if (confirm("Supprimer cette inscription ?")) {
-                await deleteDoc(doc(db, "inscriptions", person.id));
+        // =========================
+        // DELETE
+        // =========================
+
+        card.querySelector(".delete")
+        .addEventListener("click", async () => {
+
+            const confirmDelete =
+                confirm("Supprimer l'inscription ?");
+
+            if(confirmDelete){
+
+                await deleteDoc(
+                    doc(db, "inscriptions", person.id)
+                );
             }
         });
 
-        liste.appendChild(div);
+        // =========================
+        // PDF INDIVIDUEL
+        // =========================
+
+        card.querySelector(".pdf")
+        .addEventListener("click", () => {
+
+            const { jsPDF } = window.jspdf;
+
+            const pdf = new jsPDF();
+
+            pdf.setFontSize(20);
+
+            pdf.text(
+                "ASCT SKI Competition",
+                20,
+                20
+            );
+
+            pdf.setFontSize(12);
+
+            pdf.text(
+                `Nom : ${person.nom || "-"}`,
+                20,
+                50
+            );
+
+            pdf.text(
+                `Prénom : ${person.prenom || "-"}`,
+                20,
+                60
+            );
+
+            pdf.text(
+                `Email : ${person.email || "-"}`,
+                20,
+                70
+            );
+
+            pdf.text(
+                `Téléphone : ${person.telephone || "-"}`,
+                20,
+                80
+            );
+
+            pdf.text(
+                `Date naissance : ${person.dateNaissance || "-"}`,
+                20,
+                90
+            );
+
+            pdf.text(
+                `Allergies : ${person.allergies || "-"}`,
+                20,
+                110
+            );
+
+            pdf.text(
+                `Traitement : ${person.traitement || "-"}`,
+                20,
+                120
+            );
+
+            pdf.save(
+                `${person.nom}_${person.prenom}.pdf`
+            );
+        });
+
+        liste.appendChild(card);
+
     });
 }
 
-// 🔄 FIRESTORE LIVE
-onSnapshot(collection(db, "inscriptions"), (snapshot) => {
+// =========================
+// FIRESTORE LIVE
+// =========================
 
-    allData = [];
+onSnapshot(
+    collection(db, "inscriptions"),
+    (snapshot) => {
 
-    snapshot.forEach(docSnap => {
-        allData.push({
-            id: docSnap.id,
-            ...docSnap.data()
+        allData = [];
+
+        snapshot.forEach(docSnap => {
+
+            allData.push({
+                id: docSnap.id,
+                ...docSnap.data()
+            });
         });
-    });
 
-    afficherListe(allData);
-});
+        afficherListe(allData);
+    }
+);
 
-// 🔍 RECHERCHE
+// =========================
+// RECHERCHE
+// =========================
+
 searchInput.addEventListener("input", () => {
 
-    const value = searchInput.value.toLowerCase();
+    const value =
+        searchInput.value.toLowerCase();
 
-    const filtered = allData.filter(person =>
-        (person.nom || "").toLowerCase().includes(value) ||
-        (person.prenom || "").toLowerCase().includes(value) ||
-        (person.email || "").toLowerCase().includes(value) ||
-        (person.telephone || "").toLowerCase().includes(value)
-    );
+    const filtered = allData.filter(person => {
+
+        return (
+
+            (person.nom || "")
+            .toLowerCase()
+            .includes(value)
+
+            ||
+
+            (person.prenom || "")
+            .toLowerCase()
+            .includes(value)
+
+            ||
+
+            (person.email || "")
+            .toLowerCase()
+            .includes(value)
+
+        );
+    });
 
     afficherListe(filtered);
 });
 
-// 📄 EXPORT PDF
-exportBtn.addEventListener("click", () => {
+// =========================
+// EXPORT PDF GLOBAL
+// =========================
+
+exportPDF.addEventListener("click", () => {
 
     const { jsPDF } = window.jspdf;
+
     const pdf = new jsPDF();
 
-    allData.forEach((person, index) => {
+    let y = 20;
 
-        if (index > 0) pdf.addPage();
+    pdf.setFontSize(18);
 
-        // TITRE
-        pdf.setFontSize(18);
-        pdf.text("ASCT SKI Competition - Fiche d'inscription", 20, 20);
+    pdf.text(
+        "Liste des inscriptions ASCT",
+        20,
+        y
+    );
 
-        pdf.setLineWidth(0.5);
-        pdf.line(20, 25, 190, 25);
+    y += 20;
+
+    allData.forEach(person => {
 
         pdf.setFontSize(12);
 
-        // INFOS
-        pdf.text(`Nom : ${person.nom || "-"}`, 20, 40);
-        pdf.text(`Prénom : ${person.prenom || "-"}`, 20, 50);
-        pdf.text(`Email : ${person.email || "-"}`, 20, 60);
-        pdf.text(`Téléphone : ${person.telephone || "-"}`, 20, 70);
-        pdf.text(`Naissance : ${person.dateNaissance || "-"}`, 20, 80);
+        pdf.text(
+            `${person.prenom} ${person.nom}`,
+            20,
+            y
+        );
 
-        // pied de page
-        pdf.setFontSize(10);
-        pdf.text("ASCT Ski Competition", 20, 280);
+        pdf.text(
+            `${person.email || "-"}`,
+            90,
+            y
+        );
+
+        y += 10;
+
+        if(y > 270){
+
+            pdf.addPage();
+
+            y = 20;
+        }
     });
 
     pdf.save("inscriptions_ASCT.pdf");
+});
+
+// =========================
+// EXPORT CSV
+// =========================
+
+exportCSV.addEventListener("click", () => {
+
+    let csv =
+        "Nom;Prenom;Email;Telephone\n";
+
+    allData.forEach(person => {
+
+        csv +=
+            `${person.nom || ""};`
+            + `${person.prenom || ""};`
+            + `${person.email || ""};`
+            + `${person.telephone || ""}\n`;
+    });
+
+    const blob =
+        new Blob([csv], {
+            type:"text/csv"
+        });
+
+    const url =
+        URL.createObjectURL(blob);
+
+    const a =
+        document.createElement("a");
+
+    a.href = url;
+
+    a.download = "inscriptions.csv";
+
+    a.click();
 });
 
 </script>
