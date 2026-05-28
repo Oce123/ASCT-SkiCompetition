@@ -224,18 +224,18 @@
         </div>
 
         <!-- SECTION MINEUR -->
-        <div class="form-step" id="mineur-section">
+        <div class="form-step optional-step step-disabled" id="mineur-section">
 
             <h3>Représentant légal 1</h3>
 
             <div class="form-row">
-                <input type="text" placeholder="Nom">
-                <input type="text" placeholder="Prénom">
+                <input type="text" id="legal1-nom" placeholder="Nom">
+				<input type="text" id="legal1-prenom" placeholder="Prénom">
             </div>
 
             <div class="form-row">
-                <input type="tel" placeholder="Téléphone">
-                <input type="email" placeholder="Email">
+                <input type="tel" id="legal1-tel" placeholder="Téléphone">
+				<input type="email" id="legal1-mail" placeholder="Email">
             </div>
 			
 			<h3>Représentant légal 2</h3>
@@ -256,16 +256,237 @@
         </div>
 
         <!-- SECTION MATERIEL -->
-        <div class="form-step" id="materiel-section">
-            <h3>Location matériel</h3>
-            <p>Section à compléter plus tard</p>
-            <button type="button" class="next">Suivant</button>
-			<button type="button" class="prev">Précédent</button>
-        </div>
+		<div class="form-step optional-step step-disabled" id="materiel-section">
+
+			<div class="location-header">
+
+				<div class="location-top">
+					<img src="logo.png" class="location-logo">
+
+					<div class="location-title">
+						<h2>Location matériels ski</h2>
+						<h1>ASCT Ski Compétition</h1>
+						<span>SAISON 2025/2026</span>
+					</div>
+
+					<div class="location-type">
+						<div id="location-age-type">ADULTE</div>
+					</div>
+
+				</div>
+
+				<p class="location-warning">
+					Prévenir la section pour les RDV de remise de matériels le plus vite possible.
+				</p>
+
+			</div>
+
+			<!-- =========================
+				 REFERANT
+			========================= -->
+
+			<div class="form-block">
+
+				<h3>Référant</h3>
+
+				<div class="form-row">
+					<div class="form-group">
+						<label>Nom</label>
+						<input type="text" id="loc-referant-nom" readonly>
+					</div>
+
+					<div class="form-group">
+						<label>Prénom</label>
+						<input type="text" id="loc-referant-prenom" readonly>
+					</div>
+				</div>
+
+				<div class="form-row">
+					<div class="form-group">
+						<label>Adresse</label>
+						<input type="text" id="loc-referant-adresse" readonly>
+					</div>
+
+					<div class="form-group">
+						<label>Téléphone</label>
+						<input type="text" id="loc-referant-tel" readonly>
+					</div>
+				</div>
+
+				<div class="form-row">
+					<div class="form-group">
+						<label>Email</label>
+						<input type="email" id="loc-referant-mail" readonly>
+					</div>
+				</div>
+
+			</div>
+
+			<!-- =========================
+				 PARTICIPANT
+			========================= -->
+
+			<div class="form-block">
+
+				<h3>Participant</h3>
+
+				<div class="form-row">
+
+					<div class="form-group">
+						<label>Nom / Prénom</label>
+						<input type="text" id="loc-participant" readonly>
+					</div>
+
+					<div class="form-group">
+						<label>Niveau ski</label>
+						<input type="text" id="loc-ski" readonly>
+					</div>
+
+					<div class="form-group">
+						<label>Niveau snow</label>
+						<input type="text" id="loc-snow" readonly>
+					</div>
+
+				</div>
+
+				<div class="form-row">
+
+					<div class="form-group">
+						<label>Taille</label>
+						<input type="text" id="loc-taille" placeholder="1m75">
+					</div>
+
+					<div class="form-group">
+						<label>Poids</label>
+						<input type="text" id="loc-poids" placeholder="65kg">
+					</div>
+
+					<div class="form-group">
+						<label>Pointure ville</label>
+						<input type="text" id="loc-pointure" placeholder="42">
+					</div>
+
+				</div>
+
+			</div>
+
+			<!-- =========================
+				 CHOIX MATERIEL
+			========================= -->
+
+			<div class="form-block">
+
+				<h3>Choix du pack</h3>
+
+				<div class="location-packs">
+
+					<label class="pack-card">
+						<input type="radio" name="pack" value="pack1">
+
+						<div>
+							<strong>SKI + BATONS / SNOW</strong>
+							<span>
+								Enfant : 25€ | Adulte : 50€
+							</span>
+						</div>
+					</label>
+
+					<label class="pack-card">
+						<input type="radio" name="pack" value="pack2">
+
+						<div>
+							<strong>CHAUSSURES</strong>
+							<span>
+								Enfant : 15€ | Adulte : 20€
+							</span>
+						</div>
+					</label>
+
+					<label class="pack-card">
+						<input type="radio" name="pack" value="pack3">
+
+						<div>
+							<strong>PACK COMPLET</strong>
+							<span>
+								Ski/Snow + Bâtons + Chaussures<br>
+								Enfant : 40€ | Adulte : 70€
+							</span>
+						</div>
+					</label>
+
+				</div>
+
+			</div>
+
+			<!-- =========================
+				 PAIEMENT
+			========================= -->
+
+			<div class="form-block">
+
+				<h3>Paiement</h3>
+
+				<div class="form-row">
+
+					<div class="form-group">
+						<label>Montant total</label>
+						<input type="text" id="loc-total" readonly>
+					</div>
+
+					<div class="form-group">
+						<label>Moyen de paiement</label>
+
+						<select id="loc-paiement">
+							<option value="">Choisir</option>
+							<option>CB</option>
+							<option>Espèces</option>
+							<option>Chèques</option>
+						</select>
+					</div>
+
+				</div>
+
+			</div>
+
+			<!-- =========================
+				 CAUTION
+			========================= -->
+
+			<div class="form-block">
+
+				<h3>Caution</h3>
+
+				<p class="caution-text">
+					Chèque de caution obligatoire :
+					<strong>100€ par personne</strong>
+				</p>
+
+				<div class="form-row">
+
+					<div class="form-group">
+						<label>Banque</label>
+						<input type="text" id="loc-banque">
+					</div>
+
+				</div>
+
+			</div>
+
+			<div class="form-buttons">
+				<button type="button" class="prev btn-secondary">
+					Retour
+				</button>
+
+				<button type="button" class="next btn-submit">
+					Suivant
+				</button>
+			</div>
+
+		</div>
 
         <!-- SECTION FEDERAUX -->
-		<div class="form-step" id="federaux-section">
-
+		<div class="form-step optional-step step-disabled" id="federaux-section">
+		 
 			<h3>Participation aux fédéraux</h3>
 
 			<div class="federaux-info">
@@ -339,7 +560,9 @@
 			</div>
 
 			<button type="button" class="prev">Précédent</button>
-			<button type="submit">Valider</button>
+			<button type="button" class="next btn-submit">
+					Suivant
+				</button>
 
 		</div>
 		
@@ -729,7 +952,229 @@
 			</div>
 
 		</div>
-				
+		
+		<!-- =========================
+			 DROIT A L'IMAGE
+		========================= -->
+		<div class="form-step">
+
+			<h2>Droit à l'image</h2>
+
+			<div class="cerfa-header droit-image-header">
+
+				<div class="cerfa-main">
+
+					<div class="cerfa-logo">
+						<img src="logo.png" alt="">
+					</div>
+
+					<div class="cerfa-title">
+						<h3>ASCT Ski Compétition</h3>
+						<h1>DROIT À L'IMAGE</h1>
+						<span>SAISON 2025/2026</span>
+					</div>
+
+				</div>
+
+			</div>
+
+			<!-- INFORMATIONS -->
+			<div class="form-block">
+
+				<h3>Information</h3>
+
+				<div class="droit-text">
+
+					<p>
+						Nous avons à disposition un groupe WhatsApp avec tous les participants de la section ASCT Ski Compétition pour faciliter la communication.
+					</p>
+
+					<p>
+						Ce groupe servira également aux partages des photos et vidéos de nos sorties.
+					</p>
+
+					<p>
+						Ensuite, nous avons à notre disposition un stockage sur le Cloud pour stocker des vidéos qui seront prises lors de nos entraînements.
+					</p>
+
+					<p>
+						Cela nous permettra de voir l'évolution et de montrer les améliorations des compétiteurs.
+					</p>
+
+					<p>
+						De plus, il y aura des catalogues et un Excel avec des liens vers des sites pour des achats de matériels et produits d'entretiens.
+					</p>
+
+					<p>
+						Pour finir, nous vous avons demandé lors de l'inscription, le mail des participants (enfant / adulte).
+					</p>
+
+					<p>
+						Il servira à vous envoyer le lien pour le Cloud et aussi pour le calendrier.
+					</p>
+
+					<p>
+						En effet, un calendrier sera partagé pour les sorties d'entraînements ; compétitions et fédéraux.
+					</p>
+
+				</div>
+
+			</div>
+
+			<!-- ACCORDS -->
+			<div class="form-block">
+
+				<h3>Accords</h3>
+
+				<p class="accord-intro">
+					Si vous êtes d'accord, merci de signer et joindre ce document dans le dossier d'inscription.
+				</p>
+
+				<div class="accord-identite">
+
+					<p>
+						Je soussigné :
+						<strong id="droit-image-nom"></strong>
+					</p>
+
+				</div>
+
+				<!-- WhatsApp -->
+				<div class="accord-row">
+
+					<label>Accès au groupe WhatsApp</label>
+
+					<select class="accord-select">
+						<option value="">Choisir</option>
+						<option value="AUTORISE">Autorise</option>
+						<option value="REFUSE">Refuse</option>
+					</select>
+
+				</div>
+
+				<!-- Cloud -->
+				<div class="accord-row">
+
+					<label>Accès au Cloud</label>
+
+					<select class="accord-select">
+						<option value="">Choisir</option>
+						<option value="AUTORISE">Autorise</option>
+						<option value="REFUSE">Refuse</option>
+					</select>
+
+				</div>
+
+				<!-- Calendrier -->
+				<div class="accord-row">
+
+					<label>Accès au calendrier</label>
+
+					<select class="accord-select">
+						<option value="">Choisir</option>
+						<option value="AUTORISE">Autorise</option>
+						<option value="REFUSE">Refuse</option>
+					</select>
+
+				</div>
+
+				<!-- Photos / vidéos -->
+				<div class="accord-row">
+
+					<label>Utilisation des photos / vidéos</label>
+
+					<select class="accord-select">
+						<option value="">Choisir</option>
+						<option value="AUTORISE">Autorise</option>
+						<option value="REFUSE">Refuse</option>
+					</select>
+
+				</div>
+
+			</div>
+
+			<!-- SIGNATURE -->
+			<div class="signature-block">
+
+				<div class="signature-row">
+
+					<div class="signature-date">
+
+						<div class="form-group">
+							<label>Fait à</label>
+
+							<input
+								type="text"
+								id="droit-image-ville"
+								readonly>
+						</div>
+
+						<p class="signature-date-text">
+							Le <span id="droit-image-date"></span>
+						</p>
+
+					</div>
+
+					<div class="signature-box">
+
+						<label>Accord final</label>
+
+						<select id="droit-image-accord">
+
+							<option value="">
+								Choisir
+							</option>
+
+							<option value="BON POUR ACCORD">
+								Bon pour accord
+							</option>
+
+							<option value="REFUS POUR ACCORD">
+								Refus pour accord
+							</option>
+
+						</select>
+
+						<div
+							class="signature-area"
+							id="droit-image-signature">
+						</div>
+
+					</div>
+
+				</div>
+
+			</div>
+
+			<!-- IMAGE BAS -->
+			<div class="droit-image-footer">
+
+				<img src="logo.png" alt="">
+
+				<p>
+					L'ASCT et la section ASCT Ski Compétition se décharge de toutes responsabilités en cas de mauvais usage des éléments partagés.
+				</p>
+
+				<p>
+					Pas contre nous nous efforcerons de résoudre toutes problématiques déclarées.
+				</p>
+
+			</div>
+
+			<div class="form-buttons">
+
+				<button type="button" class="prev btn-secondary">
+					Retour
+				</button>
+
+				<button type="button" class="next btn-submit">
+					Suivant
+				</button>
+
+			</div>
+
+		</div>
+						
 		<!-- DERNIERE ETAPE -->
         <div class="form-step">
 
@@ -772,12 +1217,121 @@ document.addEventListener("DOMContentLoaded", () => {
         e.preventDefault();
 
         const data = {
-            nom: document.getElementById("nom").value,
-            prenom: document.getElementById("prenom").value,
-            email: document.getElementById("email").value,
-            telephone: document.getElementById("telephone").value,
-            dateNaissance: document.getElementById("birthdate").value
-        };
+
+			// =========================
+			// PARTICIPANT
+			// =========================
+
+			nom: document.getElementById("nom")?.value || "",
+			prenom: document.getElementById("prenom")?.value || "",
+			email: document.getElementById("email")?.value || "",
+			telephone: document.getElementById("telephone")?.value || "",
+			dateNaissance: document.getElementById("birthdate")?.value || "",
+
+			adresse: document.getElementById("adresse")?.value || "",
+
+			niveauSki:
+				document.getElementById("niveau_ski")?.value || "",
+
+			niveauSnow:
+				document.getElementById("niveau_snow")?.value || "",
+
+			scolarite:
+				document.getElementById("scolarite")?.value || "",
+
+			materiel:
+				document.getElementById("materiel")?.value || "",
+
+			federaux:
+				document.getElementById("federaux")?.value || "",
+
+			encadrant:
+				document.getElementById("encadrant")?.value || "",
+
+			// =========================
+			// URGENCE
+			// =========================
+
+			contactUrgence:
+				`${document.getElementById("nom-urgence")?.value || ""} 
+				${document.getElementById("prenom-urgence")?.value || ""}`,
+
+			telephoneUrgence:
+				document.getElementById("telephone-urgence")?.value || "",
+
+			lienUrgence:
+				document.getElementById("lien")?.value || "",
+
+			// =========================
+			// MEDICAL
+			// =========================
+
+			traitement:
+				document.querySelector('[name="traitement"]')?.value || "",
+
+			detailsTraitement:
+				document.querySelector('[name="details-traitement"]')?.value || "",
+
+			allergies: [
+
+				document.querySelector('[name="allergie-asthme"]')?.checked
+					? "Asthme"
+					: "",
+
+				document.querySelector('[name="allergie-alimentaire"]')?.checked
+					? "Alimentaire"
+					: "",
+
+				document.querySelector('[name="allergie-medicamenteuse"]')?.checked
+					? "Médicamenteuse"
+					: ""
+
+			].filter(Boolean).join(", "),
+
+			allergiesDetails:
+				document.querySelector('[name="allergies-details"]')?.value || "",
+
+			antecedents:
+				document.querySelector('[name="antecedents"]')?.value || "",
+
+			recommandations:
+				document.querySelector('[name="recommandations"]')?.value || "",
+
+			groupeSanguin:
+				document.querySelector('[name="groupe-sanguin"]')?.value || "",
+
+			medecin:
+				document.querySelector('[name="medecin"]')?.value || "",
+
+			// =========================
+			// DROIT IMAGE
+			// =========================
+
+			droitImage:
+				document.getElementById("droit-image-select")?.value || "",
+
+			whatsappAccord:
+				document.getElementById("whatsapp-accord")?.value || "",
+
+			cloudAccord:
+				document.getElementById("cloud-accord")?.value || "",
+
+			calendrierAccord:
+				document.getElementById("calendrier-accord")?.value || "",
+
+			// =========================
+			// SIGNATURE
+			// =========================
+
+			signatureVille:
+				document.getElementById("signature-ville")?.value || "",
+
+			signatureAccord:
+				document.getElementById("accord-select")?.value || "",
+
+			dateInscription:
+				new Date().toISOString()
+		};
 
         try {
             await addDoc(collection(db, "inscriptions"), data);

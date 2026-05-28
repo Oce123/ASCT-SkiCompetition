@@ -346,6 +346,163 @@ if (accordSelect && signatureArea) {
 }
 
 // =========================
+// LOCATION MATERIEL
+// =========================
+
+const locReferantNom =
+    document.getElementById("loc-referant-nom");
+
+const locReferantPrenom =
+    document.getElementById("loc-referant-prenom");
+
+const locReferantAdresse =
+    document.getElementById("loc-referant-adresse");
+
+const locReferantTel =
+    document.getElementById("loc-referant-tel");
+
+const locReferantMail =
+    document.getElementById("loc-referant-mail");
+
+const locParticipant =
+    document.getElementById("loc-participant");
+
+const locSki =
+    document.getElementById("loc-ski");
+
+const locSnow =
+    document.getElementById("loc-snow");
+
+const locAgeType =
+    document.getElementById("location-age-type");
+
+const locTotal =
+    document.getElementById("loc-total");
+
+const packs =
+    document.querySelectorAll('input[name="pack"]');
+
+// IMPORTANT
+// Mets des IDs sur représentant légal 1
+// ex:
+// id="legal1-nom"
+// id="legal1-prenom"
+// id="legal1-tel"
+// id="legal1-mail"
+
+function isMineur() {
+
+    const birth = new Date(birthdate.value);
+    const today = new Date();
+
+    let age =
+        today.getFullYear() - birth.getFullYear();
+
+    const m =
+        today.getMonth() - birth.getMonth();
+
+    if (
+        m < 0 ||
+        (m === 0 && today.getDate() < birth.getDate())
+    ) {
+        age--;
+    }
+
+    return age < 18;
+}
+
+function updateLocationMateriel() {
+
+    // participant
+    locParticipant.value =
+        `${prenom.value} ${nom.value}`;
+
+    locSki.value =
+        document.getElementById("niveau_ski").value;
+
+    locSnow.value =
+        document.getElementById("niveau_snow").value;
+
+    // adulte ou enfant
+    const mineur = isMineur();
+
+    locAgeType.textContent =
+        mineur ? "ENFANT" : "ADULTE";
+
+    // REFERANT
+    if (mineur) {
+
+        locReferantNom.value =
+            document.getElementById("legal1-nom").value;
+
+        locReferantPrenom.value =
+            document.getElementById("legal1-prenom").value;
+
+        locReferantTel.value =
+            document.getElementById("legal1-tel").value;
+
+        locReferantMail.value =
+            document.getElementById("legal1-mail").value;
+
+    } else {
+
+        locReferantNom.value = nom.value;
+        locReferantPrenom.value = prenom.value;
+        locReferantAdresse.value = adresse.value;
+        locReferantTel.value = telephone.value;
+        locReferantMail.value = email.value;
+    }
+}
+
+function updateTarif() {
+
+    const mineur = isMineur();
+
+    let total = 0;
+
+    packs.forEach(pack => {
+
+        if (pack.checked) {
+
+            if (pack.value === "pack1") {
+                total = mineur ? 25 : 50;
+            }
+
+            if (pack.value === "pack2") {
+                total = mineur ? 15 : 20;
+            }
+
+            if (pack.value === "pack3") {
+                total = mineur ? 40 : 70;
+            }
+        }
+    });
+
+    locTotal.value = total + " €";
+}
+
+packs.forEach(pack => {
+    pack.addEventListener("change", updateTarif);
+});
+
+// AUTO UPDATE
+[
+    nom,
+    prenom,
+    telephone,
+    adresse,
+    email,
+    birthdate
+].forEach(el => {
+
+    if (el) {
+        el.addEventListener("input", updateLocationMateriel);
+    }
+});
+
+updateLocationMateriel();
+
+// =========================
 // MENU BURGER
 // =========================
 
@@ -384,6 +541,87 @@ if (burger && nav) {
 }
 
 // =========================
+// DROIT A L'IMAGE
+// =========================
+
+const droitImageNom =
+    document.getElementById("droit-image-nom");
+
+const droitImageVille =
+    document.getElementById("droit-image-ville");
+
+const droitImageDate =
+    document.getElementById("droit-image-date");
+
+const droitImageAccord =
+    document.getElementById("droit-image-accord");
+
+const droitImageSignature =
+    document.getElementById("droit-image-signature");
+
+function updateDroitImage() {
+
+    if (droitImageNom) {
+
+        droitImageNom.textContent =
+            `${prenom.value} ${nom.value}`;
+    }
+
+    // ville
+    const villeInput =
+        document.querySelector('input[placeholder="Ville"]');
+
+    if (villeInput && droitImageVille) {
+
+        droitImageVille.value =
+            villeInput.value;
+    }
+
+    // date
+    if (droitImageDate) {
+
+        droitImageDate.textContent =
+            new Date().toLocaleDateString("fr-FR");
+    }
+}
+
+// auto update
+if (nom)
+    nom.addEventListener("input", updateDroitImage);
+
+if (prenom)
+    prenom.addEventListener("input", updateDroitImage);
+
+const villeField =
+    document.querySelector('input[placeholder="Ville"]');
+
+if (villeField)
+    villeField.addEventListener("input", updateDroitImage);
+
+updateDroitImage();
+
+// SIGNATURE
+if (droitImageAccord && droitImageSignature) {
+
+    droitImageAccord.addEventListener("change", function () {
+
+        droitImageSignature.textContent =
+            this.value;
+
+        if (this.value === "REFUS POUR ACCORD") {
+
+            droitImageSignature.style.color =
+                "#c62828";
+
+        } else {
+
+            droitImageSignature.style.color =
+                "#13a113";
+        }
+    });
+}
+
+// =========================
 // FORMULAIRE MULTI-ETAPES
 // =========================
 const steps = document.querySelectorAll(".form-step");
@@ -406,9 +644,10 @@ if (steps.length > 0) {
     const federauxSection = document.getElementById("federaux-section");
 
     // cacher au départ
-    if (mineurSection) mineurSection.style.display = "none";
-    if (materielSection) materielSection.style.display = "none";
-    if (federauxSection) federauxSection.style.display = "none";
+    if (mineurSection) mineurSection.classList.add("step-disabled");
+	if (materielSection) materielSection.classList.add("step-disabled");
+	if (federauxSection) federauxSection.classList.add("step-disabled");
+
 
     function updateProgress() {
         progress.style.width = ((currentStep + 1) / steps.length) * 100 + "%";
@@ -436,7 +675,7 @@ if (steps.length > 0) {
 
             while (
                 steps[currentStep] &&
-                steps[currentStep].style.display === "none"
+                steps[currentStep].classList.contains("step-disabled")
             ) {
                 currentStep++;
             }
@@ -456,7 +695,7 @@ if (steps.length > 0) {
 
             while (
                 steps[currentStep] &&
-                steps[currentStep].style.display === "none"
+                steps[currentStep].classList.contains("step-disabled")
             ) {
                 currentStep--;
             }
@@ -490,8 +729,7 @@ if (steps.length > 0) {
 			}
 
 			if (mineurSection) {
-				mineurSection.style.display =
-					age < 18 ? "block" : "none";
+				mineurSection.classList.toggle("step-disabled", age >= 18);
 			}
 		});
 	}
@@ -503,11 +741,7 @@ if (steps.length > 0) {
 		materiel.addEventListener("change", function () {
 
 			if (materielSection) {
-
-				materielSection.style.display =
-					this.value === "oui"
-						? "block"
-						: "none";
+				materielSection.classList.toggle("step-disabled", materiel.value !== "oui");
 			}
 		});
 	}
@@ -519,11 +753,7 @@ if (steps.length > 0) {
 		federaux.addEventListener("change", function () {
 
 			if (federauxSection) {
-
-				federauxSection.style.display =
-					this.value === "oui"
-						? "block"
-						: "none";
+				federauxSection.classList.toggle("step-disabled", federaux.value !== "oui");
 			}
 		});
 	}

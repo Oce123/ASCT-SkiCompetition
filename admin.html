@@ -62,6 +62,38 @@
             max-width:850px;
             box-shadow:0 5px 20px rgba(0,0,0,0.08);
         }
+		
+		.card{
+			cursor:pointer;
+			transition:0.25s;
+		}
+
+		.card:hover{
+			transform:translateY(-3px);
+		}
+
+		.details{
+			margin-top:20px;
+			padding-top:20px;
+			border-top:1px solid #ddd;
+			display:none;
+		}
+
+		.details.active{
+			display:block;
+		}
+
+		.details-grid{
+			display:grid;
+			grid-template-columns:repeat(auto-fit,minmax(250px,1fr));
+			gap:12px;
+		}
+
+		.details-box{
+			background:#f5f7fb;
+			padding:15px;
+			border-radius:12px;
+		}
 
         .card h2{
             margin-top:0;
@@ -292,32 +324,86 @@ function afficherListe(dataArray){
 
             </div>
 
-            <div class="actions">
+                <div class="details">
 
-                <button class="pdf">
-                    📄 PDF individuel
-                </button>
+					<div class="details-grid">
 
-                ${
-                    person.pdfUrl
-                    ?
-                    `
-                    <a href="${person.pdfUrl}" target="_blank">
-                        <button class="open">
-                            📂 Ouvrir PDF
-                        </button>
-                    </a>
-                    `
-                    :
-                    ""
-                }
+						<div class="details-box">
+							<strong>Adresse</strong><br>
+							${person.adresse || "-"}
+						</div>
 
-                <button class="delete">
-                    🗑️ Supprimer
-                </button>
+						<div class="details-box">
+							<strong>Contact urgence</strong><br>
+							${person.contactUrgence || "-"}
+						</div>
 
-            </div>
-        `;
+						<div class="details-box">
+							<strong>Téléphone urgence</strong><br>
+							${person.telephoneUrgence || "-"}
+						</div>
+
+						<div class="details-box">
+							<strong>Lien urgence</strong><br>
+							${person.lienUrgence || "-"}
+						</div>
+
+						<div class="details-box">
+							<strong>Traitement</strong><br>
+							${person.traitement || "-"}
+						</div>
+
+						<div class="details-box">
+							<strong>Détails traitement</strong><br>
+							${person.detailsTraitement || "-"}
+						</div>
+
+						<div class="details-box">
+							<strong>Allergies</strong><br>
+							${person.allergies || "-"}
+						</div>
+
+						<div class="details-box">
+							<strong>Antécédents</strong><br>
+							${person.antecedents || "-"}
+						</div>
+
+						<div class="details-box">
+							<strong>Recommandations</strong><br>
+							${person.recommandations || "-"}
+						</div>
+
+						<div class="details-box">
+							<strong>Groupe sanguin</strong><br>
+							${person.groupeSanguin || "-"}
+						</div>
+
+						<div class="details-box">
+							<strong>Médecin</strong><br>
+							${person.medecin || "-"}
+						</div>
+
+						<div class="details-box">
+							<strong>Droit à l'image</strong><br>
+							${person.droitImage || "-"}
+						</div>
+
+					</div>
+
+				</div>
+
+				<div class="actions">
+
+					<button class="pdf">
+						📄 PDF individuel
+					</button>
+
+					<button class="delete">
+						🗑️ Supprimer
+					</button>
+
+				</div>
+			`;
 
         // =========================
         // DELETE
@@ -404,6 +490,22 @@ function afficherListe(dataArray){
                 `${person.nom}_${person.prenom}.pdf`
             );
         });
+		
+		const details =
+			card.querySelector(".details");
+
+		card.addEventListener("click", (e) => {
+
+			if(
+				e.target.classList.contains("delete")
+				||
+				e.target.classList.contains("pdf")
+			){
+				return;
+			}
+
+			details.classList.toggle("active");
+		});
 
         liste.appendChild(card);
 

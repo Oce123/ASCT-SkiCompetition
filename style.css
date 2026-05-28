@@ -1992,4 +1992,189 @@ nav a:hover {
 		letter-spacing: 1px;
 	}
 
+	/* =========================
+	   LOCATION MATERIEL
+	========================= */
 
+	.location-header {
+		border: 2px solid #111;
+		margin-bottom: 30px;
+		background: #fff;
+	}
+
+	.location-top {
+		display: flex;
+		align-items: center;
+		justify-content: space-between;
+		padding: 20px;
+		gap: 20px;
+	}
+
+	.location-logo {
+		width: 120px;
+	}
+
+	.location-title {
+		text-align: center;
+		flex: 1;
+	}
+
+	.location-title h2 {
+		color: #1f5f2e;
+		margin-bottom: 10px;
+	}
+
+	.location-title h1 {
+		color: #d50000;
+		font-size: 32px;
+	}
+
+	.location-title span {
+		display: block;
+		margin-top: 10px;
+		font-weight: bold;
+		font-size: 24px;
+	}
+
+	.location-warning {
+		text-align: center;
+		color: red;
+		font-style: italic;
+		padding: 10px;
+		border-top: 1px solid #ccc;
+	}
+
+	.location-type {
+		min-width: 120px;
+		text-align: center;
+		font-weight: bold;
+		font-size: 20px;
+	}
+
+	.location-packs {
+		display: flex;
+		flex-direction: column;
+		gap: 20px;
+	}
+
+	.pack-card {
+		border: 2px solid #ddd;
+		border-radius: 12px;
+		padding: 20px;
+		cursor: pointer;
+		transition: 0.3s;
+		display: flex;
+		align-items: center;
+		gap: 15px;
+	}
+
+	.pack-card:hover {
+		border-color: #13a113;
+	}
+
+	.pack-card input {
+		transform: scale(1.5);
+	}
+
+	.pack-card strong {
+		display: block;
+		margin-bottom: 5px;
+		color: #111;
+	}
+
+	.pack-card span {
+		color: #666;
+	}
+
+	.caution-text {
+		font-size: 18px;
+		color: #c62828;
+		font-weight: bold;
+	}
+
+	/* =========================
+	   DROIT IMAGE
+	========================= */
+
+	.droit-image-header {
+		margin-bottom: 30px;
+	}
+
+	.droit-text p {
+		margin-bottom: 15px;
+		line-height: 1.7;
+	}
+
+	.accord-intro {
+		margin-bottom: 30px;
+		text-align: center;
+	}
+
+	.accord-identite {
+		margin-bottom: 30px;
+		font-size: 18px;
+	}
+
+	.accord-row {
+
+		display: flex;
+		justify-content: space-between;
+		align-items: center;
+
+		gap: 20px;
+
+		padding: 20px;
+		margin-bottom: 15px;
+
+		border: 1px solid #ddd;
+		border-radius: 14px;
+
+		background: #fafafa;
+	}
+
+	.accord-row label {
+		font-weight: 600;
+	}
+
+	.accord-row select {
+		max-width: 220px;
+	}
+
+	.droit-image-footer {
+
+		margin-top: 50px;
+		padding: 30px;
+
+		border: 2px solid #ddd;
+		border-radius: 20px;
+
+		text-align: center;
+		background: #f9f9f9;
+	}
+
+	.droit-image-footer img {
+
+		width: 220px;
+		margin-bottom: 20px;
+	}
+
+	.droit-image-footer p {
+
+		margin-bottom: 10px;
+		line-height: 1.6;
+	}
+
+	/* MOBILE */
+	@media (max-width: 768px) {
+
+		.accord-row {
+
+			flex-direction: column;
+			align-items: flex-start;
+		}
+
+		.accord-row select {
+			width: 100%;
+			max-width: 100%;
+		}
+	}
