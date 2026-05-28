@@ -14,6 +14,44 @@ if (header) {
 }
 
 // =========================
+// MENU BURGER
+// =========================
+
+const burger = document.getElementById("burger");
+const nav = document.getElementById("nav");
+
+if (burger && nav) {
+
+    burger.addEventListener("click", () => {
+
+        burger.classList.toggle("active");
+        nav.classList.toggle("active");
+    });
+
+    // ferme menu quand on clique un lien
+    document.querySelectorAll("#nav a").forEach(link => {
+
+        link.addEventListener("click", () => {
+
+            burger.classList.remove("active");
+            nav.classList.remove("active");
+        });
+    });
+
+    // ferme si clic extérieur
+    document.addEventListener("click", (e) => {
+
+        if (
+            !nav.contains(e.target) &&
+            !burger.contains(e.target)
+        ) {
+            burger.classList.remove("active");
+            nav.classList.remove("active");
+        }
+    });
+}
+
+// =========================
 // GALERIE LIGHTBOX
 // =========================
 const images = document.querySelectorAll(".gallery-grid img");
@@ -213,6 +251,9 @@ const nom =
 
 const prenom =
     document.getElementById("prenom");
+	
+const email =
+    document.getElementById("email");
 
 const telephone =
     document.getElementById("telephone");
@@ -502,43 +543,7 @@ packs.forEach(pack => {
 
 updateLocationMateriel();
 
-// =========================
-// MENU BURGER
-// =========================
 
-const burger = document.getElementById("burger");
-const nav = document.getElementById("nav");
-
-if (burger && nav) {
-
-    burger.addEventListener("click", () => {
-
-        burger.classList.toggle("active");
-        nav.classList.toggle("active");
-    });
-
-    // ferme menu quand on clique un lien
-    document.querySelectorAll("#nav a").forEach(link => {
-
-        link.addEventListener("click", () => {
-
-            burger.classList.remove("active");
-            nav.classList.remove("active");
-        });
-    });
-
-    // ferme si clic extérieur
-    document.addEventListener("click", (e) => {
-
-        if (
-            !nav.contains(e.target) &&
-            !burger.contains(e.target)
-        ) {
-            burger.classList.remove("active");
-            nav.classList.remove("active");
-        }
-    });
-}
 
 // =========================
 // DROIT A L'IMAGE
@@ -620,6 +625,8 @@ if (droitImageAccord && droitImageSignature) {
         }
     });
 }
+
+
 
 // =========================
 // FORMULAIRE MULTI-ETAPES
