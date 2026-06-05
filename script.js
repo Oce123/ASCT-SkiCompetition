@@ -627,6 +627,203 @@ if (droitImageAccord && droitImageSignature) {
 }
 
 
+// =========================
+// RECAP FINAL
+// =========================
+function updateRecapFinal() {
+
+    document.getElementById("final-nom").textContent =
+		nom.value;
+
+	document.getElementById("final-prenom").textContent =
+		prenom.value;
+
+	document.getElementById("final-email").textContent =
+		email.value;
+
+	document.getElementById("final-telephone").textContent =
+		telephone.value;
+
+	document.getElementById("final-naissance").textContent =
+		birthdate.value;
+
+	document.getElementById("final-ski").textContent =
+		document.getElementById("niveau_ski")?.value || "-";
+
+	document.getElementById("final-snow").textContent =
+		document.getElementById("niveau_snow")?.value || "-";
+
+	document.getElementById("final-allergies").textContent =
+		document.getElementById("allergies")?.value || "Aucune";
+
+	document.getElementById("final-traitement").textContent =
+		document.getElementById("traitement")?.value || "Aucun";
+
+	document.getElementById("final-urgence-nom").textContent =
+		urgenceNom?.value || "-";
+
+	document.getElementById("final-urgence-tel").textContent =
+		urgenceTel?.value || "-";
+
+    verificationFinale();
+    calculPaiement();
+}
+
+function setVerif(id, ok){
+
+    const el = document.getElementById(id);
+
+    if(!el) return;
+
+    el.textContent = ok ? "OK" : "KO";
+
+    el.className = ok ? "ok" : "ko";
+}
+
+function verificationFinale(){
+
+    setVerif(
+        "verif-formulaire",
+        nom.value &&
+        prenom.value &&
+        email.value
+    );
+
+    setVerif(
+        "verif-sanitaire",
+        sanitaireNom?.value &&
+        sanitairePrenom?.value
+    );
+
+    setVerif(
+        "verif-location",
+        document.getElementById("materiel")?.value
+    );
+
+    setVerif(
+        "verif-image",
+        document.getElementById("droit-image-accord")?.value
+    );
+
+    setVerif(
+        "verif-federaux",
+        true
+    );
+}
+
+function getAge() {
+
+    const birth = new Date(birthdate.value);
+
+    const today = new Date();
+
+    let age =
+        today.getFullYear() -
+        birth.getFullYear();
+
+    const m =
+        today.getMonth() -
+        birth.getMonth();
+
+    if (
+        m < 0 ||
+        (m === 0 && today.getDate() < birth.getDate())
+    ) {
+        age--;
+    }
+
+    return age;
+}
+
+function calculPaiement() {
+
+    const age = getAge();
+
+    const categorie =
+        age < 18
+            ? "enfant"
+            : "adulte";
+
+    const statut =
+        document.getElementById("safran-status").value;
+
+    const forfaitClub =
+        document.getElementById("npy").value === "oui";
+
+    let total = 0;
+
+    const tarif =
+        TARIFS[categorie][statut];
+
+    total += tarif.cotisation;
+
+    if (forfaitClub) {
+        total += tarif.forfaitLuz;
+    }
+
+    document.getElementById(
+        "paiement-type"
+    ).textContent =
+        categorie.toUpperCase();
+
+    document.getElementById(
+        "paiement-total"
+    ).textContent =
+        total.toFixed(2) + " €";
+
+    return total;
+}
+
+const moyenPaiement =
+    document.getElementById("moyen-paiement");
+
+const blocCheques =
+    document.getElementById("bloc-cheques");
+
+if(moyenPaiement){
+
+    moyenPaiement.addEventListener("change", () => {
+
+        blocCheques.style.display =
+            moyenPaiement.value === "Cheque"
+            ? "block"
+            : "none";
+    });
+}
+
+const nbCheques =
+    document.getElementById("nb-cheques");
+
+if(nbCheques){
+
+    nbCheques.addEventListener(
+        "change",
+        updateCheques
+    );
+}
+
+function updateCheques(){
+
+    const total = calculPaiement();
+
+    const nb =
+        parseInt(nbCheques.value);
+
+    const montant =
+        Math.round(total / nb);
+
+    let html = "";
+
+    for(let i=1;i<=nb;i++){
+
+        html +=
+            `Chèque ${i} : ${montant} €<br>`;
+    }
+
+    document.getElementById(
+        "detail-cheques"
+    ).innerHTML = html;
+}
 
 // =========================
 // FORMULAIRE MULTI-ETAPES
@@ -669,6 +866,11 @@ if (steps.length > 0) {
     if (steps[index]) {
         steps[index].classList.add("active");
     }
+	
+	// Si on arrive sur l'étape récap
+    if (steps[index].id === "recap-step") {
+        updateRecapFinal();
+    }
 
     updateProgress();
 }
@@ -679,6 +881,7 @@ if (steps.length > 0) {
 
             steps[currentStep].classList.remove("active");
             currentStep++;
+			
 
             while (
                 steps[currentStep] &&

@@ -2178,3 +2178,196 @@ nav a:hover {
 			max-width: 100%;
 		}
 	}
+	
+	.recap-card{
+    background:white;
+    border-radius:20px;
+    padding:20px;
+    margin-bottom:20px;
+    box-shadow:0 5px 20px rgba(0,0,0,.08);
+	}
+
+	.recap-grid{
+		display:grid;
+		grid-template-columns:repeat(auto-fit,minmax(250px,1fr));
+		gap:15px;
+	}
+
+	.verification-list{
+		list-style:none;
+		padding:0;
+	}
+
+	.ok{
+		color:#13a113;
+		font-weight:bold;
+	}
+
+	.ko{
+		color:#d32f2f;
+		font-weight:bold;
+	}
+
+	#detail-cheques{
+		margin-top:15px;
+		font-weight:bold;
+	}
+	
+	.final-sheet{
+
+    max-width:1200px;
+    margin:auto;
+
+    background:white;
+
+    border-radius:25px;
+
+    overflow:hidden;
+
+    box-shadow:
+        0 10px 35px rgba(0,0,0,.08);
+	}
+
+	.sheet-header{
+
+		background:
+			linear-gradient(
+				135deg,
+				#004080,
+				#0066cc
+			);
+
+		color:white;
+
+		text-align:center;
+
+		padding:40px;
+	}
+
+	.sheet-header h1{
+
+		margin:0;
+		font-size:32px;
+	}
+
+	.sheet-header h2{
+
+		margin-top:10px;
+		font-size:22px;
+	}
+
+	.sheet-section{
+
+		padding:25px 30px;
+		border-bottom:1px solid #eee;
+	}
+
+	.section-title{
+
+		font-size:22px;
+		font-weight:bold;
+
+		color:#004080;
+
+		margin-bottom:20px;
+	}
+
+	.sheet-grid{
+
+		display:grid;
+
+		grid-template-columns:
+			repeat(auto-fit,minmax(250px,1fr));
+
+		gap:20px;
+	}
+
+	.sheet-grid div{
+
+		background:#f8f9fb;
+
+		border-radius:15px;
+
+		padding:15px;
+	}
+
+	.sheet-grid label{
+
+		display:block;
+
+		font-size:13px;
+
+		color:#777;
+
+		margin-bottom:6px;
+	}
+
+	.sheet-grid span{
+
+		font-size:16px;
+		font-weight:600;
+	}
+
+	.verif-grid{
+
+		display:grid;
+
+		grid-template-columns:
+			repeat(auto-fit,minmax(250px,1fr));
+
+		gap:15px;
+	}
+
+	.verif-grid div{
+
+		background:#f5f7fa;
+
+		padding:15px;
+
+		border-radius:12px;
+
+		display:flex;
+
+		justify-content:space-between;
+	}
+
+	.ok{
+
+		color:#13a113;
+		font-weight:bold;
+	}
+
+	.ko{
+
+		color:#d32f2f;
+		font-weight:bold;
+	}
+
+	.paiement-box{
+
+		background:#f8f9fb;
+
+		border-radius:15px;
+
+		padding:25px;
+
+		display:grid;
+
+		gap:15px;
+	}
+
+	.documents-grid{
+
+		display:grid;
+
+		grid-template-columns:
+			repeat(auto-fit,minmax(250px,1fr));
+
+		gap:15px;
+	}
+
+	.later-upload{
+
+		display:block;
+		margin-top:20px;
+	}
