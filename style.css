@@ -2371,3 +2371,162 @@ nav a:hover {
 		display:block;
 		margin-top:20px;
 	}
+
+/* =========================================
+   ADHÉSION ASCT OBLIGATOIRE
+   ========================================= */
+
+.asct-warning {
+    width: 90%;
+    max-width: 1100px;
+    margin: 35px auto;
+    padding: 30px;
+    background: #f8fbff;
+    border: 2px solid #004080;
+    border-radius: 15px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+}
+
+.asct-warning-header {
+    display: flex;
+    align-items: flex-start;
+    gap: 15px;
+    margin-bottom: 20px;
+}
+
+.asct-warning-icon {
+    font-size: 2rem;
+    line-height: 1;
+}
+
+.asct-warning-header h2 {
+    margin: 0 0 8px;
+    color: #004080;
+}
+
+.asct-warning-header p {
+    margin: 0;
+    font-size: 1.05rem;
+}
+
+.asct-warning-important {
+    padding: 15px 20px;
+    margin-bottom: 30px;
+    background: #fff3cd;
+    border-left: 5px solid #f0ad00;
+    border-radius: 8px;
+    line-height: 1.6;
+}
+
+.asct-steps {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 20px;
+}
+
+.asct-step {
+    position: relative;
+    padding: 25px 20px 20px;
+    background: white;
+    border-radius: 12px;
+    border: 1px solid #d9e5f2;
+}
+
+.asct-step-number {
+    width: 38px;
+    height: 38px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 15px;
+    border-radius: 50%;
+    background: #004080;
+    color: white;
+    font-weight: bold;
+    font-size: 1.1rem;
+}
+
+.asct-step h3 {
+    margin-top: 0;
+    color: #004080;
+}
+
+.asct-step p {
+    line-height: 1.6;
+}
+
+.asct-step ul {
+    padding-left: 20px;
+    line-height: 1.6;
+}
+
+.asct-buttons {
+    display: flex;
+    justify-content: center;
+    gap: 15px;
+    flex-wrap: wrap;
+    margin-top: 30px;
+}
+
+.asct-buttons a {
+    text-decoration: none;
+}
+
+/* Mobile */
+@media (max-width: 768px) {
+
+    .asct-warning {
+        width: 85%;
+        padding: 20px;
+    }
+
+    .asct-warning-header {
+        gap: 10px;
+    }
+
+    .asct-warning-header h2 {
+        font-size: 1.4rem;
+    }
+
+    .asct-steps {
+        grid-template-columns: 1fr;
+    }
+
+    .asct-buttons {
+        flex-direction: column;
+    }
+
+    .asct-buttons a {
+        text-align: center;
+    }
+}
+
+/* =========================================
+   RAPPEL ASCT - PAGE CONTACT
+   ========================================= */
+
+.asct-contact-reminder {
+    width: 90%;
+    max-width: 900px;
+    margin: 30px auto;
+    padding: 25px;
+    text-align: center;
+    background: #fff3cd;
+    border: 2px solid #f0ad00;
+    border-radius: 15px;
+}
+
+.asct-contact-reminder h2 {
+    margin-top: 0;
+    color: #004080;
+}
+
+.asct-contact-reminder p {
+    line-height: 1.6;
+}
+
+.asct-contact-reminder .btn-primary {
+    display: inline-block;
+    margin-top: 10px;
+    text-decoration: none;
+}

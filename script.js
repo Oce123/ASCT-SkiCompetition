@@ -630,104 +630,40 @@ if (droitImageAccord && droitImageSignature) {
 // =========================
 // RECAP FINAL
 // =========================
-function updateRecapFinal() {
 
-    document.getElementById("final-nom").textContent =
-		nom.value;
-
-	document.getElementById("final-prenom").textContent =
-		prenom.value;
-
-	document.getElementById("final-email").textContent =
-		email.value;
-
-	document.getElementById("final-telephone").textContent =
-		telephone.value;
-
-	document.getElementById("final-naissance").textContent =
-		birthdate.value;
-
-	document.getElementById("final-ski").textContent =
-		document.getElementById("niveau_ski")?.value || "-";
-
-	document.getElementById("final-snow").textContent =
-		document.getElementById("niveau_snow")?.value || "-";
-
-	document.getElementById("final-allergies").textContent =
-		document.getElementById("allergies")?.value || "Aucune";
-
-	document.getElementById("final-traitement").textContent =
-		document.getElementById("traitement")?.value || "Aucun";
-
-	document.getElementById("final-urgence-nom").textContent =
-		urgenceNom?.value || "-";
-
-	document.getElementById("final-urgence-tel").textContent =
-		urgenceTel?.value || "-";
-
-    verificationFinale();
-    calculPaiement();
-}
-
-function setVerif(id, ok){
-
+function getValue(id) {
     const el = document.getElementById(id);
-
-    if(!el) return;
-
-    el.textContent = ok ? "OK" : "KO";
-
-    el.className = ok ? "ok" : "ko";
+    return el ? el.value.trim() : "";
 }
 
-function verificationFinale(){
-
-    setVerif(
-        "verif-formulaire",
-        nom.value &&
-        prenom.value &&
-        email.value
-    );
-
-    setVerif(
-        "verif-sanitaire",
-        sanitaireNom?.value &&
-        sanitairePrenom?.value
-    );
-
-    setVerif(
-        "verif-location",
-        document.getElementById("materiel")?.value
-    );
-
-    setVerif(
-        "verif-image",
-        document.getElementById("droit-image-accord")?.value
-    );
-
-    setVerif(
-        "verif-federaux",
-        true
-    );
+function getNameValue(name) {
+    const el = document.querySelector(`[name="${name}"]`);
+    return el ? el.value.trim() : "";
 }
 
 function getAge() {
 
-    const birth = new Date(birthdate.value);
+    const birthValue = getValue("birthdate");
 
+    if (!birthValue) return null;
+
+    const birth = new Date(birthValue);
     const today = new Date();
 
     let age =
         today.getFullYear() -
         birth.getFullYear();
 
-    const m =
+    const month =
         today.getMonth() -
         birth.getMonth();
 
     if (
-        m < 0 ||
-        (m === 0 && today.getDate() < birth.getDate())
+        month < 0 ||
+        (
+            month === 0 &&
+            today.getDate() < birth.getDate()
+        )
     ) {
         age--;
     }
@@ -735,94 +671,787 @@ function getAge() {
     return age;
 }
 
+
+// =========================
+// CATEGORIE
+// =========================
+
+function getCategorieParticipant() {
+
+    const age = getAge();
+
+    if (age === null) {
+        return "";
+    }
+
+    return age < 18
+        ? "Enfant"
+        : "Adulte";
+}
+
+
+// =========================
+// ALLERGIES
+// =========================
+
+function getAllergies() {
+
+    const allergies = [];
+
+    const asthme =
+        document.querySelector(
+            '[name="allergie-asthme"]'
+        );
+
+    const alimentaire =
+        document.querySelector(
+            '[name="allergie-alimentaire"]'
+        );
+
+    const medicamenteuse =
+        document.querySelector(
+            '[name="allergie-medicamenteuse"]'
+        );
+
+    if (asthme && asthme.checked) {
+        allergies.push("Asthme");
+    }
+
+    if (alimentaire && alimentaire.checked) {
+        allergies.push("Alimentaire");
+    }
+
+    if (medicamenteuse && medicamenteuse.checked) {
+        allergies.push("Médicamenteuse");
+    }
+
+    const details =
+        getNameValue("allergies-details");
+
+    if (details) {
+        allergies.push(details);
+    }
+
+    return allergies.length > 0
+        ? allergies.join(" — ")
+        : "Aucune";
+}
+
+
+// =========================
+// TRAITEMENT
+// =========================
+
+function getTraitement() {
+
+    const traitement =
+        getNameValue("traitement");
+
+    const details =
+        getNameValue("details-traitement");
+
+    if (!traitement) {
+        return "Non renseigné";
+    }
+
+    if (
+        traitement.toLowerCase() === "non"
+    ) {
+        return "Non";
+    }
+
+    if (details) {
+        return `Oui — ${details}`;
+    }
+
+    return "Oui";
+}
+
+
+// =========================
+// PAIEMENT
+// =========================
+
+function getStatutSafran() {
+
+    const statut =
+        getValue("safran-status");
+
+    const textes = {
+
+        exterieur: "Extérieur",
+
+        salarie: "Salarié",
+
+        retraite: "Retraité TM",
+
+        regie: "Régie"
+    };
+
+    return textes[statut] || "Non renseigné";
+}
+
+
+// =========================
+// CALCUL PAIEMENT
+// =========================
+
 function calculPaiement() {
 
     const age = getAge();
 
-    const categorie =
-        age < 18
-            ? "enfant"
-            : "adulte";
+    const statut = getValue("safran-status");
+    const npy = getValue("npy");
+    const materiel = getValue("materiel");
 
-    const statut =
-        document.getElementById("safran-status").value;
+    const paiementType =
+        document.getElementById("paiement-type");
 
-    const forfaitClub =
-        document.getElementById("npy").value === "oui";
+    const paiementStatut =
+        document.getElementById("paiement-statut");
 
-    let total = 0;
+    const paiementForfait =
+        document.getElementById("paiement-forfait");
 
-    const tarif =
-        TARIFS[categorie][statut];
+    const paiementTotal =
+        document.getElementById("paiement-total");
+		
+	const paiementLocation =
+		document.getElementById("paiement-location");
 
-    total += tarif.cotisation;
+	const paiementCaution =
+		document.getElementById("paiement-caution");
 
-    if (forfaitClub) {
-        total += tarif.forfaitLuz;
+    // -------------------------
+    // CATÉGORIE
+    // -------------------------
+
+    let categorie = "";
+
+    if (age !== null) {
+        categorie =
+            age < 18
+                ? "enfant"
+                : "adulte";
     }
 
-    document.getElementById(
-        "paiement-type"
-    ).textContent =
-        categorie.toUpperCase();
+    // -------------------------
+    // AFFICHAGE TYPE
+    // -------------------------
 
-    document.getElementById(
-        "paiement-total"
-    ).textContent =
-        total.toFixed(2) + " €";
+    if (paiementType) {
+
+        paiementType.textContent =
+            categorie === "enfant"
+                ? "ENFANT"
+                : categorie === "adulte"
+                    ? "ADULTE"
+                    : "Non renseigné";
+    }
+
+    // -------------------------
+    // AFFICHAGE STATUT
+    // -------------------------
+
+    if (paiementStatut) {
+        paiementStatut.textContent =
+            getStatutSafran();
+    }
+
+    // -------------------------
+    // FORFAIT LUZ
+    // -------------------------
+
+    const forfaitClub =
+        npy === "oui";
+
+    if (paiementForfait) {
+
+        paiementForfait.textContent =
+            forfaitClub
+                ? "Oui"
+                : "Non";
+    }
+
+    // -------------------------
+    // VÉRIFICATION TARIF
+    // -------------------------
+
+    const tarifs = window.TARIFS;
+
+    if (
+        !tarifs ||
+        !tarifs[categorie] ||
+        !tarifs[categorie][statut]
+    ) {
+
+        console.warn(
+            "Tarif introuvable pour :",
+            categorie,
+            statut
+        );
+
+        if (paiementTotal) {
+            paiementTotal.textContent =
+                "Tarif non trouvé";
+        }
+
+        return 0;
+    }
+
+    const tarif =
+        tarifs[categorie][statut];
+
+    // -------------------------
+    // CALCUL DE BASE
+    // -------------------------
+
+    let total =
+        Number(tarif.cotisation) || 0;
+
+    // -------------------------
+    // FORFAIT LUZ
+    // -------------------------
+
+    if (forfaitClub) {
+
+        total +=
+            Number(tarif.forfaitLuz) || 0;
+    }
+
+    // -------------------------
+    // LOCATION MATÉRIEL
+    // -------------------------
+
+    let locationPrix = 0;
+
+    let packChoisi = null;
+
+    if (materiel === "oui") {
+
+        packChoisi =
+            document.querySelector(
+                'input[name="pack"]:checked'
+            );
+
+        if (
+            packChoisi &&
+            tarifs.location &&
+            tarifs.location[categorie]
+        ) 
+		{
+
+            locationPrix =
+                Number(
+                    tarifs.location[categorie][
+                        packChoisi.value
+                    ]
+                ) || 0;
+
+            total += locationPrix;
+        }
+		
+		if (paiementLocation) {
+
+			if (packChoisi && locationPrix > 0) {
+
+				const nomsPacks = {
+					pack1: "Ski + bâtons / Snow",
+					pack2: "Chaussures",
+					pack3: "Pack complet"
+				};
+
+				paiementLocation.textContent =
+					`${nomsPacks[packChoisi.value]} — ${locationPrix} €`;
+
+			} else {
+
+				paiementLocation.textContent =
+					"Pas de location";
+			}
+		}
+		
+		if (paiementCaution) {
+
+			paiementCaution.style.display =
+				packChoisi
+					? "block"
+					: "none";
+		}
+    }
+
+    // -------------------------
+    // AFFICHAGE DU MONTANT
+    // -------------------------
+
+    if (paiementTotal) {
+
+        paiementTotal.textContent =
+            total.toFixed(2) + " €";
+    }
+
+    // -------------------------
+    // DEBUG
+    // -------------------------
+
+    console.log("===== CALCUL PAIEMENT =====");
+    console.log("Catégorie :", categorie);
+    console.log("Statut :", statut);
+    console.log("N'Py :", npy);
+    console.log("Forfait Luz :", forfaitClub);
+    console.log(
+        "Pack matériel :",
+        packChoisi
+            ? packChoisi.value
+            : "Aucun"
+    );
+    console.log(
+        "Prix location :",
+        locationPrix
+    );
+    console.log(
+        "TOTAL :",
+        total
+    );
 
     return total;
 }
 
-const moyenPaiement =
-    document.getElementById("moyen-paiement");
+// =========================
+// CHEQUES
+// =========================
 
-const blocCheques =
-    document.getElementById("bloc-cheques");
+function updateCheques() {
 
-if(moyenPaiement){
+    const total =
+        calculPaiement();
 
-    moyenPaiement.addEventListener("change", () => {
+    const nbElement =
+        document.getElementById("nb-cheques");
 
-        blocCheques.style.display =
-            moyenPaiement.value === "Cheque"
-            ? "block"
-            : "none";
-    });
+    const detail =
+        document.getElementById("detail-cheques");
+
+    if (!nbElement || !detail) {
+        return;
+    }
+
+    const nb =
+        parseInt(nbElement.value);
+
+    if (!nb || nb < 1) {
+
+        detail.innerHTML = "";
+
+        return;
+    }
+
+
+    /*
+     * Répartition à l'unité près.
+     *
+     * Exemple :
+     * 100 € / 3
+     *
+     * => 34 €
+     * => 33 €
+     * => 33 €
+     */
+
+    const montantBase =
+        Math.floor(total / nb);
+
+    const reste =
+        Math.round(total - montantBase * nb);
+
+    let html = "";
+
+    for (
+        let i = 1;
+        i <= nb;
+        i++
+    ) {
+
+        const montant =
+            montantBase +
+            (
+                i <= reste
+                    ? 1
+                    : 0
+            );
+
+        html +=
+            `<div>Chèque ${i} : <strong>${montant} €</strong></div>`;
+    }
+
+    detail.innerHTML = html;
 }
+
+
+// =========================
+// RECAP COMPLET
+// =========================
+
+function updateRecapFinal() {
+
+    // -------------------------
+    // PARTICIPANT
+    // -------------------------
+
+    const finalNom =
+        document.getElementById("final-nom");
+
+    if (finalNom)
+        finalNom.textContent =
+            getValue("nom") || "-";
+
+
+    const finalPrenom =
+        document.getElementById("final-prenom");
+
+    if (finalPrenom)
+        finalPrenom.textContent =
+            getValue("prenom") || "-";
+
+
+    const finalEmail =
+        document.getElementById("final-email");
+
+    if (finalEmail)
+        finalEmail.textContent =
+            getValue("email") || "-";
+
+
+    const finalTelephone =
+        document.getElementById("final-telephone");
+
+    if (finalTelephone)
+        finalTelephone.textContent =
+            getValue("telephone") || "-";
+
+
+    const finalNaissance =
+        document.getElementById("final-naissance");
+
+    if (finalNaissance)
+        finalNaissance.textContent =
+            getValue("birthdate") || "-";
+
+
+    // -------------------------
+    // CATEGORIE
+    // -------------------------
+
+    const finalCategorie =
+        document.getElementById("final-categorie");
+
+    if (finalCategorie)
+        finalCategorie.textContent =
+            getCategorieParticipant() || "-";
+
+
+    // -------------------------
+    // ACTIVITE
+    // -------------------------
+
+    const finalSki =
+        document.getElementById("final-ski");
+
+    if (finalSki)
+        finalSki.textContent =
+            getValue("niveau_ski") || "-";
+
+
+    const finalSnow =
+        document.getElementById("final-snow");
+
+    if (finalSnow)
+        finalSnow.textContent =
+            getValue("niveau_snow") || "-";
+
+
+    const finalFederaux =
+        document.getElementById("final-federaux");
+
+    if (finalFederaux)
+        finalFederaux.textContent =
+            getValue("federaux-role") || "Non";
+
+
+    const finalEsf =
+        document.getElementById("final-esf");
+
+    if (finalEsf)
+        finalEsf.textContent =
+            getValue("federaux-licence") || "-";
+
+
+    // -------------------------
+    // CONTACT URGENCE
+    // -------------------------
+
+    const finalUrgenceNom =
+        document.getElementById(
+            "final-urgence-nom"
+        );
+
+    if (finalUrgenceNom) {
+
+        const nomUrgence =
+            getValue("nom-urgence");
+
+        const prenomUrgence =
+            getValue("prenom-urgence");
+
+        finalUrgenceNom.textContent =
+            `${nomUrgence} ${prenomUrgence}`.trim()
+            || "-";
+    }
+
+
+    const finalUrgenceTel =
+        document.getElementById(
+            "final-urgence-tel"
+        );
+
+    if (finalUrgenceTel)
+        finalUrgenceTel.textContent =
+            getValue("telephone-urgence")
+            || "-";
+
+
+    // -------------------------
+    // MEDICAL
+    // -------------------------
+
+    const finalAllergies =
+        document.getElementById(
+            "final-allergies"
+        );
+
+    if (finalAllergies)
+        finalAllergies.textContent =
+            getAllergies();
+
+
+    const finalTraitement =
+        document.getElementById(
+            "final-traitement"
+        );
+
+    if (finalTraitement)
+        finalTraitement.textContent =
+            getTraitement();
+
+
+    // -------------------------
+    // VERIFICATIONS
+    // -------------------------
+
+    verificationFinale();
+
+
+    // -------------------------
+    // PAIEMENT
+    // -------------------------
+
+    calculPaiement();
+}
+
+
+// =========================
+// VERIFICATIONS
+// =========================
+
+function setVerif(id, ok) {
+
+    const element =
+        document.getElementById(id);
+
+    if (!element) return;
+
+    element.textContent =
+        ok ? "OK" : "KO";
+
+    element.classList.remove(
+        "ok",
+        "ko"
+    );
+
+    element.classList.add(
+        ok ? "ok" : "ko"
+    );
+}
+
+
+function verificationFinale() {
+
+    // -------------------------
+    // FORMULAIRE
+    // -------------------------
+
+    const formulaireOK =
+        !!(
+            getValue("nom") &&
+            getValue("prenom") &&
+            getValue("email") &&
+            getValue("telephone") &&
+            getValue("birthdate") &&
+            getValue("adresse") &&
+            getValue("niveau_ski") &&
+            getValue("niveau_snow") &&
+            getValue("materiel") &&
+            getValue("federaux") &&
+            getValue("encadrant") &&
+            getValue("safran-status") &&
+            getValue("npy")
+        );
+
+    setVerif(
+        "verif-formulaire",
+        formulaireOK
+    );
+
+
+    // -------------------------
+    // FICHE SANITAIRE
+    // -------------------------
+
+    const sanitaireOK =
+        !!(
+            getValue("sanitaire-nom") &&
+            getValue("sanitaire-prenom") &&
+            getValue("sanitaire-tel") &&
+            getValue("sanitaire-adresse") &&
+
+            getNameValue("vaccins") &&
+            getNameValue("traitement") &&
+
+            getValue("nom-urgence") &&
+            getValue("prenom-urgence") &&
+            getValue("telephone-urgence") &&
+            getValue("lien")
+        );
+
+    setVerif(
+        "verif-sanitaire",
+        sanitaireOK
+    );
+
+
+    // -------------------------
+    // LOCATION
+    // -------------------------
+
+    const materiel =
+        getValue("materiel");
+
+    let locationOK = true;
+
+    if (materiel === "oui") {
+
+        const pack =
+            document.querySelector(
+                'input[name="pack"]:checked'
+            );
+
+        locationOK =
+            !!(
+                pack &&
+                getValue("loc-taille") &&
+                getValue("loc-poids") &&
+                getValue("loc-pointure")
+            );
+    }
+
+    setVerif(
+        "verif-location",
+        locationOK
+    );
+
+
+    // -------------------------
+    // DROIT IMAGE
+    // -------------------------
+
+    setVerif(
+        "verif-image",
+        !!getValue("droit-image-accord")
+    );
+
+
+    // -------------------------
+    // FEDERAUX
+    // -------------------------
+
+    let federauxOK = true;
+
+    if (
+        getValue("federaux") === "oui"
+    ) {
+
+        federauxOK =
+            !!(
+                getValue("federaux-role") &&
+                getValue("federaux-discipline") &&
+                getValue("federaux-licence") &&
+                getValue("federaux-categorie")
+            );
+    }
+
+    setVerif(
+        "verif-federaux",
+        federauxOK
+    );
+}
+
+
+// =========================
+// PAIEMENT : EVENEMENTS
+// =========================
+
+const moyenPaiement =
+    document.getElementById("loc-paiement");
+
+if (moyenPaiement) {
+
+    moyenPaiement.addEventListener(
+        "change",
+        () => {
+
+            const blocCheques =
+                document.getElementById(
+                    "bloc-cheques"
+                );
+
+            if (blocCheques) {
+
+                blocCheques.style.display =
+                    moyenPaiement.value === "Chèques"
+                        ? "block"
+                        : "none";
+            }
+
+            updateRecapFinal();
+        }
+    );
+}
+
 
 const nbCheques =
     document.getElementById("nb-cheques");
 
-if(nbCheques){
+if (nbCheques) {
 
     nbCheques.addEventListener(
         "change",
-        updateCheques
+        () => {
+
+            updateCheques();
+            updateRecapFinal();
+
+        }
     );
-}
-
-function updateCheques(){
-
-    const total = calculPaiement();
-
-    const nb =
-        parseInt(nbCheques.value);
-
-    const montant =
-        Math.round(total / nb);
-
-    let html = "";
-
-    for(let i=1;i<=nb;i++){
-
-        html +=
-            `Chèque ${i} : ${montant} €<br>`;
-    }
-
-    document.getElementById(
-        "detail-cheques"
-    ).innerHTML = html;
 }
 
 // =========================

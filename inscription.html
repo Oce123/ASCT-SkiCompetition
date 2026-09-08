@@ -1386,8 +1386,22 @@
 						</div>
 
 						<div>
+							Location matériel :
+							<strong id="paiement-location"></strong>
+						</div>
+
+						<div>
 							Montant :
 							<strong id="paiement-total"></strong>
+						</div>
+
+						<div id="paiement-caution"
+							 style="display:none; margin-top:10px;">
+
+							⚠️ Caution matériel :
+							<strong>100 €</strong>
+							par chèque — non incluse dans le montant.
+
 						</div>
 
 					</div>
@@ -1635,6 +1649,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
 </script>
 
+<script src="tarifs.js"></script>
 <script src="script.js"></script>
 
 </body>

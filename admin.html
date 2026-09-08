@@ -424,72 +424,982 @@ function afficherListe(dataArray){
         });
 
         // =========================
-        // PDF INDIVIDUEL
-        // =========================
+		// PDF INDIVIDUEL PREMIUM
+		// =========================
 
-        card.querySelector(".pdf")
-        .addEventListener("click", () => {
+		card.querySelector(".pdf")
+		.addEventListener("click", async () => {
 
-            const { jsPDF } = window.jspdf;
+			const { jsPDF } = window.jspdf;
 
-            const pdf = new jsPDF();
+			const pdf = new jsPDF({
+				orientation: "portrait",
+				unit: "mm",
+				format: "a4"
+			});
 
-            pdf.setFontSize(20);
+			// =====================================================
+			// CONFIGURATION
+			// =====================================================
 
-            pdf.text(
-                "ASCT SKI Competition",
-                20,
-                20
-            );
+			const PAGE_WIDTH = 210;
+			const PAGE_HEIGHT = 297;
 
-            pdf.setFontSize(12);
+			const MARGIN_LEFT = 15;
+			const MARGIN_RIGHT = 15;
 
-            pdf.text(
-                `Nom : ${person.nom || "-"}`,
-                20,
-                50
-            );
+			const CONTENT_WIDTH =
+				PAGE_WIDTH - MARGIN_LEFT - MARGIN_RIGHT;
 
-            pdf.text(
-                `Prénom : ${person.prenom || "-"}`,
-                20,
-                60
-            );
+			let y = 0;
 
-            pdf.text(
-                `Email : ${person.email || "-"}`,
-                20,
-                70
-            );
+			// =====================================================
+			// OUTILS
+			// =====================================================
 
-            pdf.text(
-                `Téléphone : ${person.telephone || "-"}`,
-                20,
-                80
-            );
+			function safe(value) {
 
-            pdf.text(
-                `Date naissance : ${person.dateNaissance || "-"}`,
-                20,
-                90
-            );
+				if (
+					value === undefined ||
+					value === null ||
+					value === ""
+				) {
+					return "-";
+				}
 
-            pdf.text(
-                `Allergies : ${person.allergies || "-"}`,
-                20,
-                110
-            );
+				return String(value);
+			}
 
-            pdf.text(
-                `Traitement : ${person.traitement || "-"}`,
-                20,
-                120
-            );
 
-            pdf.save(
-                `${person.nom}_${person.prenom}.pdf`
-            );
-        });
+			function addPageHeader() {
+
+				// Bandeau supérieur
+				pdf.setFillColor(24, 45, 70);
+
+				pdf.rect(
+					0,
+					0,
+					PAGE_WIDTH,
+					32,
+					"F"
+				);
+
+				// Logo
+				const logo = new Image();
+
+				logo.src = "logo.png";
+
+				try {
+
+					pdf.addImage(
+						logo,
+						"PNG",
+						15,
+						5,
+						22,
+						22
+					);
+
+				} catch (error) {
+
+					console.warn(
+						"Logo impossible à charger",
+						error
+					);
+
+				}
+
+				// Nom club
+				pdf.setTextColor(255, 255, 255);
+
+				pdf.setFont(
+					"helvetica",
+					"bold"
+				);
+
+				pdf.setFontSize(16);
+
+				pdf.text(
+					"ASCT SKI COMPÉTITION",
+					43,
+					13
+				);
+
+				pdf.setFont(
+					"helvetica",
+					"normal"
+				);
+
+				pdf.setFontSize(9);
+
+				pdf.text(
+					"Fiche individuelle d'inscription",
+					43,
+					20
+				);
+
+				pdf.text(
+					"Saison 2025 / 2026",
+					43,
+					26
+				);
+
+				y = 42;
+			}
+
+
+			function addFooter() {
+
+				const pageCount =
+					pdf.internal.getNumberOfPages();
+
+				const currentPage =
+					pdf.internal.getCurrentPageInfo().pageNumber;
+
+				pdf.setDrawColor(210, 210, 210);
+
+				pdf.line(
+					MARGIN_LEFT,
+					283,
+					PAGE_WIDTH - MARGIN_RIGHT,
+					283
+				);
+
+				pdf.setFont(
+					"helvetica",
+					"normal"
+				);
+
+				pdf.setFontSize(7);
+
+				pdf.setTextColor(120, 120, 120);
+
+				pdf.text(
+					"ASCT Ski Compétition",
+					MARGIN_LEFT,
+					289
+				);
+
+				pdf.text(
+					"asct.skicompetition@gmail.com • 06 73 28 83 97",
+					PAGE_WIDTH / 2,
+					289,
+					{
+						align: "center"
+					}
+				);
+
+				pdf.text(
+					`Page ${currentPage} / ${pageCount}`,
+					PAGE_WIDTH - MARGIN_RIGHT,
+					289,
+					{
+						align: "right"
+					}
+				);
+			}
+
+
+			function checkPageSpace(height = 20) {
+
+				if (
+					y + height >
+					275
+				) {
+
+					addFooter();
+
+					pdf.addPage();
+
+					addPageHeader();
+				}
+			}
+
+
+			function addSectionTitle(title, icon = "") {
+
+				checkPageSpace(14);
+
+				pdf.setFillColor(
+					238,
+					243,
+					247
+				);
+
+				pdf.roundedRect(
+					MARGIN_LEFT,
+					y,
+					CONTENT_WIDTH,
+					9,
+					2,
+					2,
+					"F"
+				);
+
+				pdf.setTextColor(
+					24,
+					45,
+					70
+				);
+
+				pdf.setFont(
+					"helvetica",
+					"bold"
+				);
+
+				pdf.setFontSize(10);
+
+				pdf.text(
+					`${icon} ${title}`,
+					MARGIN_LEFT + 4,
+					y + 6
+				);
+
+				y += 14;
+			}
+
+
+			function addField(
+				label,
+				value,
+				x,
+				width,
+				height = 12
+			) {
+
+				pdf.setDrawColor(
+					220,
+					225,
+					230
+				);
+
+				pdf.setFillColor(
+					250,
+					251,
+					252
+				);
+
+				pdf.roundedRect(
+					x,
+					y,
+					width,
+					height,
+					2,
+					2,
+					"FD"
+				);
+
+				pdf.setFont(
+					"helvetica",
+					"bold"
+				);
+
+				pdf.setFontSize(7);
+
+				pdf.setTextColor(
+					110,
+					110,
+					110
+				);
+
+				pdf.text(
+					label.toUpperCase(),
+					x + 3,
+					y + 4
+				);
+
+				pdf.setFont(
+					"helvetica",
+					"normal"
+				);
+
+				pdf.setFontSize(9);
+
+				pdf.setTextColor(
+					30,
+					30,
+					30
+				);
+
+				const lines =
+					pdf.splitTextToSize(
+						safe(value),
+						width - 6
+					);
+
+				pdf.text(
+					lines,
+					x + 3,
+					y + 8
+				);
+			}
+
+
+			function addRow(
+				label,
+				value
+			) {
+
+				checkPageSpace(10);
+
+				pdf.setFont(
+					"helvetica",
+					"bold"
+				);
+
+				pdf.setFontSize(8);
+
+				pdf.setTextColor(
+					90,
+					90,
+					90
+				);
+
+				pdf.text(
+					label,
+					MARGIN_LEFT + 3,
+					y
+				);
+
+				pdf.setFont(
+					"helvetica",
+					"normal"
+				);
+
+				pdf.setTextColor(
+					30,
+					30,
+					30
+				);
+
+				const lines =
+					pdf.splitTextToSize(
+						safe(value),
+						CONTENT_WIDTH - 55
+					);
+
+				pdf.text(
+					lines,
+					MARGIN_LEFT + 55,
+					y
+				);
+
+				y +=
+					Math.max(
+						6,
+						lines.length * 4.5
+					);
+			}
+
+
+			// =====================================================
+			// CALCULS
+			// =====================================================
+
+			function getAge(dateNaissance) {
+
+				if (!dateNaissance) {
+					return null;
+				}
+
+				const birth =
+					new Date(dateNaissance);
+
+				if (
+					isNaN(birth.getTime())
+				) {
+					return null;
+				}
+
+				const today =
+					new Date();
+
+				let age =
+					today.getFullYear() -
+					birth.getFullYear();
+
+				const month =
+					today.getMonth() -
+					birth.getMonth();
+
+				if (
+					month < 0 ||
+					(
+						month === 0 &&
+						today.getDate() < birth.getDate()
+					)
+				) {
+					age--;
+				}
+
+				return age;
+			}
+
+
+			const age =
+				getAge(person.dateNaissance);
+
+			const typeParticipant =
+				age !== null && age < 18
+					? "Enfant"
+					: "Adulte";
+
+
+			// =====================================================
+			// TARIF
+			// =====================================================
+
+			let statutTarif =
+				person.safranStatus ||
+				person.statutSafran ||
+				person.safran ||
+				"exterieur";
+
+			statutTarif =
+				String(statutTarif)
+				.toLowerCase()
+				.normalize("NFD")
+				.replace(/[\u0300-\u036f]/g, "");
+
+			if (
+				statutTarif !== "salarie" &&
+				statutTarif !== "retraite" &&
+				statutTarif !== "exterieur"
+			) {
+
+				statutTarif = "exterieur";
+			}
+
+
+			let tarif = null;
+
+			if (
+				typeof TARIFS !== "undefined" &&
+				TARIFS[typeParticipant.toLowerCase()]
+			) {
+
+				tarif =
+					TARIFS[
+						typeParticipant.toLowerCase()
+					][statutTarif];
+			}
+
+
+			const forfaitLuz =
+				person.npy === "oui" ||
+				person.forfaitLuz === true;
+
+
+			let montantTotal = 0;
+
+			if (tarif) {
+
+				montantTotal =
+					Number(tarif.cotisation || 0);
+
+				if (forfaitLuz) {
+
+					montantTotal +=
+						Number(
+							tarif.forfaitLuz || 0
+						);
+				}
+			}
+
+
+			// =====================================================
+			// HEADER
+			// =====================================================
+
+			addPageHeader();
+
+
+			// =====================================================
+			// IDENTITÉ
+			// =====================================================
+
+			addSectionTitle(
+				"Participant",
+				"👤"
+			);
+
+			const colWidth =
+				(CONTENT_WIDTH - 6) / 2;
+
+			addField(
+				"Nom",
+				person.nom,
+				MARGIN_LEFT,
+				colWidth
+			);
+
+			addField(
+				"Prénom",
+				person.prenom,
+				MARGIN_LEFT + colWidth + 6,
+				colWidth
+			);
+
+			y += 15;
+
+			addField(
+				"Date de naissance",
+				person.dateNaissance,
+				MARGIN_LEFT,
+				colWidth
+			);
+
+			addField(
+				"Catégorie",
+				typeParticipant,
+				MARGIN_LEFT + colWidth + 6,
+				colWidth
+			);
+
+			y += 15;
+
+
+			// =====================================================
+			// COORDONNÉES
+			// =====================================================
+
+			addSectionTitle(
+				"Coordonnées",
+				"📞"
+			);
+
+			addRow(
+				"Email",
+				person.email
+			);
+
+			addRow(
+				"Téléphone",
+				person.telephone
+			);
+
+			addRow(
+				"Adresse",
+				person.adresse
+			);
+
+
+			// =====================================================
+			// SITUATION
+			// =====================================================
+
+			addSectionTitle(
+				"Situation",
+				"🏢"
+			);
+
+			addRow(
+				"Statut SAFRAN",
+				person.safranStatus ||
+				person.statutSafran ||
+				person.safran
+			);
+
+			addRow(
+				"QF",
+				person.qf
+			);
+
+			addRow(
+				"Service",
+				person.service
+			);
+
+			addRow(
+				"Correspondant",
+				person.correspondant
+			);
+
+
+			// =====================================================
+			// ACTIVITÉS
+			// =====================================================
+
+			addSectionTitle(
+				"Activités",
+				"⛷"
+			);
+
+			addRow(
+				"Niveau ski",
+				person.niveauSki
+			);
+
+			addRow(
+				"Niveau snow",
+				person.niveauSnow
+			);
+
+			addRow(
+				"Encadrant",
+				person.encadrant
+			);
+
+			addRow(
+				"Participation fédéraux",
+				person.federaux ||
+				person.participationFederaux
+			);
+
+			addRow(
+				"Rôle fédéraux",
+				person.federauxRole
+			);
+
+			addRow(
+				"Discipline",
+				person.federauxDiscipline
+			);
+
+			addRow(
+				"Licence ESF / FFS / FIS",
+				person.federauxLicence
+			);
+
+			addRow(
+				"Catégorie course",
+				person.federauxCategorie
+			);
+
+
+			// =====================================================
+			// CONTACT URGENCE
+			// =====================================================
+
+			addSectionTitle(
+				"Contact d'urgence",
+				"🚨"
+			);
+
+			addRow(
+				"Nom",
+				person.nomUrgence ||
+				person.contactUrgence
+			);
+
+			addRow(
+				"Prénom",
+				person.prenomUrgence
+			);
+
+			addRow(
+				"Téléphone",
+				person.telephoneUrgence
+			);
+
+			addRow(
+				"Lien",
+				person.lien
+			);
+
+
+			// =====================================================
+			// INFORMATIONS MÉDICALES
+			// =====================================================
+
+			addSectionTitle(
+				"Informations médicales",
+				"🩺"
+			);
+
+			addRow(
+				"Allergies",
+				person.allergies
+			);
+
+			addRow(
+				"Traitement",
+				person.traitement
+			);
+
+			addRow(
+				"Détails traitement",
+				person.detailsTraitement
+			);
+
+			addRow(
+				"Antécédents",
+				person.antecedents
+			);
+
+			addRow(
+				"Recommandations",
+				person.recommandations
+			);
+
+			addRow(
+				"Groupe sanguin",
+				person.groupeSanguin
+			);
+
+			addRow(
+				"Médecin",
+				person.medecin
+			);
+
+
+			// =====================================================
+			// LOCATION
+			// =====================================================
+
+			addSectionTitle(
+				"Location matériel",
+				"🎿"
+			);
+
+			addRow(
+				"Location",
+				person.materiel
+			);
+
+			addRow(
+				"Pack",
+				person.pack
+			);
+
+			addRow(
+				"Taille",
+				person.locTaille
+			);
+
+			addRow(
+				"Poids",
+				person.locPoids
+			);
+
+			addRow(
+				"Pointure",
+				person.locPointure
+			);
+
+
+			// =====================================================
+			// DROIT À L'IMAGE
+			// =====================================================
+
+			addSectionTitle(
+				"Droit à l'image",
+				"📸"
+			);
+
+			addRow(
+				"Accord",
+				person.droitImage ||
+				person.droitImageAccord
+			);
+
+
+			// =====================================================
+			// PAIEMENT
+			// =====================================================
+
+			addSectionTitle(
+				"Paiement",
+				"💳"
+			);
+
+			addRow(
+				"Type",
+				typeParticipant
+			);
+
+			addRow(
+				"Statut",
+				person.safranStatus ||
+				person.statutSafran ||
+				person.safran
+			);
+
+			addRow(
+				"Forfait Luz Ardiden",
+				forfaitLuz
+					? "Oui"
+					: "Non"
+			);
+
+			addRow(
+				"Cotisation",
+				tarif
+					? `${tarif.cotisation} €`
+					: "-"
+			);
+
+			addRow(
+				"Forfait Luz",
+				forfaitLuz && tarif
+					? `${tarif.forfaitLuz} €`
+					: "0 €"
+			);
+
+			addRow(
+				"Montant total",
+				`${montantTotal} €`
+			);
+
+			addRow(
+				"Moyen de paiement",
+				person.paiement ||
+				person.moyenPaiement ||
+				person.locPaiement
+			);
+
+			addRow(
+				"Nombre de chèques",
+				person.nbCheques
+			);
+
+			addRow(
+				"Banque",
+				person.banqueCheque ||
+				person.banque
+			);
+
+
+			// =====================================================
+			// DOCUMENTS
+			// =====================================================
+
+			addSectionTitle(
+				"Documents",
+				"📎"
+			);
+
+			addRow(
+				"Pièce d'identité",
+				person.pieceIdentite
+					? "Fournie"
+					: "À fournir"
+			);
+
+			addRow(
+				"Photo d'identité",
+				person.photoIdentite
+					? "Fournie"
+					: "À fournir"
+			);
+
+			addRow(
+				"Certificat scolaire",
+				person.certificatScolaire
+					? "Fourni"
+					: "À fournir"
+			);
+
+			addRow(
+				"Inscription SAFRAN",
+				person.inscriptionSafran
+					? "Fournie"
+					: "À fournir"
+			);
+
+
+			// =====================================================
+			// RÉSUMÉ FINAL
+			// =====================================================
+
+			checkPageSpace(35);
+
+			y += 4;
+
+			pdf.setFillColor(
+				24,
+				45,
+				70
+			);
+
+			pdf.roundedRect(
+				MARGIN_LEFT,
+				y,
+				CONTENT_WIDTH,
+				27,
+				3,
+				3,
+				"F"
+			);
+
+			pdf.setTextColor(
+				255,
+				255,
+				255
+			);
+
+			pdf.setFont(
+				"helvetica",
+				"bold"
+			);
+
+			pdf.setFontSize(10);
+
+			pdf.text(
+				"RÉCAPITULATIF DE L'INSCRIPTION",
+				MARGIN_LEFT + 5,
+				y + 7
+			);
+
+			pdf.setFont(
+				"helvetica",
+				"normal"
+			);
+
+			pdf.setFontSize(9);
+
+			pdf.text(
+				`${person.prenom || ""} ${person.nom || ""}`,
+				MARGIN_LEFT + 5,
+				y + 14
+			);
+
+			pdf.text(
+				`${typeParticipant} • ${safe(person.safranStatus || person.statutSafran || person.safran)}`,
+				MARGIN_LEFT + 5,
+				y + 20
+			);
+
+			pdf.setFont(
+				"helvetica",
+				"bold"
+			);
+
+			pdf.setFontSize(14);
+
+			pdf.text(
+				`${montantTotal} €`,
+				PAGE_WIDTH - MARGIN_RIGHT - 5,
+				y + 16,
+				{
+					align: "right"
+				}
+			);
+
+			y += 34;
+
+
+			// =====================================================
+			// PIED DE PAGE
+			// =====================================================
+
+			addFooter();
+
+
+			// =====================================================
+			// SAUVEGARDE
+			// =====================================================
+
+			const nomFichier =
+				`${person.nom || "participant"}_${person.prenom || ""}`
+				.replace(/\s+/g, "_")
+				.replace(/[^\wÀ-ÿ_-]/g, "");
+
+			pdf.save(
+				`${nomFichier}_ASCT.pdf`
+			);
+
+		});
 		
 		const details =
 			card.querySelector(".details");
