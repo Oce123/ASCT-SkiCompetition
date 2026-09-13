@@ -523,7 +523,11 @@ function updateTarif() {
 }
 
 packs.forEach(pack => {
-    pack.addEventListener("change", updateTarif);
+    pack.addEventListener("change", () => {
+        updateTarif();
+        calculPaiement();
+        updateRecapFinal();
+    });
 });
 
 // AUTO UPDATE
@@ -799,220 +803,110 @@ function getStatutSafran() {
 function calculPaiement() {
 
     const age = getAge();
-
     const statut = getValue("safran-status");
     const npy = getValue("npy");
     const materiel = getValue("materiel");
 
-    const paiementType =
-        document.getElementById("paiement-type");
-
-    const paiementStatut =
-        document.getElementById("paiement-statut");
-
-    const paiementForfait =
-        document.getElementById("paiement-forfait");
-
-    const paiementTotal =
-        document.getElementById("paiement-total");
-		
-	const paiementLocation =
-		document.getElementById("paiement-location");
-
-	const paiementCaution =
-		document.getElementById("paiement-caution");
-
-    // -------------------------
-    // CATÉGORIE
-    // -------------------------
+    const paiementType = document.getElementById("paiement-type");
+    const paiementStatut = document.getElementById("paiement-statut");
+    const paiementForfait = document.getElementById("paiement-forfait");
+    const paiementLocation = document.getElementById("paiement-location");
+    const paiementTotal = document.getElementById("paiement-total");
+    const paiementCaution = document.getElementById("paiement-caution");
 
     let categorie = "";
 
     if (age !== null) {
-        categorie =
-            age < 18
-                ? "enfant"
-                : "adulte";
+        categorie = age < 18 ? "enfant" : "adulte";
     }
-
-    // -------------------------
-    // AFFICHAGE TYPE
-    // -------------------------
 
     if (paiementType) {
-
         paiementType.textContent =
-            categorie === "enfant"
-                ? "ENFANT"
-                : categorie === "adulte"
-                    ? "ADULTE"
-                    : "Non renseigné";
+            categorie === "enfant" ? "ENFANT" :
+            categorie === "adulte" ? "ADULTE" :
+            "Non renseigné";
     }
-
-    // -------------------------
-    // AFFICHAGE STATUT
-    // -------------------------
 
     if (paiementStatut) {
-        paiementStatut.textContent =
-            getStatutSafran();
+        paiementStatut.textContent = getStatutSafran();
     }
 
-    // -------------------------
-    // FORFAIT LUZ
-    // -------------------------
-
-    const forfaitClub =
-        npy === "oui";
+    const forfaitClub = npy === "oui";
 
     if (paiementForfait) {
-
-        paiementForfait.textContent =
-            forfaitClub
-                ? "Oui"
-                : "Non";
+        paiementForfait.textContent = forfaitClub ? "Oui" : "Non";
     }
 
-    // -------------------------
-    // VÉRIFICATION TARIF
-    // -------------------------
-
-    const tarifs = window.TARIFS;
-
-    if (
-        !tarifs ||
-        !tarifs[categorie] ||
-        !tarifs[categorie][statut]
-    ) {
-
-        console.warn(
-            "Tarif introuvable pour :",
-            categorie,
-            statut
-        );
-
-        if (paiementTotal) {
-            paiementTotal.textContent =
-                "Tarif non trouvé";
-        }
-
+    if (!categorie || !statut) {
+        if (paiementTotal) paiementTotal.textContent = "Tarif non disponible";
+        if (paiementLocation) paiementLocation.textContent = "Aucune";
+        if (paiementCaution) paiementCaution.style.display = "none";
         return 0;
     }
 
-    const tarif =
-        tarifs[categorie][statut];
+    const tarifs = window.TARIFS;
 
-    // -------------------------
-    // CALCUL DE BASE
-    // -------------------------
-
-    let total =
-        Number(tarif.cotisation) || 0;
-
-    // -------------------------
-    // FORFAIT LUZ
-    // -------------------------
-
-    if (forfaitClub) {
-
-        total +=
-            Number(tarif.forfaitLuz) || 0;
+    if (!tarifs || !tarifs[categorie] || !tarifs[categorie][statut]) {
+        console.warn("Tarif introuvable pour :", categorie, statut);
+        if (paiementTotal) paiementTotal.textContent = "Tarif non trouvé";
+        return 0;
     }
 
-    // -------------------------
-    // LOCATION MATÉRIEL
-    // -------------------------
+    const tarif = tarifs[categorie][statut];
 
-    let locationPrix = 0;
+    let montantClub = Number(tarif.cotisation) || 0;
 
-    let packChoisi = null;
+    if (forfaitClub) {
+        montantClub += Number(tarif.forfaitLuz) || 0;
+    }
+
+    let montantLocation = 0;
+    let libelleLocation = "Aucune";
 
     if (materiel === "oui") {
 
-        packChoisi =
-            document.querySelector(
-                'input[name="pack"]:checked'
-            );
+        const pack = document.querySelector('input[name="pack"]:checked');
 
-        if (
-            packChoisi &&
-            tarifs.location &&
-            tarifs.location[categorie]
-        ) 
-		{
+        if (pack && tarifs.location && tarifs.location[categorie]) {
 
-            locationPrix =
-                Number(
-                    tarifs.location[categorie][
-                        packChoisi.value
-                    ]
-                ) || 0;
+            montantLocation =
+                Number(tarifs.location[categorie][pack.value]) || 0;
 
-            total += locationPrix;
+            const libelles = {
+                pack1: "Ski + bâtons / Snow",
+                pack2: "Chaussures",
+                pack3: "Pack complet"
+            };
+
+            libelleLocation =
+                `${libelles[pack.value] || pack.value} — ${montantLocation.toFixed(2)} €`;
         }
-		
-		if (paiementLocation) {
-
-			if (packChoisi && locationPrix > 0) {
-
-				const nomsPacks = {
-					pack1: "Ski + bâtons / Snow",
-					pack2: "Chaussures",
-					pack3: "Pack complet"
-				};
-
-				paiementLocation.textContent =
-					`${nomsPacks[packChoisi.value]} — ${locationPrix} €`;
-
-			} else {
-
-				paiementLocation.textContent =
-					"Pas de location";
-			}
-		}
-		
-		if (paiementCaution) {
-
-			paiementCaution.style.display =
-				packChoisi
-					? "block"
-					: "none";
-		}
     }
 
-    // -------------------------
-    // AFFICHAGE DU MONTANT
-    // -------------------------
+    const total = montantClub + montantLocation;
+
+    if (paiementLocation) {
+        paiementLocation.textContent = libelleLocation;
+    }
 
     if (paiementTotal) {
-
         paiementTotal.textContent =
-            total.toFixed(2) + " €";
+            `${montantClub.toFixed(2)} € hors loc. matériel`;
     }
 
-    // -------------------------
-    // DEBUG
-    // -------------------------
+    // Dernier calcul disponible pour l'enregistrement Firebase.
+    window.DERNIER_PAIEMENT = {
+        montantClub,
+        montantLocation,
+        total,
+        location: libelleLocation,
+        caution: montantLocation > 0 ? 100 : 0
+    };
 
-    console.log("===== CALCUL PAIEMENT =====");
-    console.log("Catégorie :", categorie);
-    console.log("Statut :", statut);
-    console.log("N'Py :", npy);
-    console.log("Forfait Luz :", forfaitClub);
-    console.log(
-        "Pack matériel :",
-        packChoisi
-            ? packChoisi.value
-            : "Aucun"
-    );
-    console.log(
-        "Prix location :",
-        locationPrix
-    );
-    console.log(
-        "TOTAL :",
-        total
-    );
+    if (paiementCaution) {
+        paiementCaution.style.display =
+            montantLocation > 0 ? "block" : "none";
+    }
 
     return total;
 }
@@ -1258,7 +1152,6 @@ function updateRecapFinal() {
     calculPaiement();
 }
 
-
 // =========================
 // VERIFICATIONS
 // =========================
@@ -1403,8 +1296,150 @@ function verificationFinale() {
         "verif-federaux",
         federauxOK
     );
+
+    const documentsOK =
+        typeof window.verifierDocuments === "function"
+            ? window.verifierDocuments()
+            : false;
+
+    setVerif(
+        "verif-documents",
+        documentsOK
+    );
+
+    return {
+        formulaireOK,
+        sanitaireOK,
+        locationOK,
+        federauxOK,
+        documentsOK
+    };
 }
 
+
+
+// =========================
+// DOCUMENTS OBLIGATOIRES
+// =========================
+
+const documentConfig = [
+    { input: "doc-cni", check: "doc-cni-check", name: "doc-cni-name", row: "document-cni-row" },
+    { input: "doc-photo", check: "doc-photo-check", name: "doc-photo-name", row: "document-photo-row" },
+    { input: "doc-scolarite", check: "doc-scolarite-check", name: "doc-scolarite-name", row: "document-scolarite-row" },
+    { input: "doc-safran", check: "doc-safran-check", name: "doc-safran-name", row: "document-safran-row" }
+];
+
+function scolariteSelectionnee() {
+    const valeur = getValue("scolarite");
+    return !!valeur && valeur !== "Scolarité" && valeur !== "/";
+}
+
+function mettreAJourDocumentScolarite() {
+
+    const row = document.getElementById("document-scolarite-row");
+    const input = document.getElementById("doc-scolarite");
+    const check = document.getElementById("doc-scolarite-check");
+    const name = document.getElementById("doc-scolarite-name");
+
+    if (!row) return;
+
+    const visible = scolariteSelectionnee();
+
+    row.style.display = visible ? "flex" : "none";
+
+    if (!visible) {
+        if (input) input.value = "";
+        if (check) check.checked = false;
+        if (name) name.textContent = "Aucun fichier";
+    }
+}
+
+function mettreAJourEtatDocuments() {
+
+    mettreAJourDocumentScolarite();
+
+    documentConfig.forEach(doc => {
+
+        const input = document.getElementById(doc.input);
+        const check = document.getElementById(doc.check);
+        const name = document.getElementById(doc.name);
+        const row = document.getElementById(doc.row);
+
+        if (!input || !check) return;
+
+        const hasFile = !!(input.files && input.files.length > 0);
+
+        check.checked = hasFile;
+
+        if (name) {
+            name.textContent =
+                hasFile ? input.files[0].name : "Aucun fichier";
+        }
+
+        if (row) {
+            row.classList.toggle("document-ok", hasFile);
+        }
+    });
+
+    const obligatoire = documentConfig.filter(doc => {
+        return doc.input === "doc-scolarite"
+            ? scolariteSelectionnee()
+            : true;
+    });
+
+    const complet = obligatoire.every(doc => {
+        const input = document.getElementById(doc.input);
+        return !!(input && input.files && input.files.length > 0);
+    });
+
+    const status = document.getElementById("documents-status");
+
+    if (status) {
+        status.textContent = complet
+            ? "✅ Tous les documents obligatoires sont sélectionnés"
+            : "⚠️ Documents manquants";
+
+        status.classList.toggle("documents-complete", complet);
+    }
+
+    return complet;
+}
+
+window.verifierDocuments = mettreAJourEtatDocuments;
+
+window.reinitialiserDocuments = function () {
+    documentConfig.forEach(doc => {
+        const input = document.getElementById(doc.input);
+        const check = document.getElementById(doc.check);
+        const name = document.getElementById(doc.name);
+        const row = document.getElementById(doc.row);
+
+        if (input) input.value = "";
+        if (check) check.checked = false;
+        if (name) name.textContent = "Aucun fichier";
+        if (row) row.classList.remove("document-ok");
+    });
+
+    mettreAJourDocumentScolarite();
+    mettreAJourEtatDocuments();
+};
+
+documentConfig.forEach(doc => {
+    const input = document.getElementById(doc.input);
+
+    if (input) {
+        input.addEventListener("change", mettreAJourEtatDocuments);
+    }
+});
+
+const scolariteDocuments = document.getElementById("scolarite");
+
+if (scolariteDocuments) {
+    scolariteDocuments.addEventListener("change", mettreAJourEtatDocuments);
+}
+
+mettreAJourDocumentScolarite();
+mettreAJourEtatDocuments();
 
 // =========================
 // PAIEMENT : EVENEMENTS
@@ -1498,6 +1533,7 @@ if (steps.length > 0) {
 	
 	// Si on arrive sur l'étape récap
     if (steps[index].id === "recap-step") {
+        mettreAJourEtatDocuments();
         updateRecapFinal();
     }
 
@@ -1508,9 +1544,15 @@ if (steps.length > 0) {
     nextBtns.forEach(btn => {
         btn.addEventListener("click", () => {
 
+            if (steps[currentStep] && steps[currentStep].id === "recap-step") {
+                if (!window.verifierDocuments()) {
+                    alert("⚠️ Vous devez sélectionner tous les documents obligatoires avant de continuer.");
+                    return;
+                }
+            }
+
             steps[currentStep].classList.remove("active");
             currentStep++;
-			
 
             while (
                 steps[currentStep] &&
@@ -1740,28 +1782,13 @@ FIS SKI & FFS SKI : ${categorieFFS}`;
     showStep(currentStep);
 }
 
-let allData = [];
+["materiel", "npy", "safran-status"].forEach(id => {
+    const element = document.getElementById(id);
 
-onSnapshot(collection(db, "inscriptions"), (snapshot) => {
-
-    liste.innerHTML = "";
-    allData = [];
-
-    snapshot.forEach(doc => {
-        const data = doc.data();
-        allData.push(data);
-
-        const div = document.createElement("div");
-        div.classList.add("card");
-
-        div.innerHTML = `
-            <strong>${data.prenom} ${data.nom}</strong><br>
-            📧 ${data.email || "—"}<br>
-            📱 ${data.telephone || "—"}<br>
-            🎂 ${data.dateNaissance || "—"}
-        `;
-
-        liste.appendChild(div);
-    });
+    if (element) {
+        element.addEventListener("change", () => {
+            calculPaiement();
+            updateRecapFinal();
+        });
+    }
 });
-

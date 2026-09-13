@@ -2530,3 +2530,182 @@ nav a:hover {
     margin-top: 10px;
     text-decoration: none;
 }
+
+/* =========================================
+   BOUTONS FORMULAIRE - STYLE UNIFIÉ
+   ========================================= */
+
+.inscription-page .form-buttons {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 15px;
+    margin-top: 30px;
+}
+
+.inscription-page .form-buttons button,
+.inscription-page .form-step > .prev,
+.inscription-page .form-step > .next,
+.inscription-page .form-step > button[type="submit"] {
+    box-sizing: border-box;
+    min-width: 150px;
+    padding: 12px 20px;
+    border-radius: 10px;
+    font-size: 17px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: 0.3s;
+    text-align: center;
+}
+
+.inscription-page .form-buttons .btn-submit,
+.inscription-page .form-step > .btn-submit,
+.inscription-page .form-step > button[type="submit"] {
+    border: none;
+    background: #004080;
+    color: white;
+}
+
+.inscription-page .form-buttons .btn-submit:hover,
+.inscription-page .form-step > .btn-submit:hover,
+.inscription-page .form-step > button[type="submit"]:hover {
+    background: #0066cc;
+}
+
+.inscription-page .form-buttons .btn-secondary,
+.inscription-page .form-step > .btn-secondary {
+    background: white;
+    color: #004080;
+    border: 2px solid #004080;
+}
+
+.inscription-page .form-buttons .btn-secondary:hover,
+.inscription-page .form-step > .btn-secondary:hover {
+    background: #004080;
+    color: white;
+}
+
+/* =========================================
+   DOCUMENTS
+   ========================================= */
+
+.documents-required-note {
+    margin-bottom: 20px;
+    padding: 12px 15px;
+    border-radius: 10px;
+    background: #fff3cd;
+    border-left: 4px solid #f0ad00;
+    color: #5f4b00;
+}
+
+.documents-list {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.document-upload-row {
+    display: grid;
+    grid-template-columns: minmax(220px, 1fr) auto minmax(130px, 220px);
+    align-items: center;
+    gap: 15px;
+    padding: 15px;
+    background: #f8f9fb;
+    border: 1px solid #ddd;
+    border-radius: 12px;
+    transition: 0.25s;
+}
+
+.document-upload-row.document-ok {
+    border-color: #13a113;
+    background: #f3fff3;
+}
+
+.document-label {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-weight: 600;
+}
+
+.document-label input[type="checkbox"] {
+    width: 18px;
+    height: 18px;
+    accent-color: #13a113;
+}
+
+.file-select-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 10px 14px;
+    border-radius: 8px;
+    background: #004080;
+    color: white;
+    font-weight: 600;
+    cursor: pointer;
+    transition: 0.3s;
+    white-space: nowrap;
+}
+
+.file-select-btn:hover {
+    background: #0066cc;
+}
+
+.file-name {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    color: #666;
+    font-size: 14px;
+}
+
+.document-upload-row.document-ok .file-name {
+    color: #13a113;
+    font-weight: 600;
+}
+
+.documents-status {
+    margin-top: 18px;
+    padding: 13px 15px;
+    border-radius: 10px;
+    background: #fff3cd;
+    color: #8a6500;
+    font-weight: 600;
+    text-align: center;
+}
+
+.documents-status.documents-complete {
+    background: #eaf8ea;
+    color: #138a13;
+}
+
+@media (max-width: 768px) {
+
+    .inscription-page .form-buttons {
+        flex-direction: column-reverse;
+    }
+
+    .inscription-page .form-buttons button,
+    .inscription-page .form-step > .prev,
+    .inscription-page .form-step > .next,
+    .inscription-page .form-step > button[type="submit"] {
+        width: 100%;
+        min-width: 0;
+    }
+
+    .document-upload-row {
+        grid-template-columns: 1fr;
+        gap: 10px;
+    }
+
+    .file-select-btn {
+        width: 100%;
+        box-sizing: border-box;
+    }
+
+    .file-name {
+        white-space: normal;
+        word-break: break-word;
+    }
+}

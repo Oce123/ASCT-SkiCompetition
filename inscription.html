@@ -219,7 +219,7 @@
             </div>
 
 
-            <button type="button" class="next">Suivant</button>
+            <button type="button" class="next btn-submit">Suivant</button>
 
         </div>
 
@@ -250,8 +250,8 @@
                 <input type="email" placeholder="Email">
             </div>
 
-            <button type="button" class="next">Suivant</button>
-			<button type="button" class="prev">Précédent</button>
+            <button type="button" class="next btn-submit">Suivant</button>
+			<button type="button" class="prev btn-secondary">Précédent</button>
 
         </div>
 
@@ -559,7 +559,7 @@
 
 			</div>
 
-			<button type="button" class="prev">Précédent</button>
+			<button type="button" class="prev btn-secondary">Précédent</button>
 			<button type="button" class="next btn-submit">
 					Suivant
 				</button>
@@ -1356,6 +1356,11 @@
 							<span id="verif-federaux"></span>
 						</div>
 
+						<div>
+							Documents
+							<span id="verif-documents"></span>
+						</div>
+
 					</div>
 
 				</div>
@@ -1407,7 +1412,6 @@
 					</div>
 
 				</div>
-
 				<!-- DOCUMENTS -->
 
 				<div class="sheet-section">
@@ -1416,52 +1420,73 @@
 						📎 Documents à fournir
 					</div>
 
-					<div class="documents-grid">
+					<p class="documents-required-note">
+						<strong>Les documents doivent être sélectionnés avant de pouvoir transmettre l'inscription.</strong>
+					</p>
 
-						<label>
-							<input type="checkbox" disabled>
-							Pièce d'identité
-						</label>
+					<div class="documents-list">
 
-						<label>
-							<input type="checkbox" disabled>
-							Photo d'identité
-						</label>
+						<div class="document-upload-row" id="document-cni-row">
+							<div class="document-label">
+								<input type="checkbox" id="doc-cni-check" disabled>
+								<label for="doc-cni">Pièce d'identité (CNI)</label>
+							</div>
+							<label class="file-select-btn">
+								<span>📎 Sélectionner un fichier</span>
+								<input type="file" id="doc-cni"
+									   accept=".pdf,.jpg,.jpeg,.png" hidden>
+							</label>
+							<span class="file-name" id="doc-cni-name">Aucun fichier</span>
+						</div>
 
-						<label>
-							<input type="checkbox" disabled>
-							Certificat scolaire
-						</label>
+						<div class="document-upload-row" id="document-photo-row">
+							<div class="document-label">
+								<input type="checkbox" id="doc-photo-check" disabled>
+								<label for="doc-photo">Photo d'identité</label>
+							</div>
+							<label class="file-select-btn">
+								<span>📎 Sélectionner un fichier</span>
+								<input type="file" id="doc-photo"
+									   accept=".jpg,.jpeg,.png" hidden>
+							</label>
+							<span class="file-name" id="doc-photo-name">Aucun fichier</span>
+						</div>
 
-						<label>
-							<input type="checkbox" disabled>
-							Inscription SAFRAN
-						</label>
+						<div class="document-upload-row" id="document-scolarite-row" style="display:none;">
+							<div class="document-label">
+								<input type="checkbox" id="doc-scolarite-check" disabled>
+								<label for="doc-scolarite">Certificat de scolarité</label>
+							</div>
+							<label class="file-select-btn">
+								<span>📎 Sélectionner un fichier</span>
+								<input type="file" id="doc-scolarite"
+									   accept=".pdf,.jpg,.jpeg,.png" hidden>
+							</label>
+							<span class="file-name" id="doc-scolarite-name">Aucun fichier</span>
+						</div>
+
+						<div class="document-upload-row" id="document-safran-row">
+							<div class="document-label">
+								<input type="checkbox" id="doc-safran-check" disabled>
+								<label for="doc-safran">Inscription SAFRAN</label>
+							</div>
+							<label class="file-select-btn">
+								<span>📎 Sélectionner un fichier</span>
+								<input type="file" id="doc-safran"
+									   accept=".pdf,.jpg,.jpeg,.png" hidden>
+							</label>
+							<span class="file-name" id="doc-safran-name">Aucun fichier</span>
+						</div>
 
 					</div>
 
-					<br>
-
-					<input
-						type="file"
-						id="documents"
-						multiple>
-
-					<label class="later-upload">
-
-						<input
-							type="checkbox"
-							id="upload-plus-tard">
-
-						Je transmettrai les documents plus tard
-
-					</label>
+					<div class="documents-status" id="documents-status">
+						⚠️ Documents manquants
+					</div>
 
 				</div>
 
-			</div>
-			
-			<div class="form-buttons">
+				<div class="form-buttons">
 
 				<button type="button" class="prev btn-secondary">
 					Retour
@@ -1480,8 +1505,8 @@
 
             <h3>Validation</h3>
 
-            <button type="button" class="prev">Précédent</button>
-            <button type="submit">Valider</button>
+            <button type="button" class="prev btn-secondary">Précédent</button>
+            <button type="submit" class="btn-submit">Valider</button>
 
         </div>
 
@@ -1495,154 +1520,711 @@
 <script type="module">
 
 import { initializeApp } from "https://www.gstatic.com/firebasejs/12.12.0/firebase-app.js";
-import { getFirestore, collection, addDoc } from "https://www.gstatic.com/firebasejs/12.12.0/firebase-firestore.js";
+
+import {
+    getFirestore,
+    collection,
+    addDoc,
+    updateDoc,
+    doc
+} from "https://www.gstatic.com/firebasejs/12.12.0/firebase-firestore.js";
+
+import {
+    getStorage,
+    ref,
+    uploadBytes,
+    getDownloadURL
+} from "https://www.gstatic.com/firebasejs/12.12.0/firebase-storage.js";
+
+
+// =====================================================
+// CONFIGURATION FIREBASE
+// =====================================================
 
 const firebaseConfig = {
-  apiKey: "AIzaSy...",
-  authDomain: "asct-ski.firebaseapp.com",
-  projectId: "asct-ski",
-  storageBucket: "asct-ski.firebasestorage.app",
-  messagingSenderId: "845391150142",
-  appId: "1:845391150142:web:c7d808016344cfafad256f"
+
+    apiKey: "AIzaSyD_xW5F5iRRXHRuolefgfsN--f-lWMB-9A",
+
+    authDomain: "asct-ski.firebaseapp.com",
+
+    projectId: "asct-ski",
+
+    storageBucket: "asct-ski.firebasestorage.app",
+
+    messagingSenderId: "845391150142",
+
+    appId: "1:845391150142:web:c7d808016344cfafad256f"
 };
 
+
+// =====================================================
+// INITIALISATION FIREBASE
+// =====================================================
+
 const app = initializeApp(firebaseConfig);
+
 const db = getFirestore(app);
+
+const storage = getStorage(app);
+
+
+// =====================================================
+// ATTENTE DU CHARGEMENT DE LA PAGE
+// =====================================================
 
 document.addEventListener("DOMContentLoaded", () => {
 
     const form = document.getElementById("form");
 
+    if (!form) {
+
+        console.error(
+            "❌ Firebase : formulaire #form introuvable."
+        );
+
+        return;
+    }
+
+
+    // =================================================
+    // ENVOI DU FORMULAIRE
+    // =================================================
+
     form.addEventListener("submit", async (e) => {
+
         e.preventDefault();
+
+
+        console.log("=================================");
+        console.log("📨 ENVOI DE L'INSCRIPTION");
+        console.log("=================================");
+
+
+        // =================================================
+        // VERIFICATION DES DOCUMENTS
+        // =================================================
+
+        if (
+            typeof window.verifierDocuments === "function"
+        ) {
+
+            const documentsOK =
+                window.verifierDocuments();
+
+            console.log(
+                "Documents obligatoires :",
+                documentsOK
+            );
+
+
+            if (!documentsOK) {
+
+                alert(
+                    "⚠️ Vous devez sélectionner tous les documents obligatoires avant de transmettre l'inscription."
+                );
+
+                return;
+            }
+        }
+
+
+        // =================================================
+        // RECALCUL DU PAIEMENT
+        // =================================================
+
+        if (
+            typeof window.calculPaiement === "function"
+        ) {
+
+            window.calculPaiement();
+
+        }
+
+
+        // =================================================
+        // RECUPERATION DU PAIEMENT
+        // =================================================
+
+        const paiement =
+            window.DERNIER_PAIEMENT || {};
+
+
+        console.log(
+            "💰 Paiement :",
+            paiement
+        );
+
+
+        // =================================================
+        // CREATION DES DONNEES
+        // =================================================
 
         const data = {
 
-			// =========================
-			// PARTICIPANT
-			// =========================
+            // -----------------------------
+            // PARTICIPANT
+            // -----------------------------
 
-			nom: document.getElementById("nom")?.value || "",
-			prenom: document.getElementById("prenom")?.value || "",
-			email: document.getElementById("email")?.value || "",
-			telephone: document.getElementById("telephone")?.value || "",
-			dateNaissance: document.getElementById("birthdate")?.value || "",
+            nom:
+                document.getElementById("nom")?.value || "",
 
-			adresse: document.getElementById("adresse")?.value || "",
+            prenom:
+                document.getElementById("prenom")?.value || "",
 
-			niveauSki:
-				document.getElementById("niveau_ski")?.value || "",
+            email:
+                document.getElementById("email")?.value || "",
 
-			niveauSnow:
-				document.getElementById("niveau_snow")?.value || "",
+            telephone:
+                document.getElementById("telephone")?.value || "",
 
-			scolarite:
-				document.getElementById("scolarite")?.value || "",
+            dateNaissance:
+                document.getElementById("birthdate")?.value || "",
 
-			materiel:
-				document.getElementById("materiel")?.value || "",
+            adresse:
+                document.getElementById("adresse")?.value || "",
 
-			federaux:
-				document.getElementById("federaux")?.value || "",
 
-			encadrant:
-				document.getElementById("encadrant")?.value || "",
+            // -----------------------------
+            // ACTIVITE
+            // -----------------------------
 
-			// =========================
-			// URGENCE
-			// =========================
+            niveauSki:
+                document.getElementById("niveau_ski")?.value || "",
 
-			contactUrgence:
-				`${document.getElementById("nom-urgence")?.value || ""} 
-				${document.getElementById("prenom-urgence")?.value || ""}`,
+            niveauSnow:
+                document.getElementById("niveau_snow")?.value || "",
 
-			telephoneUrgence:
-				document.getElementById("telephone-urgence")?.value || "",
+            scolarite:
+                document.getElementById("scolarite")?.value || "",
 
-			lienUrgence:
-				document.getElementById("lien")?.value || "",
+            materiel:
+                document.getElementById("materiel")?.value || "",
 
-			// =========================
-			// MEDICAL
-			// =========================
+            federaux:
+                document.getElementById("federaux")?.value || "",
 
-			traitement:
-				document.querySelector('[name="traitement"]')?.value || "",
+            encadrant:
+                document.getElementById("encadrant")?.value || "",
 
-			detailsTraitement:
-				document.querySelector('[name="details-traitement"]')?.value || "",
 
-			allergies: [
+            // -----------------------------
+            // SAFRAN
+            // -----------------------------
 
-				document.querySelector('[name="allergie-asthme"]')?.checked
-					? "Asthme"
-					: "",
+            statutSafran:
+                document.getElementById("safran-status")?.value || "",
 
-				document.querySelector('[name="allergie-alimentaire"]')?.checked
-					? "Alimentaire"
-					: "",
+            service:
+                document.getElementById("service")?.value || "",
 
-				document.querySelector('[name="allergie-medicamenteuse"]')?.checked
-					? "Médicamenteuse"
-					: ""
+            correspondant:
+                document.getElementById("correspondant")?.value || "",
 
-			].filter(Boolean).join(", "),
+            qf:
+                document.getElementById("qf")?.value || "",
 
-			allergiesDetails:
-				document.querySelector('[name="allergies-details"]')?.value || "",
 
-			antecedents:
-				document.querySelector('[name="antecedents"]')?.value || "",
+            // -----------------------------
+            // NPY
+            // -----------------------------
 
-			recommandations:
-				document.querySelector('[name="recommandations"]')?.value || "",
+            forfaitNpy:
+                document.getElementById("npy")?.value || "",
 
-			groupeSanguin:
-				document.querySelector('[name="groupe-sanguin"]')?.value || "",
+            numeroNpy:
+                document.getElementById("npy-number")?.value || "",
 
-			medecin:
-				document.querySelector('[name="medecin"]')?.value || "",
 
-			// =========================
-			// DROIT IMAGE
-			// =========================
+            // -----------------------------
+            // URGENCE
+            // -----------------------------
 
-			droitImage:
-				document.getElementById("droit-image-select")?.value || "",
+            contactUrgence:
+                `${document.getElementById("nom-urgence")?.value || ""} ${document.getElementById("prenom-urgence")?.value || ""}`.trim(),
 
-			whatsappAccord:
-				document.getElementById("whatsapp-accord")?.value || "",
+            telephoneUrgence:
+                document.getElementById("telephone-urgence")?.value || "",
 
-			cloudAccord:
-				document.getElementById("cloud-accord")?.value || "",
+            lienUrgence:
+                document.getElementById("lien")?.value || "",
 
-			calendrierAccord:
-				document.getElementById("calendrier-accord")?.value || "",
 
-			// =========================
-			// SIGNATURE
-			// =========================
+            // -----------------------------
+            // MEDICAL
+            // -----------------------------
 
-			signatureVille:
-				document.getElementById("signature-ville")?.value || "",
+            traitement:
+                document.querySelector(
+                    '[name="traitement"]'
+                )?.value || "",
 
-			signatureAccord:
-				document.getElementById("accord-select")?.value || "",
+            detailsTraitement:
+                document.querySelector(
+                    '[name="details-traitement"]'
+                )?.value || "",
 
-			dateInscription:
-				new Date().toISOString()
-		};
+            allergies: [
+
+                document.querySelector(
+                    '[name="allergie-asthme"]'
+                )?.checked
+                    ? "Asthme"
+                    : "",
+
+                document.querySelector(
+                    '[name="allergie-alimentaire"]'
+                )?.checked
+                    ? "Alimentaire"
+                    : "",
+
+                document.querySelector(
+                    '[name="allergie-medicamenteuse"]'
+                )?.checked
+                    ? "Médicamenteuse"
+                    : ""
+
+            ]
+            .filter(Boolean)
+            .join(", "),
+
+            allergiesDetails:
+                document.querySelector(
+                    '[name="allergies-details"]'
+                )?.value || "",
+
+            antecedents:
+                document.querySelector(
+                    '[name="antecedents"]'
+                )?.value || "",
+
+            recommandations:
+                document.querySelector(
+                    '[name="recommandations"]'
+                )?.value || "",
+
+            groupeSanguin:
+                document.querySelector(
+                    '[name="groupe-sanguin"]'
+                )?.value || "",
+
+            medecin:
+                document.querySelector(
+                    '[name="medecin"]'
+                )?.value || "",
+
+
+            // -----------------------------
+            // DROIT A L'IMAGE
+            // -----------------------------
+
+            droitImage:
+                document.getElementById(
+                    "droit-image-select"
+                )?.value || "",
+
+            whatsappAccord:
+                document.getElementById(
+                    "whatsapp-accord"
+                )?.value || "",
+
+            cloudAccord:
+                document.getElementById(
+                    "cloud-accord"
+                )?.value || "",
+
+            calendrierAccord:
+                document.getElementById(
+                    "calendrier-accord"
+                )?.value || "",
+
+
+            // -----------------------------
+            // SIGNATURE
+            // -----------------------------
+
+            signatureVille:
+                document.getElementById(
+                    "signature-ville"
+                )?.value || "",
+
+            signatureAccord:
+                document.getElementById(
+                    "accord-select"
+                )?.value || "",
+
+
+            // -----------------------------
+            // PAIEMENT
+            // -----------------------------
+
+            montantClub:
+                Number(paiement.montantClub) || 0,
+
+            montantLocation:
+                Number(paiement.montantLocation) || 0,
+
+            montantTotal:
+                Number(paiement.total) ||
+                (
+                    Number(paiement.montantClub) || 0
+                ) +
+                (
+                    Number(paiement.montantLocation) || 0
+                ),
+
+            locationMateriel:
+                paiement.location || "Aucune",
+
+            cautionMateriel:
+                Number(paiement.caution) || 0,
+
+
+            // -----------------------------
+            // DATE
+            // -----------------------------
+
+            dateInscription:
+                new Date().toISOString(),
+
+
+            // -----------------------------
+            // STATUT
+            // -----------------------------
+
+            statutInscription:
+                "reçue"
+        };
+
 
         try {
-            await addDoc(collection(db, "inscriptions"), data);
+
+            // =================================================
+            // NOM DU DOSSIER
+            // =================================================
+
+            const dossier =
+                `${Date.now()}_${data.prenom || "participant"}_${data.nom || "inscription"}`
+                .replace(
+                    /[^a-zA-Z0-9_-]/g,
+                    "_"
+                );
+
+
+            data.dossier = dossier;
+
+            data.documents = {};
+
+
+            console.log(
+                "📁 Dossier :",
+                dossier
+            );
+
+
+            // =================================================
+            // 1. ENREGISTREMENT FIRESTORE
+            // =================================================
+
+            console.log(
+                "🔥 Enregistrement Firestore..."
+            );
+
+
+            const inscriptionRef =
+                await addDoc(
+                    collection(
+                        db,
+                        "inscriptions"
+                    ),
+                    data
+                );
+
+
+            console.log(
+                "✅ Inscription Firestore créée :",
+                inscriptionRef.id
+            );
+
+
+            // =================================================
+            // 2. ENVOI DES DOCUMENTS
+            // =================================================
+
+            const documentInputs = [
+
+                {
+                    id: "doc-cni",
+                    key: "cni"
+                },
+
+                {
+                    id: "doc-photo",
+                    key: "photo"
+                },
+
+                {
+                    id: "doc-scolarite",
+                    key: "scolarite"
+                },
+
+                {
+                    id: "doc-safran",
+                    key: "safran"
+                }
+
+            ];
+
+
+            const documentsEnvoyes = {};
+
+
+            for (
+                const item
+                of documentInputs
+            ) {
+
+                const input =
+                    document.getElementById(
+                        item.id
+                    );
+
+
+                // -------------------------------------------------
+                // SCOLARITE NON NECESSAIRE
+                // -------------------------------------------------
+
+                if (
+                    item.key === "scolarite"
+                    &&
+                    input
+                    &&
+                    input.closest(
+                        ".document-upload-row"
+                    )?.style.display === "none"
+                ) {
+
+                    console.log(
+                        "ℹ️ Certificat scolaire non nécessaire."
+                    );
+
+                    continue;
+                }
+
+
+                // -------------------------------------------------
+                // FICHIER MANQUANT
+                // -------------------------------------------------
+
+                if (
+                    !input
+                    ||
+                    !input.files
+                    ||
+                    !input.files[0]
+                ) {
+
+                    console.warn(
+                        "⚠️ Fichier manquant :",
+                        item.key
+                    );
+
+                    continue;
+                }
+
+
+                const file =
+                    input.files[0];
+
+
+                console.log(
+                    "📎 Envoi :",
+                    item.key,
+                    file.name
+                );
+
+
+                // -------------------------------------------------
+                // NOM SECURISE
+                // -------------------------------------------------
+
+                const safeName =
+                    file.name.replace(
+                        /[^a-zA-Z0-9._-]/g,
+                        "_"
+                    );
+
+
+                // -------------------------------------------------
+                // REFERENCE STORAGE
+                // -------------------------------------------------
+
+                const storageRef =
+                    ref(
+                        storage,
+                        `inscriptions/${dossier}/${item.key}_${safeName}`
+                    );
+
+
+                // -------------------------------------------------
+                // UPLOAD
+                // -------------------------------------------------
+
+                await uploadBytes(
+                    storageRef,
+                    file
+                );
+
+
+                console.log(
+                    "✅ Fichier envoyé :",
+                    item.key
+                );
+
+
+                // -------------------------------------------------
+                // URL
+                // -------------------------------------------------
+
+                const url =
+                    await getDownloadURL(
+                        storageRef
+                    );
+
+
+                documentsEnvoyes[
+                    item.key
+                ] = {
+
+                    nom:
+                        file.name,
+
+                    type:
+                        file.type ||
+                        "application/octet-stream",
+
+                    url:
+                        url
+                };
+            }
+
+
+            // =================================================
+            // 3. MISE A JOUR FIRESTORE
+            // =================================================
+
+            console.log(
+                "🔄 Mise à jour Firestore..."
+            );
+
+
+            await updateDoc(
+                doc(
+                    db,
+                    "inscriptions",
+                    inscriptionRef.id
+                ),
+                {
+
+                    documents:
+                        documentsEnvoyes,
+
+                    statutInscription:
+                        "validée",
+
+                    dateValidation:
+                        new Date().toISOString()
+                }
+            );
+
+
+            console.log(
+                "================================="
+            );
+
+            console.log(
+                "🎉 INSCRIPTION VALIDÉE"
+            );
+
+            console.log(
+                "================================="
+            );
+
+
+            // =================================================
+            // RESET
+            // =================================================
 
             form.reset();
 
-            alert("Merci pour votre inscription 🎉");
+
+            if (
+                typeof window.reinitialiserDocuments ===
+                "function"
+            ) {
+
+                window.reinitialiserDocuments();
+            }
+
+
+            // =================================================
+            // MESSAGE FINAL
+            // =================================================
+
+            alert(
+                "✅ Merci pour votre inscription !\n\n" +
+                "Votre dossier et vos documents ont bien été transmis."
+            );
+
 
         } catch (error) {
-            console.error("Erreur Firebase :", error);
+
+            // =================================================
+            // ERREUR
+            // =================================================
+
+            console.error(
+                "================================="
+            );
+
+            console.error(
+                "❌ ERREUR FIREBASE"
+            );
+
+            console.error(
+                "================================="
+            );
+
+            console.error(
+                "Code :",
+                error?.code
+            );
+
+            console.error(
+                "Message :",
+                error?.message
+            );
+
+            console.error(
+                "Erreur complète :",
+                error
+            );
+
+
+            alert(
+                "❌ L'inscription n'a pas pu être finalisée.\n\n" +
+
+                "Erreur : " +
+                (
+                    error?.message ||
+                    "Erreur inconnue"
+                ) +
+
+                "\n\n" +
+
+                "Consultez la console du navigateur avec F12."
+            );
         }
+
     });
 
 });
