@@ -1,0 +1,606 @@
+<!DOCTYPE html>
+<html lang="fr">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Créer mon espace — ASCT Ski Compétition</title>
+
+    <style>
+
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            min-height: 100vh;
+            font-family: Arial, Helvetica, sans-serif;
+            background: linear-gradient(135deg, #f4f7fb, #e8eef6);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+            color: #1d2a3a;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 500px;
+        }
+
+        .logo {
+            display: block;
+            width: 110px;
+            height: 110px;
+            object-fit: contain;
+            margin: 0 auto 20px;
+        }
+
+        .card {
+            background: white;
+            border-radius: 18px;
+            padding: 35px;
+            box-shadow: 0 15px 45px rgba(0, 0, 0, 0.10);
+        }
+
+        h1 {
+            text-align: center;
+            margin: 0 0 8px;
+            font-size: 28px;
+        }
+
+        .subtitle {
+            text-align: center;
+            color: #687789;
+            margin: 0 0 30px;
+            line-height: 1.5;
+        }
+
+        .section-title {
+            font-size: 17px;
+            font-weight: 700;
+            margin: 0 0 18px;
+        }
+
+        .field {
+            margin-bottom: 18px;
+        }
+
+        label {
+            display: block;
+            font-weight: 600;
+            margin-bottom: 7px;
+        }
+
+        input {
+            width: 100%;
+            padding: 13px 14px;
+            border: 1px solid #d6dde6;
+            border-radius: 9px;
+            font-size: 16px;
+            outline: none;
+            transition: border-color 0.2s, box-shadow 0.2s;
+        }
+
+        input:focus {
+            border-color: #1d5fa7;
+            box-shadow: 0 0 0 3px rgba(29, 95, 167, 0.12);
+        }
+
+        .password-info {
+            font-size: 13px;
+            color: #687789;
+            margin-top: 7px;
+            line-height: 1.4;
+        }
+
+        button {
+            width: 100%;
+            border: none;
+            border-radius: 9px;
+            padding: 14px;
+            background: #1d5fa7;
+            color: white;
+            font-size: 16px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: background 0.2s, transform 0.1s;
+            margin-top: 8px;
+        }
+
+        button:hover {
+            background: #174d89;
+        }
+
+        button:active {
+            transform: scale(0.99);
+        }
+
+        button:disabled {
+            opacity: 0.6;
+            cursor: wait;
+        }
+
+        .message {
+            display: none;
+            margin-top: 18px;
+            padding: 12px 14px;
+            border-radius: 9px;
+            font-size: 14px;
+            line-height: 1.4;
+        }
+
+        .message.error {
+            display: block;
+            background: #fff0f0;
+            color: #a42626;
+            border: 1px solid #f0c5c5;
+        }
+
+        .message.success {
+            display: block;
+            background: #eefaf1;
+            color: #23733a;
+            border: 1px solid #c6e7ce;
+        }
+
+        .login-link {
+            text-align: center;
+            margin-top: 25px;
+            padding-top: 25px;
+            border-top: 1px solid #e5e9ee;
+        }
+
+        .login-link p {
+            margin: 0 0 12px;
+            color: #687789;
+        }
+
+        .login-link a {
+            color: #1d5fa7;
+            font-weight: 700;
+            text-decoration: none;
+        }
+
+        .login-link a:hover {
+            text-decoration: underline;
+        }
+
+        .back {
+            display: block;
+            text-align: center;
+            margin-top: 20px;
+            color: #687789;
+            text-decoration: none;
+            font-size: 14px;
+        }
+
+        .back:hover {
+            color: #1d5fa7;
+        }
+
+    </style>
+</head>
+
+
+<body>
+
+<div class="container">
+
+    <img
+        src="logo.png"
+        alt="ASCT Ski Compétition"
+        class="logo"
+    >
+
+
+    <div class="card">
+
+        <h1>Créer mon espace</h1>
+
+        <p class="subtitle">
+            Créez votre espace famille pour gérer simplement
+            les inscriptions de vos enfants et les retrouver
+            d'une saison à l'autre.
+        </p>
+
+
+        <form id="signup-form">
+
+
+            <p class="section-title">
+                Responsable de la famille
+            </p>
+
+
+            <div class="field">
+
+                <label for="prenom">
+                    Prénom
+                </label>
+
+                <input
+                    type="text"
+                    id="prenom"
+                    autocomplete="given-name"
+                    required
+                >
+
+            </div>
+
+
+            <div class="field">
+
+                <label for="nom">
+                    Nom
+                </label>
+
+                <input
+                    type="text"
+                    id="nom"
+                    autocomplete="family-name"
+                    required
+                >
+
+            </div>
+
+
+            <div class="field">
+
+                <label for="email">
+                    Adresse e-mail
+                </label>
+
+                <input
+                    type="email"
+                    id="email"
+                    autocomplete="email"
+                    required
+                >
+
+            </div>
+
+
+            <div class="field">
+
+                <label for="password">
+                    Mot de passe
+                </label>
+
+                <input
+                    type="password"
+                    id="password"
+                    autocomplete="new-password"
+                    minlength="6"
+                    required
+                >
+
+                <div class="password-info">
+                    Le mot de passe doit contenir au minimum
+                    6 caractères.
+                </div>
+
+            </div>
+
+
+            <div class="field">
+
+                <label for="password-confirm">
+                    Confirmer le mot de passe
+                </label>
+
+                <input
+                    type="password"
+                    id="password-confirm"
+                    autocomplete="new-password"
+                    minlength="6"
+                    required
+                >
+
+            </div>
+
+
+            <button
+                type="submit"
+                id="signup-button"
+            >
+                Créer mon espace famille
+            </button>
+
+
+        </form>
+
+
+        <div
+            id="message"
+            class="message"
+        ></div>
+
+
+        <div class="login-link">
+
+            <p>
+                Vous avez déjà un compte ?
+            </p>
+
+            <a href="connexion.html">
+                Se connecter
+            </a>
+
+        </div>
+
+    </div>
+
+
+    <a
+        href="inscription.html"
+        class="back"
+    >
+        ← Retour à l'inscription
+    </a>
+
+</div>
+
+
+
+<script type="module">
+
+    import { initializeApp }
+        from "https://www.gstatic.com/firebasejs/12.12.0/firebase-app.js";
+
+    import {
+        getAuth,
+        createUserWithEmailAndPassword
+    }
+        from "https://www.gstatic.com/firebasejs/12.12.0/firebase-auth.js";
+
+    import {
+        getFirestore,
+        doc,
+        setDoc,
+        serverTimestamp
+    }
+        from "https://www.gstatic.com/firebasejs/12.12.0/firebase-firestore.js";
+
+
+
+const firebaseConfig = {
+
+    apiKey: "AIzaSyD_xW5F5iRRXHRuolefgfsN--f-lWMB-9A",
+
+    authDomain: "asct-ski.firebaseapp.com",
+
+    projectId: "asct-ski",
+
+    storageBucket: "asct-ski.firebasestorage.app",
+
+    messagingSenderId: "845391150142",
+
+    appId: "1:845391150142:web:c7d808016344cfafad256f"
+};
+
+
+    // Initialisation Firebase
+
+    const app = initializeApp(firebaseConfig);
+
+    const auth = getAuth(app);
+
+    const db = getFirestore(app);
+
+
+    // Récupération des éléments du formulaire
+
+    const form = document.getElementById("signup-form");
+
+    const prenomInput = document.getElementById("prenom");
+
+    const nomInput = document.getElementById("nom");
+
+    const emailInput = document.getElementById("email");
+
+    const passwordInput = document.getElementById("password");
+
+    const passwordConfirmInput =
+        document.getElementById("password-confirm");
+
+    const button =
+        document.getElementById("signup-button");
+
+    const message =
+        document.getElementById("message");
+
+
+    // Fonction d'affichage des messages
+
+    function afficherMessage(texte, type) {
+
+        message.textContent = texte;
+
+        message.className = "message " + type;
+
+    }
+
+
+    // Création du compte
+
+    form.addEventListener("submit", async (event) => {
+
+        event.preventDefault();
+
+
+        const prenom =
+            prenomInput.value.trim();
+
+        const nom =
+            nomInput.value.trim();
+
+        const email =
+            emailInput.value.trim();
+
+        const password =
+            passwordInput.value;
+
+        const passwordConfirm =
+            passwordConfirmInput.value;
+
+
+        // Vérification des mots de passe
+
+        if (password !== passwordConfirm) {
+
+            afficherMessage(
+                "Les deux mots de passe ne correspondent pas.",
+                "error"
+            );
+
+            return;
+        }
+
+
+        button.disabled = true;
+
+        button.textContent =
+            "Création du compte…";
+
+        message.className = "message";
+
+
+        try {
+
+            /*
+             * 1 — Création du compte Firebase Authentication
+             */
+
+            const userCredential =
+                await createUserWithEmailAndPassword(
+                    auth,
+                    email,
+                    password
+                );
+
+
+            const user =
+                userCredential.user;
+
+
+            /*
+             * 2 — Création du document famille
+             *
+             * Le document est enregistré avec comme ID
+             * l'UID Firebase de l'utilisateur.
+             */
+
+            await setDoc(
+                doc(db, "familles", user.uid),
+                {
+
+                    prenomResponsable: prenom,
+
+                    nomResponsable: nom,
+
+                    email: email,
+
+                    createdAt: serverTimestamp(),
+
+                    updatedAt: serverTimestamp()
+
+                }
+            );
+
+
+            /*
+             * 3 — Confirmation
+             */
+
+            afficherMessage(
+                "Votre espace famille a été créé avec succès !",
+                "success"
+            );
+
+
+            /*
+             * Pour cette première étape,
+             * on ne redirige pas encore.
+             *
+             * Nous créerons espace-adherent.html
+             * juste après.
+             */
+
+
+            form.reset();
+
+
+        } catch (error) {
+
+            console.error(error);
+
+
+            let texte =
+                "Impossible de créer le compte.";
+
+
+            if (error.code === "auth/email-already-in-use") {
+
+                texte =
+                    "Cette adresse e-mail possède déjà un compte.";
+
+            }
+
+
+            else if (error.code === "auth/invalid-email") {
+
+                texte =
+                    "L'adresse e-mail renseignée n'est pas valide.";
+
+            }
+
+
+            else if (error.code === "auth/weak-password") {
+
+                texte =
+                    "Le mot de passe est trop faible. Utilisez au moins 6 caractères.";
+
+            }
+
+
+            else if (error.code === "auth/operation-not-allowed") {
+
+                texte =
+                    "La création de compte par e-mail n'est pas activée dans Firebase.";
+
+            }
+
+
+            else if (error.code === "permission-denied") {
+
+                texte =
+                    "Le compte a été créé, mais l'accès à la base de données est refusé. Il faudra vérifier les règles Firestore.";
+
+            }
+
+
+            afficherMessage(
+                texte,
+                "error"
+            );
+
+
+        } finally {
+
+            button.disabled = false;
+
+            button.textContent =
+                "Créer mon espace famille";
+
+        }
+
+    });
+
+</script>
+
+</body>
+
+</html>
