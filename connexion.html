@@ -223,8 +223,8 @@
 
     </div>
 
-    <a href="inscription.html" class="back">
-        ← Retour à l'inscription
+    <a href="index.html" class="back">
+        ← Retour à l'accueil
     </a>
 
 </div>
@@ -242,7 +242,7 @@
         from "https://www.gstatic.com/firebasejs/12.12.0/firebase-auth.js";
 
 
-    /const firebaseConfig = {
+    const firebaseConfig = {
 	  apiKey: "AIzaSyD_xW5F5iRRXHRuolefgfsN--f-lWMB-9A",
 	  authDomain: "asct-ski.firebaseapp.com",
 	  projectId: "asct-ski",
@@ -302,10 +302,7 @@
                 "success"
             );
 
-            /*
-             * Pour l'instant, on ne redirige pas encore.
-             * On créera espace-adherent.html à l'étape suivante.
-             */
+            window.location.href = "espace-adherent.html";
 
         } catch (error) {
 
