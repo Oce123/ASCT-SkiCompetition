@@ -480,6 +480,9 @@
 
                 </div>
 
+				<div id="inscriptions-container">
+					<p>Chargement de vos inscriptions...</p>
+				</div>
 
                 <div class="empty-state">
 
@@ -490,13 +493,6 @@
                     <h4>
                         Votre espace est prêt
                     </h4>
-
-                    <p>
-                        Dès que le système de rattachement des inscriptions
-                        à votre compte sera activé, vos dossiers apparaîtront
-                        automatiquement ici.
-                    </p>
-
                 </div>
 
             </div>
@@ -522,13 +518,17 @@
             signOut
         }
         from "https://www.gstatic.com/firebasejs/12.12.0/firebase-auth.js";
-
-        import {
-            getFirestore,
-            doc,
-            getDoc
-        }
-        from "https://www.gstatic.com/firebasejs/12.12.0/firebase-firestore.js";
+		
+		import {
+			getFirestore,
+			doc,
+			getDoc,
+			collection,
+			query,
+			where,
+			getDocs,
+			orderBy
+		} from "https://www.gstatic.com/firebasejs/12.12.0/firebase-firestore.js";
 
 
         const firebaseConfig = {
@@ -571,6 +571,142 @@
         const logoutBtn = document.getElementById("logoutBtn");
 
 
+		// =====================================================
+		// CHARGEMENT DES INSCRIPTIONS DE LA FAMILLE
+		// =====================================================
+
+		async function chargerInscriptions(user) {
+
+			const container = document.getElementById("inscriptions-container");
+
+			try {
+
+				const inscriptionsRef = collection(db, "inscriptions");
+
+				const q = query(
+					inscriptionsRef,
+					where("familleId", "==", user.uid)
+				);
+
+				const snapshot = await getDocs(q);
+
+				if (snapshot.empty) {
+
+					container.innerHTML = `
+						<p class="empty-message">
+							Aucune inscription enregistrée pour le moment.
+						</p>
+					`;
+
+					return;
+				}
+
+				container.innerHTML = "";
+
+				snapshot.forEach((docSnap) => {
+
+					const inscription = docSnap.data();
+
+					const nom = inscription.nom || "";
+					const prenom = inscription.prenom || "";
+					const statut = inscription.statutInscription || "En attente";
+					const saison = inscription.saison || "2026/2027";
+
+					// Date de l'inscription
+					let dateInscription = "";
+
+					if (inscription.dateValidation) {
+
+						const date = inscription.dateValidation.toDate
+							? inscription.dateValidation.toDate()
+							: new Date(inscription.dateValidation);
+
+						dateInscription = date.toLocaleDateString("fr-FR");
+					}
+
+					// Détermination de la classe du statut
+					let statutClass = "status-pending";
+
+					if (
+						statut.toLowerCase().includes("valid")
+					) {
+						statutClass = "status-valid";
+					}
+
+					if (
+						statut.toLowerCase().includes("refus") ||
+						statut.toLowerCase().includes("annul")
+					) {
+						statutClass = "status-error";
+					}
+
+					const carte = document.createElement("div");
+
+					carte.className = "inscription-item";
+
+					carte.innerHTML = `
+						<div class="inscription-main">
+
+							<div class="inscription-person">
+
+								<div class="inscription-avatar">
+									${prenom.charAt(0).toUpperCase()}
+								</div>
+
+								<div>
+									<strong>${prenom} ${nom}</strong>
+									<span>Saison ${saison}</span>
+								</div>
+
+							</div>
+
+							<div class="inscription-details">
+
+								<span class="inscription-status ${statutClass}">
+									${statut}
+								</span>
+
+								${
+									dateInscription
+									? `<span class="inscription-date">
+										Inscrite le ${dateInscription}
+									   </span>`
+									: ""
+								}
+
+							</div>
+
+						</div>
+
+						<button
+							type="button"
+							class="inscription-button"
+							data-id="${docSnap.id}"
+						>
+							Voir le dossier
+							<span>→</span>
+						</button>
+					`;
+
+					container.appendChild(carte);
+				});
+
+			} catch (error) {
+
+				console.error(
+					"Erreur lors du chargement des inscriptions :",
+					error
+				);
+
+				container.innerHTML = `
+					<p class="error-message">
+						Impossible de charger vos inscriptions.
+					</p>
+				`;
+			}
+		}
+
+
         /* ==========================================
            VÉRIFICATION DE LA CONNEXION
         ========================================== */
@@ -580,16 +716,12 @@
             /* Aucun utilisateur connecté */
 
             if (!user) {
-
                 window.location.href = "connexion.html";
-
                 return;
-
             }
 
 
             try {
-
                 /*
                  * On récupère le document de la famille
                  *
@@ -605,11 +737,9 @@
 
                 const familleSnap = await getDoc(familleRef);
 
-
                 if (familleSnap.exists()) {
 
                     const data = familleSnap.data();
-
 
                     const prenomResponsable =
                         data.prenomResponsable || "";
@@ -617,6 +747,7 @@
                     const nomResponsable =
                         data.nomResponsable || "";
 
+					chargerInscriptions(user);
 
                     /* Affichage */
 
@@ -633,27 +764,19 @@
                         data.email || user.email || "—";
 
                 } else {
-
                     /*
                      * Le compte Firebase existe mais
                      * le document famille n'a pas été trouvé.
                      */
-
                     prenom.textContent = "adhérent";
-
                     infoPrenom.textContent = "—";
-
                     infoNom.textContent = "—";
-
                     infoEmail.textContent =
                         user.email || "—";
                 }
 
-
                 /* On masque l'écran de chargement */
-
                 loading.style.display = "none";
-
 
             } catch (error) {
 
@@ -661,12 +784,9 @@
                     "Erreur lors du chargement du compte :",
                     error
                 );
-
                 loading.textContent =
                     "Impossible de charger votre espace. Vérifiez les règles Firestore.";
-
             }
-
         });
 
 

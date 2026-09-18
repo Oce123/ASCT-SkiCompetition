@@ -1530,6 +1530,11 @@ import {
 } from "https://www.gstatic.com/firebasejs/12.12.0/firebase-firestore.js";
 
 import {
+    getAuth,
+    onAuthStateChanged
+} from "https://www.gstatic.com/firebasejs/12.12.0/firebase-auth.js";
+
+import {
     getStorage,
     ref,
     uploadBytes,
@@ -1567,6 +1572,27 @@ const db = getFirestore(app);
 
 const storage = getStorage(app);
 
+const auth = getAuth(app);
+
+// =====================================================
+// VÉRIFICATION DE L'ACCÈS
+// =====================================================
+
+onAuthStateChanged(auth, (user) => {
+
+    if (!user) {
+
+        window.location.href = "connexion.html";
+
+        return;
+    }
+
+    console.log(
+        "✅ Utilisateur connecté :",
+        user.email
+    );
+
+});
 
 // =====================================================
 // ATTENTE DU CHARGEMENT DE LA PAGE
@@ -1593,6 +1619,14 @@ document.addEventListener("DOMContentLoaded", () => {
     form.addEventListener("submit", async (e) => {
 
         e.preventDefault();
+		
+		const user = auth.currentUser;
+
+		if (!user) {
+			alert("Vous devez être connecté pour effectuer une inscription.");
+			window.location.href = "connexion.html";
+			return;
+		}
 
 
         console.log("=================================");
@@ -1664,6 +1698,8 @@ document.addEventListener("DOMContentLoaded", () => {
             // -----------------------------
             // PARTICIPANT
             // -----------------------------
+
+			familleId: user.uid,
 
             nom:
                 document.getElementById("nom")?.value || "",
