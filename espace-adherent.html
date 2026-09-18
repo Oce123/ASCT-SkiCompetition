@@ -1244,7 +1244,7 @@
 							documentsCount.textContent =
 								`${documentsEntries.length} document${documentsEntries.length > 1 ? "s" : ""}`;
 
-							documentsEntries.forEach(([nomDocument, url]) => {
+							documentsEntries.forEach(([nomDocument, documentData]) => {
 
 								const documentItem = document.createElement("div");
 
@@ -1258,14 +1258,14 @@
 										</div>
 
 										<div>
-											<strong>${nomDocument}</strong>
+											<strong>${documentData.nom || nomDocument}</strong>
 											<span>Document enregistré</span>
 										</div>
 
 									</div>
 
 									<a
-										href="${url}"
+										href="${documentData.url}"
 										target="_blank"
 										rel="noopener noreferrer"
 										class="document-button"
