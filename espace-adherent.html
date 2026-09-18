@@ -286,6 +286,441 @@
                 text-align: left;
             }
         }
+		
+		/* =====================================================
+		   CARTES — MES INSCRIPTIONS
+		   ===================================================== */
+
+		#inscriptions-container {
+			display: flex;
+			flex-direction: column;
+			gap: 16px;
+			margin-top: 20px;
+		}
+
+		.inscription-item {
+			display: flex;
+			align-items: center;
+			justify-content: space-between;
+			gap: 20px;
+
+			padding: 20px 22px;
+
+			background: rgba(255, 255, 255, 0.045);
+			border: 1px solid rgba(255, 255, 255, 0.09);
+			border-radius: 16px;
+
+			transition:
+				transform 0.25s ease,
+				background 0.25s ease,
+				border-color 0.25s ease;
+		}
+
+		.inscription-item:hover {
+			transform: translateY(-2px);
+			background: rgba(255, 255, 255, 0.07);
+			border-color: rgba(255, 255, 255, 0.16);
+		}
+
+
+		/* Partie gauche */
+
+		.inscription-main {
+			flex: 1;
+			min-width: 0;
+		}
+
+		.inscription-person {
+			display: flex;
+			align-items: center;
+			gap: 14px;
+		}
+
+		.inscription-avatar {
+			width: 46px;
+			height: 46px;
+
+			display: flex;
+			align-items: center;
+			justify-content: center;
+
+			flex-shrink: 0;
+
+			border-radius: 50%;
+
+			background: rgba(255, 255, 255, 0.10);
+			border: 1px solid rgba(255, 255, 255, 0.15);
+
+			font-size: 17px;
+			font-weight: 700;
+		}
+
+		.inscription-person strong {
+			display: block;
+
+			font-size: 16px;
+			font-weight: 700;
+
+			margin-bottom: 4px;
+		}
+
+		.inscription-person span {
+			display: block;
+
+			font-size: 13px;
+			opacity: 0.60;
+		}
+
+
+		/* Informations */
+
+		.inscription-details {
+			display: flex;
+			align-items: center;
+			gap: 12px;
+
+			margin-top: 12px;
+			margin-left: 60px;
+		}
+
+		.inscription-status {
+			display: inline-flex;
+			align-items: center;
+
+			padding: 5px 10px;
+
+			border-radius: 999px;
+
+			font-size: 12px;
+			font-weight: 600;
+		}
+
+		.status-valid {
+			background: rgba(46, 204, 113, 0.13);
+			color: #6ee7a1;
+			border: 1px solid rgba(46, 204, 113, 0.20);
+		}
+
+		.status-pending {
+			background: rgba(255, 193, 7, 0.13);
+			color: #ffd76a;
+			border: 1px solid rgba(255, 193, 7, 0.20);
+		}
+
+		.status-error {
+			background: rgba(231, 76, 60, 0.13);
+			color: #ff8f84;
+			border: 1px solid rgba(231, 76, 60, 0.20);
+		}
+
+		.inscription-date {
+			font-size: 12px;
+			opacity: 0.55;
+		}
+
+
+		/* Bouton */
+
+		.inscription-button {
+			display: inline-flex;
+			align-items: center;
+			gap: 8px;
+
+			padding: 10px 15px;
+
+			border: 1px solid rgba(255, 255, 255, 0.12);
+			border-radius: 10px;
+
+			background: rgba(255, 255, 255, 0.06);
+			color: inherit;
+
+			font-size: 13px;
+			font-weight: 600;
+
+			cursor: pointer;
+
+			transition:
+				background 0.2s ease,
+				border-color 0.2s ease,
+				transform 0.2s ease;
+		}
+
+		.inscription-button span {
+			font-size: 16px;
+			transition: transform 0.2s ease;
+		}
+
+		.inscription-button:hover {
+			background: rgba(255, 255, 255, 0.11);
+			border-color: rgba(255, 255, 255, 0.20);
+		}
+
+		.inscription-button:hover span {
+			transform: translateX(3px);
+		}
+
+
+		/* Message lorsqu'il n'y a aucune inscription */
+
+		.empty-message {
+			margin: 10px 0 0;
+
+			font-size: 14px;
+			opacity: 0.60;
+		}
+
+
+		/* Message d'erreur */
+
+		.error-message {
+			margin: 10px 0 0;
+
+			font-size: 14px;
+			opacity: 0.75;
+		}
+
+
+		/* =====================================================
+		   RESPONSIVE — MOBILE
+		   ===================================================== */
+
+		@media (max-width: 700px) {
+
+			.inscription-item {
+				flex-direction: column;
+				align-items: stretch;
+				gap: 16px;
+			}
+
+			.inscription-button {
+				width: 100%;
+				justify-content: center;
+			}
+
+			.inscription-details {
+				margin-left: 60px;
+				flex-wrap: wrap;
+			}
+		}
+		
+		/* =====================================================
+		   DÉTAILS DU DOSSIER
+		   ===================================================== */
+
+		.inscription-dossier {
+			animation: dossierAppear 0.25s ease;
+		}
+
+		.dossier-separator {
+			height: 1px;
+			margin: 20px 0;
+
+			background: rgba(255, 255, 255, 0.08);
+		}
+
+		.dossier-grid {
+			display: grid;
+			grid-template-columns: repeat(2, minmax(0, 1fr));
+			gap: 14px 24px;
+		}
+
+		.dossier-field {
+			display: flex;
+			flex-direction: column;
+			gap: 5px;
+
+			padding: 11px 13px;
+
+			background: rgba(255, 255, 255, 0.035);
+			border-radius: 10px;
+		}
+
+		.dossier-field span {
+			font-size: 11px;
+			opacity: 0.50;
+			text-transform: uppercase;
+			letter-spacing: 0.04em;
+		}
+
+		.dossier-field strong {
+			font-size: 13px;
+			font-weight: 600;
+		}
+
+
+		/* Animation */
+
+		@keyframes dossierAppear {
+
+			from {
+				opacity: 0;
+				transform: translateY(-5px);
+			}
+
+			to {
+				opacity: 1;
+				transform: translateY(0);
+			}
+		}
+
+
+		/* Mobile */
+
+		@media (max-width: 700px) {
+
+			.dossier-grid {
+				grid-template-columns: 1fr;
+			}
+		}
+		
+		/* =====================================================
+		   DOCUMENTS DU DOSSIER
+		   ===================================================== */
+
+		.dossier-documents {
+			margin-top: 24px;
+		}
+
+		.documents-header {
+			display: flex;
+			align-items: center;
+			justify-content: space-between;
+
+			margin-bottom: 12px;
+		}
+
+		.documents-header h3 {
+			margin: 0 0 4px;
+
+			font-size: 15px;
+			font-weight: 700;
+		}
+
+		.documents-header span {
+			font-size: 12px;
+			opacity: 0.50;
+		}
+
+		#documents-list {
+			display: flex;
+			flex-direction: column;
+			gap: 8px;
+		}
+
+		.document-item {
+			display: flex;
+			align-items: center;
+			justify-content: space-between;
+			gap: 15px;
+
+			padding: 12px 14px;
+
+			background: rgba(255, 255, 255, 0.035);
+			border: 1px solid rgba(255, 255, 255, 0.07);
+			border-radius: 11px;
+		}
+
+		.document-info {
+			display: flex;
+			align-items: center;
+			gap: 11px;
+
+			min-width: 0;
+		}
+
+		.document-icon {
+			width: 34px;
+			height: 34px;
+
+			display: flex;
+			align-items: center;
+			justify-content: center;
+
+			flex-shrink: 0;
+
+			border-radius: 8px;
+
+			background: rgba(255, 255, 255, 0.07);
+
+			font-size: 15px;
+		}
+
+		.document-info strong {
+			display: block;
+
+			font-size: 13px;
+
+			overflow: hidden;
+			text-overflow: ellipsis;
+			white-space: nowrap;
+		}
+
+		.document-info span {
+			display: block;
+
+			margin-top: 3px;
+
+			font-size: 11px;
+			opacity: 0.45;
+		}
+
+		.document-button {
+			display: inline-flex;
+			align-items: center;
+			gap: 6px;
+
+			flex-shrink: 0;
+
+			padding: 8px 11px;
+
+			border: 1px solid rgba(255, 255, 255, 0.10);
+			border-radius: 8px;
+
+			background: rgba(255, 255, 255, 0.05);
+			color: inherit;
+
+			text-decoration: none;
+
+			font-size: 12px;
+			font-weight: 600;
+
+			transition:
+				background 0.2s ease,
+				border-color 0.2s ease;
+		}
+
+		.document-button:hover {
+			background: rgba(255, 255, 255, 0.10);
+			border-color: rgba(255, 255, 255, 0.18);
+		}
+
+		.document-button span {
+			font-size: 14px;
+		}
+
+		.document-empty {
+			padding: 15px;
+
+			border: 1px dashed rgba(255, 255, 255, 0.10);
+			border-radius: 10px;
+
+			text-align: center;
+
+			font-size: 12px;
+			opacity: 0.50;
+		}
+
+
+		@media (max-width: 700px) {
+
+			.document-item {
+				align-items: flex-start;
+			}
+
+			.document-button {
+				padding: 8px 10px;
+			}
+		}
     </style>
 </head>
 
@@ -689,6 +1124,167 @@
 					`;
 
 					container.appendChild(carte);
+					
+					// =====================================================
+					// BOUTON "VOIR LE DOSSIER"
+					// =====================================================
+
+					const boutonDossier = carte.querySelector(".inscription-button");
+
+					boutonDossier.addEventListener("click", () => {
+
+						// Évite d'ouvrir plusieurs fois le dossier
+						const dossierExistant = carte.querySelector(".inscription-dossier");
+
+						if (dossierExistant) {
+							dossierExistant.remove();
+							boutonDossier.innerHTML = `
+								Voir le dossier
+								<span>→</span>
+							`;
+							return;
+						}
+
+						const dossier = document.createElement("div");
+
+						dossier.className = "inscription-dossier";
+
+						dossier.innerHTML = `
+							<div class="dossier-separator"></div>
+
+							<div class="dossier-grid">
+
+								<div class="dossier-field">
+									<span>Nom</span>
+									<strong>${inscription.nom || "—"}</strong>
+								</div>
+
+								<div class="dossier-field">
+									<span>Prénom</span>
+									<strong>${inscription.prenom || "—"}</strong>
+								</div>
+
+								<div class="dossier-field">
+									<span>Date de naissance</span>
+									<strong>${inscription.dateNaissance || "—"}</strong>
+								</div>
+
+								<div class="dossier-field">
+									<span>Niveau ski</span>
+									<strong>${inscription.niveauSki || "—"}</strong>
+								</div>
+
+								<div class="dossier-field">
+									<span>Niveau snowboard</span>
+									<strong>${inscription.niveauSnow || "—"}</strong>
+								</div>
+
+								<div class="dossier-field">
+									<span>Matériel</span>
+									<strong>${inscription.materiel || "—"}</strong>
+								</div>
+
+								<div class="dossier-field">
+									<span>Montant total</span>
+									<strong>
+										${
+											inscription.montantTotal !== undefined
+												? inscription.montantTotal + " €"
+												: "—"
+										}
+									</strong>
+								</div>
+
+								<div class="dossier-field">
+									<span>Statut</span>
+									<strong>${statut}</strong>
+								</div>
+
+							</div>
+
+							<div class="dossier-documents">
+
+								<div class="documents-header">
+									<div>
+										<h3>Documents</h3>
+										<span id="documents-count"></span>
+									</div>
+								</div>
+
+								<div id="documents-list"></div>
+
+							</div>
+						`;
+
+						carte.appendChild(dossier);
+						
+						// =====================================================
+						// AFFICHAGE DES DOCUMENTS
+						// =====================================================
+
+						const documentsList = dossier.querySelector("#documents-list");
+						const documentsCount = dossier.querySelector("#documents-count");
+
+						const documents = inscription.documents || {};
+
+						const documentsEntries = Object.entries(documents);
+
+						if (documentsEntries.length === 0) {
+
+							documentsCount.textContent = "Aucun document";
+
+							documentsList.innerHTML = `
+								<div class="document-empty">
+									Aucun document enregistré pour cette inscription.
+								</div>
+							`;
+
+						} else {
+
+							documentsCount.textContent =
+								`${documentsEntries.length} document${documentsEntries.length > 1 ? "s" : ""}`;
+
+							documentsEntries.forEach(([nomDocument, url]) => {
+
+								const documentItem = document.createElement("div");
+
+								documentItem.className = "document-item";
+
+								documentItem.innerHTML = `
+									<div class="document-info">
+
+										<div class="document-icon">
+											📄
+										</div>
+
+										<div>
+											<strong>${nomDocument}</strong>
+											<span>Document enregistré</span>
+										</div>
+
+									</div>
+
+									<a
+										href="${url}"
+										target="_blank"
+										rel="noopener noreferrer"
+										class="document-button"
+									>
+										Consulter
+										<span>↗</span>
+									</a>
+								`;
+
+								documentsList.appendChild(documentItem);
+							});
+						}
+
+						boutonDossier.innerHTML = `
+							Fermer
+							<span>↑</span>
+						`;
+					});
+					
 				});
 
 			} catch (error) {
