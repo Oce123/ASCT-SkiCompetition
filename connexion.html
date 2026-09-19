@@ -107,6 +107,22 @@
             cursor: wait;
         }
 
+        .forgot-password {
+            display: block;
+            text-align: right;
+            margin-top: -8px;
+            margin-bottom: 20px;
+            color: #1d5fa7;
+            font-size: 14px;
+            font-weight: 600;
+            text-decoration: none;
+            cursor: pointer;
+        }
+
+        .forgot-password:hover {
+            text-decoration: underline;
+        }
+
         .message {
             display: none;
             margin-top: 18px;
@@ -128,6 +144,32 @@
             background: #eefaf1;
             color: #23733a;
             border: 1px solid #c6e7ce;
+        }
+
+        .reset-section {
+            display: none;
+        }
+
+        .reset-section.active {
+            display: block;
+        }
+
+        .login-section.hidden {
+            display: none;
+        }
+
+        .back-to-login {
+            display: block;
+            text-align: center;
+            margin-top: 18px;
+            color: #687789;
+            text-decoration: none;
+            font-size: 14px;
+            cursor: pointer;
+        }
+
+        .back-to-login:hover {
+            color: #1d5fa7;
         }
 
         .create-account {
@@ -171,54 +213,129 @@
 
 <div class="login-container">
 
-    <!-- Si ton logo porte un autre nom, adapte simplement cette ligne -->
     <img src="logo.png" alt="ASCT Ski Compétition" class="logo">
 
     <div class="card">
 
-        <h1>Espace adhérent</h1>
+        <!-- =====================================================
+             ESPACE CONNEXION
+        ====================================================== -->
 
-        <p class="subtitle">
-            Connectez-vous à votre espace famille pour retrouver
-            vos inscriptions et vos informations.
-        </p>
+        <div id="login-section" class="login-section">
 
-        <form id="login-form">
+            <h1>Espace adhérent</h1>
 
-            <div class="field">
-                <label for="email">Adresse e-mail</label>
-                <input
-                    type="email"
-                    id="email"
-                    autocomplete="email"
-                    required
+            <p class="subtitle">
+                Connectez-vous à votre espace famille pour retrouver
+                vos inscriptions et vos informations.
+            </p>
+
+            <form id="login-form">
+
+                <div class="field">
+                    <label for="email">Adresse e-mail</label>
+
+                    <input
+                        type="email"
+                        id="email"
+                        autocomplete="email"
+                        required
+                    >
+                </div>
+
+                <div class="field">
+                    <label for="password">Mot de passe</label>
+
+                    <input
+                        type="password"
+                        id="password"
+                        autocomplete="current-password"
+                        required
+                    >
+                </div>
+
+                <!-- MOT DE PASSE OUBLIÉ -->
+                <a
+                    href="#"
+                    id="forgot-password"
+                    class="forgot-password"
                 >
+                    Mot de passe oublié ?
+                </a>
+
+                <button type="submit" id="login-button">
+                    Se connecter
+                </button>
+
+            </form>
+
+            <div id="login-message" class="message"></div>
+
+            <div class="create-account">
+
+                <p>
+                    Vous n'avez pas encore de compte ?
+                </p>
+
+                <a href="compte.html">
+                    Créer mon espace famille
+                </a>
+
             </div>
 
-            <div class="field">
-                <label for="password">Mot de passe</label>
-                <input
-                    type="password"
-                    id="password"
-                    autocomplete="current-password"
-                    required
+        </div>
+
+
+        <!-- =====================================================
+             RÉINITIALISATION DU MOT DE PASSE
+        ====================================================== -->
+
+        <div id="reset-section" class="reset-section">
+
+            <h1>Mot de passe oublié</h1>
+
+            <p class="subtitle">
+                Renseignez votre adresse e-mail.
+                Nous vous enverrons un lien pour créer
+                un nouveau mot de passe.
+            </p>
+
+            <form id="reset-form">
+
+                <div class="field">
+
+                    <label for="reset-email">
+                        Adresse e-mail
+                    </label>
+
+                    <input
+                        type="email"
+                        id="reset-email"
+                        autocomplete="email"
+                        required
+                    >
+
+                </div>
+
+                <button
+                    type="submit"
+                    id="reset-button"
                 >
-            </div>
+                    Envoyer le lien
+                </button>
 
-            <button type="submit" id="login-button">
-                Se connecter
-            </button>
+            </form>
 
-        </form>
+            <div id="reset-message" class="message"></div>
 
-        <div id="message" class="message"></div>
-
-        <div class="create-account">
-            <p>Vous n'avez pas encore de compte ?</p>
-
-            <a href="compte.html">
-                Créer mon espace famille
+            <a
+                href="#"
+                id="back-to-login"
+                class="back-to-login"
+            >
+                ← Retour à la connexion
             </a>
+
         </div>
 
     </div>
@@ -230,63 +347,204 @@
 </div>
 
 
+<!-- =========================================================
+     FIREBASE
+========================================================= -->
+
 <script type="module">
 
-    import { initializeApp } 
-        from "https://www.gstatic.com/firebasejs/12.12.0/firebase-app.js";
+    import {
+        initializeApp
+    }
+    from "https://www.gstatic.com/firebasejs/12.12.0/firebase-app.js";
+
 
     import {
         getAuth,
-        signInWithEmailAndPassword
-    } 
-        from "https://www.gstatic.com/firebasejs/12.12.0/firebase-auth.js";
+        signInWithEmailAndPassword,
+        sendPasswordResetEmail
+    }
+    from "https://www.gstatic.com/firebasejs/12.12.0/firebase-auth.js";
 
+
+    // =========================================================
+    // CONFIGURATION FIREBASE
+    // =========================================================
 
     const firebaseConfig = {
-	  apiKey: "AIzaSyD_xW5F5iRRXHRuolefgfsN--f-lWMB-9A",
-	  authDomain: "asct-ski.firebaseapp.com",
-	  projectId: "asct-ski",
-	  storageBucket: "asct-ski.firebasestorage.app",
-	  messagingSenderId: "845391150142",
-	  appId: "1:845391150142:web:c7d808016344cfafad256f"
-	};
+
+        apiKey: "AIzaSyD_xW5F5iRRXHRuolefgfsN--f-lWMB-9A",
+
+        authDomain: "asct-ski.firebaseapp.com",
+
+        projectId: "asct-ski",
+
+        storageBucket: "asct-ski.firebasestorage.app",
+
+        messagingSenderId: "845391150142",
+
+        appId: "1:845391150142:web:c7d808016344cfafad256f"
+
+    };
 
 
     const app = initializeApp(firebaseConfig);
+
     const auth = getAuth(app);
 
 
-    const form = document.getElementById("login-form");
-    const emailInput = document.getElementById("email");
-    const passwordInput = document.getElementById("password");
-    const button = document.getElementById("login-button");
-    const message = document.getElementById("message");
+    // =========================================================
+    // ÉLÉMENTS HTML
+    // =========================================================
+
+    const loginSection =
+        document.getElementById("login-section");
+
+    const resetSection =
+        document.getElementById("reset-section");
 
 
-    function afficherMessage(texte, type) {
-        message.textContent = texte;
-        message.className = "message " + type;
+    const loginForm =
+        document.getElementById("login-form");
+
+    const resetForm =
+        document.getElementById("reset-form");
+
+
+    const emailInput =
+        document.getElementById("email");
+
+    const resetEmailInput =
+        document.getElementById("reset-email");
+
+
+    const passwordInput =
+        document.getElementById("password");
+
+
+    const loginButton =
+        document.getElementById("login-button");
+
+    const resetButton =
+        document.getElementById("reset-button");
+
+
+    const forgotPassword =
+        document.getElementById("forgot-password");
+
+    const backToLogin =
+        document.getElementById("back-to-login");
+
+
+    const loginMessage =
+        document.getElementById("login-message");
+
+    const resetMessage =
+        document.getElementById("reset-message");
+
+
+    // =========================================================
+    // AFFICHAGE DES MESSAGES
+    // =========================================================
+
+    function afficherMessage(element, texte, type) {
+
+        element.textContent = texte;
+
+        element.className =
+            "message " + type;
+
     }
 
 
-    form.addEventListener("submit", async (event) => {
+    function cacherMessage(element) {
+
+        element.textContent = "";
+
+        element.className = "message";
+
+    }
+
+
+    // =========================================================
+    // AFFICHER LA RÉINITIALISATION
+    // =========================================================
+
+    forgotPassword.addEventListener("click", (event) => {
 
         event.preventDefault();
 
-        const email = emailInput.value.trim();
-        const password = passwordInput.value;
+        // On récupère automatiquement l'e-mail
+        // déjà saisi dans la connexion.
+
+        resetEmailInput.value =
+            emailInput.value.trim();
+
+
+        cacherMessage(loginMessage);
+
+        cacherMessage(resetMessage);
+
+
+        loginSection.classList.add("hidden");
+
+        resetSection.classList.add("active");
+
+    });
+
+
+    // =========================================================
+    // RETOUR À LA CONNEXION
+    // =========================================================
+
+    backToLogin.addEventListener("click", (event) => {
+
+        event.preventDefault();
+
+        cacherMessage(resetMessage);
+
+        resetSection.classList.remove("active");
+
+        loginSection.classList.remove("hidden");
+
+    });
+
+
+    // =========================================================
+    // CONNEXION
+    // =========================================================
+
+    loginForm.addEventListener("submit", async (event) => {
+
+        event.preventDefault();
+
+
+        const email =
+            emailInput.value.trim();
+
+        const password =
+            passwordInput.value;
+
 
         if (!email || !password) {
+
             afficherMessage(
+                loginMessage,
                 "Veuillez renseigner votre adresse e-mail et votre mot de passe.",
                 "error"
             );
+
             return;
+
         }
 
-        button.disabled = true;
-        button.textContent = "Connexion…";
-        message.className = "message";
+
+        loginButton.disabled = true;
+
+        loginButton.textContent =
+            "Connexion…";
+
+        cacherMessage(loginMessage);
 
 
         try {
@@ -297,41 +555,167 @@
                 password
             );
 
+
             afficherMessage(
+                loginMessage,
                 "Connexion réussie. Redirection…",
                 "success"
             );
 
-            window.location.href = "espace-adherent.html";
+
+            window.location.href =
+                "espace-adherent.html";
+
 
         } catch (error) {
 
             console.error(error);
 
-            let texte = "Impossible de vous connecter.";
+
+            let texte =
+                "Impossible de vous connecter.";
+
 
             if (
                 error.code === "auth/invalid-credential" ||
                 error.code === "auth/wrong-password" ||
                 error.code === "auth/user-not-found"
             ) {
-                texte = "Adresse e-mail ou mot de passe incorrect.";
+
+                texte =
+                    "Adresse e-mail ou mot de passe incorrect.";
+
             }
 
-            if (error.code === "auth/invalid-email") {
-                texte = "L'adresse e-mail renseignée n'est pas valide.";
+
+            if (
+                error.code === "auth/invalid-email"
+            ) {
+
+                texte =
+                    "L'adresse e-mail renseignée n'est pas valide.";
+
             }
 
-            if (error.code === "auth/too-many-requests") {
-                texte = "Trop de tentatives. Veuillez patienter quelques instants.";
+
+            if (
+                error.code === "auth/too-many-requests"
+            ) {
+
+                texte =
+                    "Trop de tentatives. Veuillez patienter quelques instants.";
+
             }
 
-            afficherMessage(texte, "error");
+
+            afficherMessage(
+                loginMessage,
+                texte,
+                "error"
+            );
 
         } finally {
 
-            button.disabled = false;
-            button.textContent = "Se connecter";
+            loginButton.disabled = false;
+
+            loginButton.textContent =
+                "Se connecter";
+
+        }
+
+    });
+
+
+    // =========================================================
+    // RÉINITIALISATION DU MOT DE PASSE
+    // =========================================================
+
+    resetForm.addEventListener("submit", async (event) => {
+
+        event.preventDefault();
+
+
+        const email =
+            resetEmailInput.value.trim();
+
+
+        if (!email) {
+
+            afficherMessage(
+                resetMessage,
+                "Veuillez renseigner votre adresse e-mail.",
+                "error"
+            );
+
+            return;
+
+        }
+
+
+        resetButton.disabled = true;
+
+        resetButton.textContent =
+            "Envoi en cours…";
+
+        cacherMessage(resetMessage);
+
+
+        try {
+
+            await sendPasswordResetEmail(
+                auth,
+                email
+            );
+
+
+            afficherMessage(
+                resetMessage,
+                "Si cette adresse correspond à un compte, un e-mail de réinitialisation vient d'être envoyé. Pensez à vérifier vos courriers indésirables.",
+                "success"
+            );
+
+
+        } catch (error) {
+
+            console.error(error);
+
+
+            let texte =
+                "Impossible d'envoyer l'e-mail de réinitialisation.";
+
+
+            if (
+                error.code === "auth/invalid-email"
+            ) {
+
+                texte =
+                    "L'adresse e-mail renseignée n'est pas valide.";
+
+            }
+
+
+            if (
+                error.code === "auth/too-many-requests"
+            ) {
+
+                texte =
+                    "Trop de demandes. Veuillez patienter quelques instants avant de réessayer.";
+
+            }
+
+
+            afficherMessage(
+                resetMessage,
+                texte,
+                "error"
+            );
+
+        } finally {
+
+            resetButton.disabled = false;
+
+            resetButton.textContent =
+                "Envoyer le lien";
 
         }
 

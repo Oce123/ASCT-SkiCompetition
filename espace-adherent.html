@@ -1345,7 +1345,6 @@
 
 				membresContainer.innerHTML = "";
 
-
 				const count = snapshot.size;
 
 				const compteur = document.createElement("div");
@@ -1739,6 +1738,22 @@
 					);
 
 				});
+				
+				// =====================================================
+				// BOUTON NOUVELLE INSCRIPTION
+				// =====================================================
+
+				const nouvelleInscription = document.createElement("div");
+
+				nouvelleInscription.className = "new-inscription-container";
+
+				nouvelleInscription.innerHTML = `
+					<a href="inscription.html" class="primary-btn">
+						+ Nouvelle inscription
+					</a>
+				`;
+
+				membresContainer.appendChild(nouvelleInscription);
 
 			} catch (error) {
 

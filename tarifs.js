@@ -3,46 +3,46 @@ window.TARIFS = {
     adulte: {
 
         salarie: {
-            cotisation: 35,
-            forfaitLuz: 420
+            cotisation: 70,
+            forfaitLuz: 295
         },
 
         retraite: {
-            cotisation: 35,
-            forfaitLuz: 420
+            cotisation: 70,
+            forfaitLuz: 295
         },
 
         exterieur: {
-            cotisation: 55,
-            forfaitLuz: 420
+            cotisation: 160,
+            forfaitLuz: 295 
         },
 
         regie: {
-            cotisation: 35,
-            forfaitLuz: 420
+            cotisation: 160,
+            forfaitLuz: 295
         }
     },
 
     enfant: {
 
         salarie: {
-            cotisation: 25,
-            forfaitLuz: 160
+            cotisation: 105,
+            forfaitLuz: 170
         },
 
         retraite: {
-            cotisation: 25,
-            forfaitLuz: 160
+            cotisation: 105,
+            forfaitLuz: 170
         },
 
         exterieur: {
-            cotisation: 45,
-            forfaitLuz: 160
+            cotisation: 160,
+            forfaitLuz: 170
         },
 
         regie: {
-            cotisation: 25,
-            forfaitLuz: 160
+            cotisation: 160,
+            forfaitLuz: 170
         }
     },
 
