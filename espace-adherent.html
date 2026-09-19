@@ -285,6 +285,14 @@
             .info-value {
                 text-align: left;
             }
+			
+			.member-item {
+				align-items: flex-start;
+			}
+
+			.member-button {
+				white-space: nowrap;
+			}
         }
 		
 		/* =====================================================
@@ -721,6 +729,269 @@
 				padding: 8px 10px;
 			}
 		}
+		
+		/* =========================
+		   LISTE DES MEMBRES
+		========================= */
+
+		#membres-container {
+			display: grid;
+			gap: 12px;
+		}
+
+		.member-item {
+			display: flex;
+			align-items: center;
+			justify-content: space-between;
+			gap: 20px;
+
+			padding: 16px 18px;
+
+			background: rgba(255,255,255,0.055);
+			border: 1px solid rgba(255,255,255,0.09);
+			border-radius: 14px;
+
+			transition: 0.25s;
+		}
+
+		.member-item:hover {
+			background: rgba(255,255,255,0.09);
+			border-color: rgba(255,255,255,0.16);
+			transform: translateY(-1px);
+		}
+
+		.member-main {
+			display: flex;
+			align-items: center;
+			gap: 14px;
+		}
+
+		.member-avatar {
+			width: 44px;
+			height: 44px;
+
+			border-radius: 50%;
+
+			display: flex;
+			align-items: center;
+			justify-content: center;
+
+			background: rgba(255,255,255,0.12);
+
+			font-size: 15px;
+			font-weight: bold;
+
+			flex-shrink: 0;
+		}
+
+		.member-info {
+			display: flex;
+			flex-direction: column;
+			gap: 4px;
+		}
+
+		.member-name {
+			font-size: 15px;
+			font-weight: 600;
+		}
+
+		.member-birth {
+			font-size: 13px;
+			color: #aebdcb;
+		}
+
+		.member-button {
+			border: 1px solid rgba(255,255,255,0.16);
+
+			background: rgba(255,255,255,0.06);
+			color: white;
+
+			padding: 9px 13px;
+
+			border-radius: 8px;
+
+			font-size: 13px;
+			cursor: pointer;
+
+			transition: 0.25s;
+		}
+
+		.member-button:hover {
+			background: rgba(255,255,255,0.12);
+		}
+
+		.members-count {
+			color: #aebdcb;
+			font-size: 13px;
+			margin-bottom: 4px;
+		}
+
+		.members-error {
+			color: #ffb4b4;
+			text-align: center;
+			padding: 20px 10px;
+		}
+		
+		/* =========================
+		   DOSSIER MEMBRE
+		========================= */
+
+		.member-profile {
+			margin-top: 10px;
+			padding: 20px;
+
+			background: rgba(255,255,255,0.035);
+			border: 1px solid rgba(255,255,255,0.08);
+			border-radius: 14px;
+
+			animation: memberProfileIn 0.25s ease;
+		}
+
+		@keyframes memberProfileIn {
+			from {
+				opacity: 0;
+				transform: translateY(-5px);
+			}
+
+			to {
+				opacity: 1;
+				transform: translateY(0);
+			}
+		}
+
+		.member-profile-header {
+			display: flex;
+			align-items: center;
+			gap: 14px;
+
+			margin-bottom: 18px;
+		}
+
+		.member-profile-avatar {
+			width: 50px;
+			height: 50px;
+
+			border-radius: 50%;
+
+			display: flex;
+			align-items: center;
+			justify-content: center;
+
+			background: rgba(255,255,255,0.12);
+
+			font-weight: 700;
+		}
+
+		.member-profile-title {
+			display: flex;
+			flex-direction: column;
+			gap: 4px;
+		}
+
+		.member-profile-title strong {
+			font-size: 17px;
+		}
+
+		.member-profile-title span {
+			font-size: 13px;
+			color: #aebdcb;
+		}
+
+		.member-profile-grid {
+			display: grid;
+			grid-template-columns: repeat(2, minmax(0, 1fr));
+			gap: 10px;
+		}
+
+		.member-profile-field {
+			padding: 12px;
+
+			background: rgba(255,255,255,0.04);
+			border-radius: 10px;
+		}
+
+		.member-profile-field span {
+			display: block;
+
+			font-size: 11px;
+			text-transform: uppercase;
+
+			color: #8fa1b3;
+
+			margin-bottom: 5px;
+		}
+
+		.member-profile-field strong {
+			font-size: 14px;
+		}
+
+		.member-profile-inscriptions {
+			margin-top: 20px;
+		}
+
+		.member-profile-inscriptions h4 {
+			margin: 0 0 12px;
+			font-size: 14px;
+		}
+
+		.member-inscription {
+			display: flex;
+			align-items: center;
+			justify-content: space-between;
+
+			padding: 12px 14px;
+
+			background: rgba(255,255,255,0.04);
+			border-radius: 10px;
+
+			margin-bottom: 8px;
+		}
+
+		.member-inscription-main {
+			display: flex;
+			flex-direction: column;
+			gap: 4px;
+		}
+
+		.member-inscription-main strong {
+			font-size: 14px;
+		}
+
+		.member-inscription-main span {
+			font-size: 12px;
+			color: #9eafc0;
+		}
+
+		.member-inscription-status {
+			font-size: 12px;
+			padding: 5px 9px;
+			border-radius: 20px;
+
+			background: rgba(255,255,255,0.08);
+		}
+
+		.member-no-inscription {
+			font-size: 13px;
+			color: #8fa1b3;
+		}
+
+		.member-loading {
+			font-size: 13px;
+			color: #9eafc0;
+		}
+
+		@media (max-width: 750px) {
+
+			.member-profile-grid {
+				grid-template-columns: 1fr;
+			}
+
+			.member-inscription {
+				align-items: flex-start;
+				gap: 10px;
+				flex-direction: column;
+			}
+		}
     </style>
 </head>
 
@@ -869,26 +1140,30 @@
                 </div>
 
 
-                <div class="empty-state">
+                <div id="membres-container">
 
-                    <div class="empty-icon">
-                        ⛷️
-                    </div>
+					<div class="empty-state">
 
-                    <h4>
-                        Aucun membre enregistré
-                    </h4>
+						<div class="empty-icon">
+							⛷️
+						</div>
 
-                    <p>
-                        Cette partie permettra bientôt d'ajouter et de gérer
-                        les inscriptions des différents membres de votre famille.
-                    </p>
+						<h4>
+							Aucun membre enregistré
+						</h4>
 
-                    <a href="inscription.html" class="primary-btn">
-                        Commencer une inscription
-                    </a>
+						<p>
+							Commencez une inscription pour ajouter
+							un membre à votre famille.
+						</p>
 
-                </div>
+						<a href="inscription.html" class="primary-btn">
+							Commencer une inscription
+						</a>
+
+					</div>
+
+				</div>
 
             </div>
 
@@ -1004,7 +1279,488 @@
         const infoEmail = document.getElementById("infoEmail");
 
         const logoutBtn = document.getElementById("logoutBtn");
+		
+		const membresContainer =
+			document.getElementById("membres-container");
 
+		/* ==========================================
+		   CHARGEMENT DES MEMBRES
+		========================================== */
+
+		async function chargerMembres(user) {
+
+			if (!membresContainer) {
+				return;
+			}
+
+			try {
+
+				const membresRef = collection(
+					db,
+					"familles",
+					user.uid,
+					"membres"
+				);
+
+				const snapshot = await getDocs(membresRef);
+
+
+				/* Aucun membre */
+
+				if (snapshot.empty) {
+
+					membresContainer.innerHTML = `
+						<div class="empty-state">
+
+							<div class="empty-icon">
+								⛷️
+							</div>
+
+							<h4>
+								Aucun membre enregistré
+							</h4>
+
+							<p>
+								Commencez une inscription pour ajouter
+								un membre à votre famille.
+							</p>
+
+							<a
+								href="inscription.html"
+								class="primary-btn"
+							>
+								Commencer une inscription
+							</a>
+
+						</div>
+					`;
+
+					return;
+				}
+
+
+				/* =========================
+				   AFFICHAGE DES MEMBRES
+				========================= */
+
+				membresContainer.innerHTML = "";
+
+
+				const count = snapshot.size;
+
+				const compteur = document.createElement("div");
+
+				compteur.className = "members-count";
+
+				compteur.textContent =
+					`${count} membre${count > 1 ? "s" : ""} enregistré${count > 1 ? "s" : ""}`;
+
+				membresContainer.appendChild(compteur);
+
+
+				snapshot.forEach((membreSnap) => {
+
+					const membre = membreSnap.data();
+
+					const nom =
+						membre.nom || "";
+
+					const prenom =
+						membre.prenom || "";
+
+					const dateNaissance =
+						membre.dateNaissance || "";
+
+
+					/* Initiales */
+
+					const initialePrenom =
+						prenom.charAt(0).toUpperCase();
+
+					const initialeNom =
+						nom.charAt(0).toUpperCase();
+
+					const initiales =
+						initialePrenom + initialeNom;
+
+
+					/* =========================
+					   CARTE MEMBRE
+					========================= */
+
+					const membreElement =
+						document.createElement("div");
+
+					membreElement.className =
+						"member-item";
+
+
+					membreElement.innerHTML = `
+
+						<div class="member-main">
+
+							<div class="member-avatar">
+								${initiales || "?"}
+							</div>
+
+							<div class="member-info">
+
+								<div class="member-name">
+									${prenom} ${nom}
+								</div>
+
+								<div class="member-birth">
+									${
+										dateNaissance
+											? `Né(e) le ${dateNaissance}`
+											: "Date de naissance non renseignée"
+									}
+								</div>
+
+							</div>
+
+						</div>
+
+
+						<button
+							type="button"
+							class="member-button"
+						>
+							Voir
+							<span>→</span>
+						</button>
+
+					`;
+
+					/* ==========================================
+					   OUVERTURE DU DOSSIER MEMBRE
+					========================================== */
+
+					const boutonMembre =
+						membreElement.querySelector(".member-button");
+
+					boutonMembre.addEventListener(
+						"click",
+						async () => {
+
+							const dossierExistant =
+								membreElement.querySelector(
+									".member-profile"
+								);
+
+							/* Fermer le dossier */
+
+							if (dossierExistant) {
+
+								dossierExistant.remove();
+
+								boutonMembre.innerHTML =
+									`Voir <span>→</span>`;
+
+								return;
+							}
+
+
+							/* Chargement */
+
+							boutonMembre.innerHTML =
+								`Chargement...`;
+
+
+							const dossier =
+								document.createElement("div");
+
+							dossier.className =
+								"member-profile";
+
+							dossier.innerHTML = `
+								<div class="member-loading">
+									Chargement du dossier...
+								</div>
+							`;
+
+							membreElement.appendChild(dossier);
+
+
+							try {
+
+								/* =====================================
+								   RECHERCHE DES INSCRIPTIONS DU MEMBRE
+								===================================== */
+
+								const inscriptionsRef =
+									collection(
+										db,
+										"inscriptions"
+									);
+
+								const q =
+									query(
+										inscriptionsRef,
+										where(
+											"familleId",
+											"==",
+											user.uid
+										),
+										where(
+											"membreId",
+											"==",
+											membreSnap.id
+										)
+									);
+
+								const inscriptionsSnapshot =
+									await getDocs(q);
+
+
+								/* =====================================
+								   CONSTRUCTION DU DOSSIER
+								===================================== */
+
+								const dateNaissance =
+									membre.dateNaissance || "—";
+
+								const email =
+									membre.email || "—";
+
+								const telephone =
+									membre.telephone || "—";
+
+
+								const inscriptions =
+									inscriptionsSnapshot.docs
+										.map(docSnap => ({
+											id: docSnap.id,
+											...docSnap.data()
+										}));
+
+
+								let inscriptionsHTML = "";
+
+
+								if (inscriptions.length === 0) {
+
+									inscriptionsHTML = `
+										<div class="member-no-inscription">
+											Aucune inscription enregistrée
+											pour ce membre.
+										</div>
+									`;
+
+								} else {
+
+									inscriptionsHTML =
+										inscriptions
+											.map(inscription => {
+
+												const saison =
+													inscription.saison ||
+													"Saison 2026/2027";
+
+												const statut =
+													inscription.statutInscription ||
+													"En attente";
+
+												return `
+													<div
+														class="member-inscription"
+													>
+
+														<div
+															class="member-inscription-main"
+														>
+
+															<strong>
+																${saison}
+															</strong>
+
+															<span>
+																Montant :
+																${
+																	inscription.montantTotal !== undefined
+																		? inscription.montantTotal + " €"
+																		: "—"
+																}
+															</span>
+
+														</div>
+
+														<span
+															class="member-inscription-status"
+														>
+															${statut}
+														</span>
+
+													</div>
+												`;
+
+											})
+											.join("");
+
+								}
+
+
+								dossier.innerHTML = `
+
+									<div class="member-profile-header">
+
+										<div
+											class="member-profile-avatar"
+										>
+											${initiales || "?"}
+										</div>
+
+										<div class="member-profile-title">
+
+											<strong>
+												${prenom} ${nom}
+											</strong>
+
+											<span>
+												Membre de votre famille
+											</span>
+
+										</div>
+
+									</div>
+
+
+									<div class="member-profile-grid">
+
+										<div
+											class="member-profile-field"
+										>
+											<span>
+												Nom
+											</span>
+
+											<strong>
+												${nom || "—"}
+											</strong>
+										</div>
+
+
+										<div
+											class="member-profile-field"
+										>
+											<span>
+												Prénom
+											</span>
+
+											<strong>
+												${prenom || "—"}
+											</strong>
+										</div>
+
+
+										<div
+											class="member-profile-field"
+										>
+											<span>
+												Date de naissance
+											</span>
+
+											<strong>
+												${dateNaissance}
+											</strong>
+										</div>
+
+
+										<div
+											class="member-profile-field"
+										>
+											<span>
+												Email
+											</span>
+
+											<strong>
+												${email}
+											</strong>
+										</div>
+
+
+										<div
+											class="member-profile-field"
+										>
+											<span>
+												Téléphone
+											</span>
+
+											<strong>
+												${telephone}
+											</strong>
+										</div>
+
+									</div>
+
+
+									<div
+										class="member-profile-inscriptions"
+									>
+
+										<h4>
+											📋 Inscriptions
+										</h4>
+
+										${inscriptionsHTML}
+
+									</div>
+
+								`;
+
+
+								boutonMembre.innerHTML =
+									`Fermer <span>↑</span>`;
+
+
+							} catch (error) {
+
+								console.error(
+									"Erreur dossier membre :",
+									error
+								);
+
+								dossier.innerHTML = `
+									<div class="members-error">
+										Impossible de charger
+										le dossier de ce membre.
+									</div>
+								`;
+
+								boutonMembre.innerHTML =
+									`Voir <span>→</span>`;
+							}
+
+						}
+					);
+
+					membresContainer.appendChild(
+						membreElement
+					);
+
+				});
+
+			} catch (error) {
+
+				console.error(
+					"Erreur lors du chargement des membres :",
+					error
+				);
+
+				membresContainer.innerHTML = `
+
+					<div class="members-error">
+
+						Impossible de charger
+						les membres de votre famille.
+
+					</div>
+
+				`;
+
+			}
+
+		}
 
 		// =====================================================
 		// CHARGEMENT DES INSCRIPTIONS DE LA FAMILLE
@@ -1370,6 +2126,9 @@
                     infoEmail.textContent =
                         user.email || "—";
                 }
+
+				/* Chargement des membres */
+				await chargerMembres(user);
 
                 /* On masque l'écran de chargement */
                 loading.style.display = "none";

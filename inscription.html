@@ -1527,7 +1527,8 @@ import {
     collection,
     addDoc,
     updateDoc,
-    doc
+    doc,
+	setDoc
 } from "https://www.gstatic.com/firebasejs/12.12.0/firebase-firestore.js";
 
 import {
@@ -1975,6 +1976,50 @@ document.addEventListener("DOMContentLoaded", () => {
                     ),
                     data
                 );
+				
+			// =====================================================
+			// CRÉATION DU MEMBRE DANS LA FAMILLE
+			// =====================================================
+
+			const membreRef = doc(
+				collection(
+					db,
+					"familles",
+					user.uid,
+					"membres"
+				)
+			);
+
+			await setDoc(
+				membreRef,
+				{
+					nom: data.nom || "",
+					prenom: data.prenom || "",
+					dateNaissance: data.dateNaissance || "",
+
+					email: data.email || "",
+					telephone: data.telephone || "",
+
+					createdAt: new Date().toISOString(),
+					updatedAt: new Date().toISOString()
+				}
+			);
+			
+			await updateDoc(
+				doc(
+					db,
+					"inscriptions",
+					inscriptionRef.id
+				),
+				{
+					membreId: membreRef.id
+				}
+			);
+
+			console.log(
+				"✅ Membre créé :",
+				membreRef.id
+			);
 
 
             console.log(
