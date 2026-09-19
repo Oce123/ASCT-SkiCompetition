@@ -2709,3 +2709,27 @@ nav a:hover {
         word-break: break-word;
     }
 }
+
+.reinscription-notice {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+
+    margin: 15px auto 25px;
+    padding: 14px 16px;
+
+    max-width: 850px;
+
+    background: rgba(255,255,255,0.05);
+    border: 1px solid rgba(255,255,255,0.1);
+    border-radius: 12px;
+}
+
+.reinscription-notice strong {
+    font-size: 14px;
+}
+
+.reinscription-notice span {
+    font-size: 13px;
+    color: #aebdcb;
+}

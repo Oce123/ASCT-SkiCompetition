@@ -1528,7 +1528,8 @@ import {
     addDoc,
     updateDoc,
     doc,
-	setDoc
+	setDoc,
+	getDoc
 } from "https://www.gstatic.com/firebasejs/12.12.0/firebase-firestore.js";
 
 import {
@@ -1576,24 +1577,170 @@ const storage = getStorage(app);
 
 const auth = getAuth(app);
 
+let membreIdExistant = null;
+
+const params = new URLSearchParams(window.location.search);
+const membreIdParam = params.get("membreId");
+
+// =====================================================
+// PRE REMPLIR LE FORMULAIRE
+// =====================================================
+
+async function chargerMembreExistant(user) {
+
+    if (!membreIdParam) {
+        return;
+    }
+
+    try {
+
+        const membreRef = doc(
+            db,
+            "familles",
+            user.uid,
+            "membres",
+            membreIdParam
+        );
+
+        const membreSnap = await getDoc(membreRef);
+
+        if (!membreSnap.exists()) {
+            console.warn("⚠️ Membre introuvable :", membreIdParam);
+            return;
+        }
+
+        const membre = membreSnap.data();
+
+        membreIdExistant = membreSnap.id;
+
+        console.log("✅ Membre existant chargé :", membre);
+
+        // Préremplissage
+        const champNom =
+            document.getElementById("nom");
+
+        const champPrenom =
+            document.getElementById("prenom");
+
+        const champEmail =
+            document.getElementById("email");
+
+        const champTelephone =
+            document.getElementById("telephone");
+
+        const champDateNaissance =
+            document.getElementById("birthdate");
+
+        if (champNom) {
+            champNom.value = membre.nom || "";
+        }
+
+        if (champPrenom) {
+            champPrenom.value = membre.prenom || "";
+        }
+
+        if (champEmail) {
+            champEmail.value = membre.email || "";
+        }
+
+        if (champTelephone) {
+            champTelephone.value = membre.telephone || "";
+        }
+
+        if (champDateNaissance) {
+            champDateNaissance.value =
+                membre.dateNaissance || "";
+        }
+		
+		// ==========================================
+		// ACTUALISATION DES CHAMPS AUTOMATIQUES
+		// ==========================================
+
+		// Les valeurs ont été renseignées par JavaScript.
+		// On déclenche maintenant les événements nécessaires
+		// pour que les différentes parties du formulaire
+		// se mettent également à jour.
+
+		if (champNom) {
+			champNom.dispatchEvent(
+				new Event("input", { bubbles: true })
+			);
+		}
+
+		if (champPrenom) {
+			champPrenom.dispatchEvent(
+				new Event("input", { bubbles: true })
+			);
+		}
+
+		if (champDateNaissance) {
+			champDateNaissance.dispatchEvent(
+				new Event("change", { bubbles: true })
+			);
+			champDateNaissance.dispatchEvent(
+				new Event("input", { bubbles: true })
+			);
+		}
+		
+		// ==========================================
+		// MISE À JOUR FORCÉE DES BLOCS AUTOMATIQUES
+		// ==========================================
+
+		if (typeof updateFederauxNom === "function") {
+			updateFederauxNom();
+		}
+
+		if (typeof updateDroitImage === "function") {
+			updateDroitImage();
+		}
+
+		if (typeof updateLocationMateriel === "function") {
+			updateLocationMateriel();
+		}
+
+        // Petit message visuel
+        const titreFormulaire =
+            document.querySelector("h1");
+
+        if (titreFormulaire) {
+            titreFormulaire.insertAdjacentHTML(
+                "afterend",
+                `
+                <div class="reinscription-notice">
+                    <strong>Réinscription</strong>
+                    <span>
+                        Les informations de ce membre ont été
+                        préremplies à partir de son dossier.
+                    </span>
+                </div>
+                `
+            );
+        }
+
+    } catch (error) {
+
+        console.error(
+            "❌ Erreur lors du chargement du membre :",
+            error
+        );
+
+    }
+}
+
 // =====================================================
 // VÉRIFICATION DE L'ACCÈS
 // =====================================================
 
-onAuthStateChanged(auth, (user) => {
+onAuthStateChanged(auth, async (user) => {
 
     if (!user) {
-
         window.location.href = "connexion.html";
-
         return;
     }
 
-    console.log(
-        "✅ Utilisateur connecté :",
-        user.email
-    );
+    console.log("✅ Utilisateur connecté :", user.email);
 
+    await chargerMembreExistant(user);
 });
 
 // =====================================================
@@ -1612,7 +1759,6 @@ document.addEventListener("DOMContentLoaded", () => {
 
         return;
     }
-
 
     // =================================================
     // ENVOI DU FORMULAIRE
@@ -1977,57 +2123,92 @@ document.addEventListener("DOMContentLoaded", () => {
                     data
                 );
 				
+			console.log(
+                "✅ Inscription Firestore créée :",
+                inscriptionRef.id
+            );
+				
 			// =====================================================
 			// CRÉATION DU MEMBRE DANS LA FAMILLE
 			// =====================================================
 
-			const membreRef = doc(
-				collection(
+			let membreRef;
+			if (membreIdExistant) {
+
+				// ==========================================
+				// RÉINSCRIPTION D'UN MEMBRE EXISTANT
+				// ==========================================
+
+				membreRef = doc(
 					db,
 					"familles",
 					user.uid,
-					"membres"
-				)
-			);
+					"membres",
+					membreIdExistant
+				);
 
-			await setDoc(
-				membreRef,
-				{
-					nom: data.nom || "",
-					prenom: data.prenom || "",
-					dateNaissance: data.dateNaissance || "",
+				await updateDoc(
+					membreRef,
+					{
+						nom: data.nom || "",
+						prenom: data.prenom || "",
+						dateNaissance: data.dateNaissance || "",
+						email: data.email || "",
+						telephone: data.telephone || "",
+						updatedAt: new Date().toISOString()
+					}
+				);
 
-					email: data.email || "",
-					telephone: data.telephone || "",
+				console.log(
+					"✅ Membre existant réutilisé :",
+					membreIdExistant
+				);
 
-					createdAt: new Date().toISOString(),
-					updatedAt: new Date().toISOString()
-				}
-			);
-			
+			} else {
+
+				// ==========================================
+				// NOUVEAU MEMBRE
+				// ==========================================
+
+				membreRef = doc(
+					collection(
+						db,
+						"familles",
+						user.uid,
+						"membres"
+					)
+				);
+
+				await setDoc(
+					membreRef,
+					{
+						nom: data.nom || "",
+						prenom: data.prenom || "",
+						dateNaissance: data.dateNaissance || "",
+						email: data.email || "",
+						telephone: data.telephone || "",
+						createdAt: new Date().toISOString(),
+						updatedAt: new Date().toISOString()
+					}
+				);
+
+				console.log(
+					"✅ Nouveau membre créé :",
+					membreRef.id
+				);
+			}
+
+			// ==========================================
+			// LIEN INSCRIPTION → MEMBRE
+			// ==========================================
+
 			await updateDoc(
-				doc(
-					db,
-					"inscriptions",
-					inscriptionRef.id
-				),
+				doc(db, "inscriptions", inscriptionRef.id),
 				{
 					membreId: membreRef.id
 				}
 			);
-
-			console.log(
-				"✅ Membre créé :",
-				membreRef.id
-			);
-
-
-            console.log(
-                "✅ Inscription Firestore créée :",
-                inscriptionRef.id
-            );
-
-
+			
             // =================================================
             // 2. ENVOI DES DOCUMENTS
             // =================================================

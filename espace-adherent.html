@@ -987,10 +987,212 @@
 			}
 
 			.member-inscription {
-				align-items: flex-start;
+				align-items: stretch;
 				gap: 10px;
 				flex-direction: column;
 			}
+			
+			.member-inscription-right {
+				justify-content: space-between;
+				width: 100%;
+			}
+		}
+		
+		.member-profile-actions {
+			margin-top: 20px;
+			display: flex;
+			justify-content: flex-end;
+		}
+
+		.member-reinscription-button {
+			display: inline-flex;
+			align-items: center;
+			gap: 8px;
+
+			padding: 10px 16px;
+
+			border-radius: 10px;
+
+			background: rgba(255,255,255,0.08);
+			border: 1px solid rgba(255,255,255,0.12);
+
+			color: white;
+			text-decoration: none;
+
+			font-size: 13px;
+			font-weight: 600;
+
+			transition: all 0.2s ease;
+		}
+
+		.member-reinscription-button:hover {
+			background: rgba(255,255,255,0.14);
+			border-color: rgba(255,255,255,0.2);
+			transform: translateY(-1px);
+		}
+
+		@media (max-width: 750px) {
+			.member-profile-actions {
+				justify-content: stretch;
+			}
+
+			.member-reinscription-button {
+				width: 100%;
+				justify-content: center;
+			}
+		}
+		
+		.member-inscription-right {
+			display: flex;
+			align-items: center;
+			gap: 10px;
+		}
+
+		.member-inscription-button {
+			border: 1px solid rgba(255,255,255,0.1);
+			background: rgba(255,255,255,0.06);
+			color: white;
+
+			padding: 7px 11px;
+			border-radius: 8px;
+
+			font-size: 12px;
+			font-weight: 600;
+
+			cursor: pointer;
+
+			transition: all 0.2s ease;
+		}
+
+		.member-inscription-button:hover {
+			background: rgba(255,255,255,0.12);
+			transform: translateY(-1px);
+		}
+
+		.member-inscription-button span {
+			margin-left: 3px;
+		}
+		
+		.inscription-detail {
+			margin-top: 12px;
+			padding: 18px;
+
+			background: rgba(0,0,0,0.16);
+			border: 1px solid rgba(255,255,255,0.08);
+			border-radius: 12px;
+
+			animation: memberProfileIn 0.25s ease;
+		}
+
+		.inscription-detail-header {
+			display: flex;
+			align-items: center;
+			justify-content: space-between;
+
+			margin-bottom: 18px;
+		}
+
+		.inscription-detail-header div {
+			display: flex;
+			flex-direction: column;
+			gap: 4px;
+		}
+
+		.inscription-detail-header span {
+			font-size: 10px;
+			text-transform: uppercase;
+			color: #8fa1b3;
+			letter-spacing: 0.08em;
+		}
+
+		.inscription-detail-header strong {
+			font-size: 17px;
+		}
+
+		.inscription-detail-close {
+			width: 30px;
+			height: 30px;
+
+			border: none;
+			border-radius: 50%;
+
+			background: rgba(255,255,255,0.08);
+			color: white;
+
+			cursor: pointer;
+			font-size: 18px;
+		}
+
+		.inscription-detail-grid {
+			display: grid;
+			grid-template-columns: repeat(3, 1fr);
+			gap: 10px;
+		}
+
+		.inscription-detail-grid > div {
+			padding: 11px;
+
+			background: rgba(255,255,255,0.04);
+			border-radius: 9px;
+		}
+
+		.inscription-detail-grid span {
+			display: block;
+
+			margin-bottom: 5px;
+
+			font-size: 10px;
+			text-transform: uppercase;
+			color: #8fa1b3;
+		}
+
+		.inscription-detail-grid strong {
+			font-size: 13px;
+		}
+
+		.inscription-detail-documents {
+			margin-top: 20px;
+		}
+
+		.inscription-detail-documents h4 {
+			margin: 0 0 10px;
+			font-size: 13px;
+		}
+
+		.inscription-documents-list {
+			display: flex;
+			flex-direction: column;
+			gap: 7px;
+		}
+
+		.inscription-document-link {
+			display: flex;
+			align-items: center;
+			justify-content: space-between;
+
+			padding: 10px 12px;
+
+			border-radius: 8px;
+			background: rgba(255,255,255,0.04);
+
+			color: white;
+			text-decoration: none;
+
+			font-size: 12px;
+
+			transition: background 0.2s ease;
+		}
+
+		.inscription-document-link:hover {
+			background: rgba(255,255,255,0.08);
+		}
+
+		@media (max-width: 750px) {
+
+			.inscription-detail-grid {
+				grid-template-columns: 1fr;
+			}
+
 		}
     </style>
 </head>
@@ -1480,6 +1682,78 @@
 
 							membreElement.appendChild(dossier);
 
+							const boutonsInscription =
+								dossier.querySelectorAll(
+									".member-inscription-button"
+								);
+
+							boutonsInscription.forEach((bouton) => {
+
+								bouton.addEventListener(
+									"click",
+									async () => {
+
+										const inscriptionId =
+											bouton.dataset.inscriptionId;
+
+										console.log(
+											"📋 Consultation inscription :",
+											inscriptionId
+										);
+
+										// Pour l'instant :
+										// on récupère directement l'inscription
+										// depuis Firestore.
+
+										try {
+
+											const inscriptionRef =
+												doc(
+													db,
+													"inscriptions",
+													inscriptionId
+												);
+
+											const inscriptionSnap =
+												await getDoc(inscriptionRef);
+
+											if (!inscriptionSnap.exists()) {
+
+												alert(
+													"Cette inscription n'existe plus."
+												);
+
+												return;
+											}
+
+											const inscription =
+												inscriptionSnap.data();
+
+											console.log(
+												"✅ Inscription chargée :",
+												inscription
+											);
+
+											afficherDetailInscription(
+												dossier,
+												inscription
+											);
+
+										} catch (error) {
+
+											console.error(
+												"Erreur lors du chargement de l'inscription :",
+												error
+											);
+
+											alert(
+												"Impossible de charger cette inscription."
+											);
+										}
+									}
+								);
+
+							});
 
 							try {
 
@@ -1561,17 +1835,11 @@
 													"En attente";
 
 												return `
-													<div
-														class="member-inscription"
-													>
+													<div class="member-inscription">
 
-														<div
-															class="member-inscription-main"
-														>
+														<div class="member-inscription-main">
 
-															<strong>
-																${saison}
-															</strong>
+															<strong>${saison}</strong>
 
 															<span>
 																Montant :
@@ -1584,11 +1852,22 @@
 
 														</div>
 
-														<span
-															class="member-inscription-status"
-														>
-															${statut}
-														</span>
+														<div class="member-inscription-right">
+
+															<span class="member-inscription-status">
+																${statut}
+															</span>
+
+															<button
+																type="button"
+																class="member-inscription-button"
+																data-inscription-id="${inscription.id}"
+															>
+																Voir
+																<span>→</span>
+															</button>
+
+														</div>
 
 													</div>
 												`;
@@ -1693,18 +1972,19 @@
 									</div>
 
 
-									<div
-										class="member-profile-inscriptions"
-									>
-
-										<h4>
-											📋 Inscriptions
-										</h4>
-
+									<div class="member-profile-inscriptions">
+										<h4>📋 Inscriptions</h4>
 										${inscriptionsHTML}
-
 									</div>
 
+									<div class="member-profile-actions">
+										<a
+											href="inscription.html?membreId=${membreSnap.id}"
+											class="member-reinscription-button"
+										>
+											+ Réinscrire ce membre
+										</a>
+									</div>
 								`;
 
 
@@ -1775,6 +2055,175 @@
 
 			}
 
+		}
+		
+		function afficherDetailInscription(
+			dossier,
+			inscription
+		) {
+
+			const ancienDetail =
+				dossier.querySelector(
+					".inscription-detail"
+				);
+
+			if (ancienDetail) {
+				ancienDetail.remove();
+				return;
+			}
+
+			const detail =
+				document.createElement("div");
+
+			detail.className =
+				"inscription-detail";
+
+			detail.innerHTML = `
+
+				<div class="inscription-detail-header">
+
+					<div>
+						<span>INSCRIPTION</span>
+						<strong>
+							${inscription.saison || "Saison"}
+						</strong>
+					</div>
+
+					<button
+						type="button"
+						class="inscription-detail-close"
+					>
+						×
+					</button>
+
+				</div>
+
+				<div class="inscription-detail-grid">
+
+					<div>
+						<span>Statut</span>
+						<strong>
+							${inscription.statutInscription || "—"}
+						</strong>
+					</div>
+
+					<div>
+						<span>Montant</span>
+						<strong>
+							${
+								inscription.montantTotal !== undefined
+									? inscription.montantTotal + " €"
+									: "—"
+							}
+						</strong>
+					</div>
+
+					<div>
+						<span>Date d'inscription</span>
+						<strong>
+							${
+								inscription.dateInscription
+									? new Date(
+										inscription.dateInscription
+									  ).toLocaleDateString("fr-FR")
+									: "—"
+							}
+						</strong>
+					</div>
+
+					<div>
+						<span>Participation fédéraux</span>
+						<strong>
+							${inscription.federaux || "Non"}
+						</strong>
+					</div>
+
+					<div>
+						<span>Location matériel</span>
+						<strong>
+							${inscription.materiel || "Non"}
+						</strong>
+					</div>
+
+					<div>
+						<span>Encadrant</span>
+						<strong>
+							${inscription.encadrant || "Non"}
+						</strong>
+					</div>
+
+				</div>
+
+				<div class="inscription-detail-documents">
+
+					<h4>Documents transmis</h4>
+
+					<div class="inscription-documents-list">
+						${afficherDocumentsInscription(inscription)}
+					</div>
+
+				</div>
+
+			`;
+
+			dossier.appendChild(detail);
+
+			const boutonFermer =
+				detail.querySelector(
+					".inscription-detail-close"
+				);
+
+			boutonFermer.addEventListener(
+				"click",
+				() => detail.remove()
+			);
+		}
+
+		function afficherDocumentsInscription(
+			inscription
+		) {
+
+			const documents =
+				inscription.documents || {};
+
+			const entries =
+				Object.entries(documents);
+
+			if (entries.length === 0) {
+
+				return `
+					<div class="member-no-inscription">
+						Aucun document transmis.
+					</div>
+				`;
+			}
+
+			return entries
+				.map(([key, documentData]) => {
+
+					const nom =
+						documentData.nom || key;
+
+					const url =
+						documentData.url;
+
+					if (!url) {
+						return "";
+					}
+
+					return `
+						<a
+							href="${url}"
+							target="_blank"
+							class="inscription-document-link"
+						>
+							📄 ${nom}
+							<span>↗</span>
+						</a>
+					`;
+
+				})
+				.join("");
 		}
 
 		// =====================================================
