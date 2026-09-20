@@ -1682,79 +1682,7 @@
 
 							membreElement.appendChild(dossier);
 
-							const boutonsInscription =
-								dossier.querySelectorAll(
-									".member-inscription-button"
-								);
-
-							boutonsInscription.forEach((bouton) => {
-
-								bouton.addEventListener(
-									"click",
-									async () => {
-
-										const inscriptionId =
-											bouton.dataset.inscriptionId;
-
-										console.log(
-											"📋 Consultation inscription :",
-											inscriptionId
-										);
-
-										// Pour l'instant :
-										// on récupère directement l'inscription
-										// depuis Firestore.
-
-										try {
-
-											const inscriptionRef =
-												doc(
-													db,
-													"inscriptions",
-													inscriptionId
-												);
-
-											const inscriptionSnap =
-												await getDoc(inscriptionRef);
-
-											if (!inscriptionSnap.exists()) {
-
-												alert(
-													"Cette inscription n'existe plus."
-												);
-
-												return;
-											}
-
-											const inscription =
-												inscriptionSnap.data();
-
-											console.log(
-												"✅ Inscription chargée :",
-												inscription
-											);
-
-											afficherDetailInscription(
-												dossier,
-												inscription
-											);
-
-										} catch (error) {
-
-											console.error(
-												"Erreur lors du chargement de l'inscription :",
-												error
-											);
-
-											alert(
-												"Impossible de charger cette inscription."
-											);
-										}
-									}
-								);
-
-							});
-
+							
 							try {
 
 								/* =====================================
@@ -2009,6 +1937,80 @@
 								boutonMembre.innerHTML =
 									`Voir <span>→</span>`;
 							}
+
+							/* ==========================================
+							   BOUTONS "VOIR" DES INSCRIPTIONS
+							========================================== */
+
+							const boutonsInscription =
+								dossier.querySelectorAll(
+									".member-inscription-button"
+								);
+
+							boutonsInscription.forEach((bouton) => {
+
+								bouton.addEventListener(
+									"click",
+									async () => {
+
+										const inscriptionId =
+											bouton.dataset.inscriptionId;
+
+										console.log(
+											"📋 Consultation inscription :",
+											inscriptionId
+										);
+
+										try {
+
+											const inscriptionRef =
+												doc(
+													db,
+													"inscriptions",
+													inscriptionId
+												);
+
+											const inscriptionSnap =
+												await getDoc(inscriptionRef);
+
+											if (!inscriptionSnap.exists()) {
+
+												alert(
+													"Cette inscription n'existe plus."
+												);
+
+												return;
+											}
+
+											const inscription =
+												inscriptionSnap.data();
+
+											console.log(
+												"✅ Inscription chargée :",
+												inscription
+											);
+
+											afficherDetailInscription(
+												dossier,
+												inscription
+											);
+
+										} catch (error) {
+
+											console.error(
+												"Erreur lors du chargement de l'inscription :",
+												error
+											);
+
+											alert(
+												"Impossible de charger cette inscription."
+											);
+										}
+
+									}
+								);
+
+							});
 
 						}
 					);

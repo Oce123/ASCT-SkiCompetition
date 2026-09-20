@@ -186,8 +186,11 @@
 			</div>
 
 			<div class="form-row" id="npy-number" style="display:none;">
-				<input type="text" placeholder="N° de la carte N'Py">
-</div>
+				<input
+					type="text"
+					id="npy-number-input"
+					placeholder="N° de la carte N'Py">
+			</div>
 			
 			<h3>Personne à prévenir en cas d'urgence</h3>
 			
@@ -1045,7 +1048,7 @@
 
 					<label>Accès au groupe WhatsApp</label>
 
-					<select class="accord-select">
+					<select class="accord-select" id="whatsapp-accord">
 						<option value="">Choisir</option>
 						<option value="AUTORISE">Autorise</option>
 						<option value="REFUSE">Refuse</option>
@@ -1058,7 +1061,7 @@
 
 					<label>Accès au Cloud</label>
 
-					<select class="accord-select">
+					<select class="accord-select" id="cloud-accord">
 						<option value="">Choisir</option>
 						<option value="AUTORISE">Autorise</option>
 						<option value="REFUSE">Refuse</option>
@@ -1071,7 +1074,7 @@
 
 					<label>Accès au calendrier</label>
 
-					<select class="accord-select">
+					<select class="accord-select" id="calendrier-accord">
 						<option value="">Choisir</option>
 						<option value="AUTORISE">Autorise</option>
 						<option value="REFUSE">Refuse</option>
@@ -1084,7 +1087,7 @@
 
 					<label>Utilisation des photos / vidéos</label>
 
-					<select class="accord-select">
+					<select class="accord-select" id="photos-videos-accord">
 						<option value="">Choisir</option>
 						<option value="AUTORISE">Autorise</option>
 						<option value="REFUSE">Refuse</option>
@@ -1916,7 +1919,7 @@ document.addEventListener("DOMContentLoaded", () => {
                 document.getElementById("npy")?.value || "",
 
             numeroNpy:
-                document.getElementById("npy-number")?.value || "",
+				document.getElementById("npy-number-input")?.value || "",
 
 
             // -----------------------------
@@ -1937,7 +1940,12 @@ document.addEventListener("DOMContentLoaded", () => {
             // MEDICAL
             // -----------------------------
 
-            traitement:
+            vaccins:
+				document.querySelector(
+					'[name="vaccins"]'
+				)?.value || "",
+			
+			traitement:
                 document.querySelector(
                     '[name="traitement"]'
                 )?.value || "",
@@ -1946,6 +1954,17 @@ document.addEventListener("DOMContentLoaded", () => {
                 document.querySelector(
                     '[name="details-traitement"]'
                 )?.value || "",
+			
+			maladies: [
+				document.querySelector('[name="rubeole"]')?.checked ? "Rubéole" : "",
+				document.querySelector('[name="varicelle"]')?.checked ? "Varicelle" : "",
+				document.querySelector('[name="angine"]')?.checked ? "Angine" : "",
+				document.querySelector('[name="otite"]')?.checked ? "Otite" : "",
+				document.querySelector('[name="rougeole"]')?.checked ? "Rougeole" : "",
+				document.querySelector('[name="oreillons"]')?.checked ? "Oreillons" : "",
+				document.querySelector('[name="coqueluche"]')?.checked ? "Coqueluche" : "",
+				document.querySelector('[name="scarlatine"]')?.checked ? "Scarlatine" : ""
+			].filter(Boolean).join(", "),
 
             allergies: [
 
@@ -1998,43 +2017,54 @@ document.addEventListener("DOMContentLoaded", () => {
 
 
             // -----------------------------
-            // DROIT A L'IMAGE
-            // -----------------------------
+			// DROIT A L'IMAGE
+			// -----------------------------
 
-            droitImage:
-                document.getElementById(
-                    "droit-image-select"
-                )?.value || "",
+			whatsappAccord:
+				document.getElementById(
+					"whatsapp-accord"
+				)?.value || "",
 
-            whatsappAccord:
-                document.getElementById(
-                    "whatsapp-accord"
-                )?.value || "",
+			cloudAccord:
+				document.getElementById(
+					"cloud-accord"
+				)?.value || "",
 
-            cloudAccord:
-                document.getElementById(
-                    "cloud-accord"
-                )?.value || "",
+			calendrierAccord:
+				document.getElementById(
+					"calendrier-accord"
+				)?.value || "",
 
-            calendrierAccord:
-                document.getElementById(
-                    "calendrier-accord"
-                )?.value || "",
+			photosVideosAccord:
+				document.getElementById(
+					"photos-videos-accord"
+				)?.value || "",
+
+			droitImageAccord:
+				document.getElementById(
+					"droit-image-accord"
+				)?.value || "",
+
+			droitImageVille:
+				document.getElementById(
+					"droit-image-ville"
+				)?.value || "",
+
+			droitImageDate:
+				document.getElementById(
+					"droit-image-date"
+				)?.textContent || "",
 
 
             // -----------------------------
             // SIGNATURE
             // -----------------------------
 
-            signatureVille:
-                document.getElementById(
-                    "signature-ville"
-                )?.value || "",
-
             signatureAccord:
-                document.getElementById(
-                    "accord-select"
-                )?.value || "",
+				document.getElementById("accord-select")?.value || "",
+
+			signatureVille:
+				document.getElementById("signature-ville")?.value || "",
 
 
             // -----------------------------
@@ -2105,34 +2135,12 @@ document.addEventListener("DOMContentLoaded", () => {
             );
 
 
-            // =================================================
-            // 1. ENREGISTREMENT FIRESTORE
-            // =================================================
-
-            console.log(
-                "🔥 Enregistrement Firestore..."
-            );
-
-
-            const inscriptionRef =
-                await addDoc(
-                    collection(
-                        db,
-                        "inscriptions"
-                    ),
-                    data
-                );
-				
-			console.log(
-                "✅ Inscription Firestore créée :",
-                inscriptionRef.id
-            );
-				
-			// =====================================================
-			// CRÉATION DU MEMBRE DANS LA FAMILLE
-			// =====================================================
+			// =================================================
+			// CRÉATION / RÉUTILISATION DU MEMBRE
+			// =================================================
 
 			let membreRef;
+
 			if (membreIdExistant) {
 
 				// ==========================================
@@ -2198,16 +2206,39 @@ document.addEventListener("DOMContentLoaded", () => {
 				);
 			}
 
-			// ==========================================
-			// LIEN INSCRIPTION → MEMBRE
-			// ==========================================
 
-			await updateDoc(
-				doc(db, "inscriptions", inscriptionRef.id),
-				{
-					membreId: membreRef.id
-				}
+			// =================================================
+			// LIEN AVEC L'INSCRIPTION
+			// =================================================
+
+			data.membreId = membreRef.id;
+
+			console.log(
+				"👤 membreId :",
+				data.membreId
 			);
+				
+			// =================================================
+			// ENREGISTREMENT FIRESTORE
+			// =================================================
+
+			/*console.log(
+				"🔥 Enregistrement Firestore..."
+			);
+
+			const inscriptionRef =
+				await addDoc(
+					collection(
+						db,
+						"inscriptions"
+					),
+					data
+				);
+
+			console.log(
+				"✅ Inscription Firestore créée :",
+				inscriptionRef.id
+			);*/
 			
             // =================================================
             // 2. ENVOI DES DOCUMENTS
@@ -2322,10 +2353,10 @@ document.addEventListener("DOMContentLoaded", () => {
                 // -------------------------------------------------
 
                 const storageRef =
-                    ref(
-                        storage,
-                        `inscriptions/${dossier}/${item.key}_${safeName}`
-                    );
+					ref(
+						storage,
+						`inscriptions/${user.uid}/${dossier}/${item.key}_${safeName}`
+					);
 
 
                 // -------------------------------------------------
@@ -2372,45 +2403,62 @@ document.addEventListener("DOMContentLoaded", () => {
 
 
             // =================================================
-            // 3. MISE A JOUR FIRESTORE
-            // =================================================
+			// 3. PRÉPARATION FINALE DE L'INSCRIPTION
+			// =================================================
 
-            console.log(
-                "🔄 Mise à jour Firestore..."
-            );
+			data.documents = documentsEnvoyes;
 
+			data.statutInscription = "validée";
 
-            await updateDoc(
-                doc(
-                    db,
-                    "inscriptions",
-                    inscriptionRef.id
-                ),
-                {
-
-                    documents:
-                        documentsEnvoyes,
-
-                    statutInscription:
-                        "validée",
-
-                    dateValidation:
-                        new Date().toISOString()
-                }
-            );
+			data.dateValidation =
+				new Date().toISOString();
 
 
-            console.log(
-                "================================="
-            );
+			// =================================================
+			// 4. CRÉATION DE L'INSCRIPTION FIRESTORE
+			// =================================================
 
-            console.log(
-                "🎉 INSCRIPTION VALIDÉE"
-            );
+			console.log(
+				"🔥 Création de l'inscription Firestore..."
+			);
 
-            console.log(
-                "================================="
-            );
+			console.log(
+				"👤 membreId :",
+				data.membreId
+			);
+
+			console.log(
+				"📎 Documents :",
+				data.documents
+			);
+
+
+			const inscriptionRef =
+				await addDoc(
+					collection(
+						db,
+						"inscriptions"
+					),
+					data
+				);
+
+
+			console.log(
+				"✅ Inscription Firestore créée :",
+				inscriptionRef.id
+			);
+			
+			console.log(
+				"================================="
+			);
+
+			console.log(
+				"🎉 INSCRIPTION VALIDÉE"
+			);
+
+			console.log(
+				"================================="
+			);
 
 
             // =================================================
