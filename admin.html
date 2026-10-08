@@ -155,6 +155,63 @@
             }
 
         }
+		
+		
+		.admin-login{
+			min-height:70vh;
+			display:flex;
+			align-items:center;
+			justify-content:center;
+		}
+
+		.login-box{
+			background:white;
+			width:100%;
+			max-width:420px;
+			padding:35px;
+			border-radius:20px;
+			box-shadow:0 10px 40px rgba(0,0,0,0.12);
+			text-align:center;
+		}
+
+		.login-icon{
+			font-size:40px;
+			margin-bottom:10px;
+		}
+
+		.login-box h2{
+			color:#004080;
+			margin-bottom:10px;
+		}
+
+		.login-box p{
+			color:#666;
+			margin-bottom:25px;
+		}
+
+		.login-box input{
+			box-sizing:border-box;
+			width:100%;
+			margin-bottom:12px;
+			border:1px solid #ddd;
+		}
+
+		.login-box button{
+			width:100%;
+			background:#004080;
+			color:white;
+		}
+
+		#loginError{
+			color:#c62828;
+			margin-top:15px;
+			font-weight:bold;
+		}
+
+		.logout{
+			background:#555;
+			color:white;
+		}
 
     </style>
 </head>
@@ -162,6 +219,42 @@
 <body>
 
 <h1>🎿 Administration ASCT</h1>
+
+<div id="adminLogin" class="admin-login">
+
+    <div class="login-box">
+
+        <div class="login-icon">🔐</div>
+
+        <h2>Administration ASCT</h2>
+
+        <p>
+            Connectez-vous avec votre compte administrateur.
+        </p>
+
+        <input
+            type="email"
+            id="adminEmail"
+            placeholder="Adresse e-mail"
+        >
+
+        <input
+            type="password"
+            id="adminPassword"
+            placeholder="Mot de passe"
+        >
+
+        <button id="adminLoginBtn">
+            Se connecter
+        </button>
+
+        <div id="loginError"></div>
+
+    </div>
+
+</div>
+
+<div id="adminContent" style="display:none;">
 
 <div class="counter" id="counter">
     0 inscription
@@ -179,6 +272,10 @@
         📊 Export CSV
     </button>
 
+    <button id="logoutAdmin" class="logout">
+        🚪 Déconnexion
+    </button>
+
 </div>
 
 <div id="liste"></div>
@@ -187,19 +284,7 @@
 
 <script type="module">
 
-// =========================
-// MOT DE PASSE
-// =========================
 
-const password = prompt("Mot de passe admin :");
-
-if(password !== "ASCT2025"){
-
-    document.body.innerHTML =
-        "<h1>⛔ Accès refusé</h1>";
-
-    throw new Error("Accès refusé");
-}
 
 // =========================
 // FIREBASE
@@ -213,9 +298,17 @@ import {
     collection,
     onSnapshot,
     deleteDoc,
-    doc
+    doc,
+    getDoc
 }
 from "https://www.gstatic.com/firebasejs/12.12.0/firebase-firestore.js";
+
+import {
+    getAuth,
+    onAuthStateChanged,
+    signOut
+}
+from "https://www.gstatic.com/firebasejs/12.12.0/firebase-auth.js";
 
 const firebaseConfig = {
 
@@ -230,6 +323,154 @@ const firebaseConfig = {
 const app = initializeApp(firebaseConfig);
 
 const db = getFirestore(app);
+
+const auth = getAuth(app);
+
+// =========================
+// AUTHENTIFICATION ADMIN
+// =========================
+
+const adminLogin =
+    document.getElementById("adminLogin");
+
+const adminContent =
+    document.getElementById("adminContent");
+
+const adminEmail =
+    document.getElementById("adminEmail");
+
+const adminPassword =
+    document.getElementById("adminPassword");
+
+const adminLoginBtn =
+    document.getElementById("adminLoginBtn");
+
+const loginError =
+    document.getElementById("loginError");
+
+
+// =========================
+// CONNEXION
+// =========================
+
+adminLoginBtn.addEventListener("click", async () => {
+
+    const email = adminEmail.value.trim();
+    const password = adminPassword.value;
+
+    loginError.textContent = "";
+
+    if (!email || !password) {
+
+        loginError.textContent =
+            "Veuillez renseigner votre adresse e-mail et votre mot de passe.";
+
+        return;
+    }
+
+    try {
+
+        const { signInWithEmailAndPassword } =
+            await import(
+                "https://www.gstatic.com/firebasejs/12.12.0/firebase-auth.js"
+            );
+
+        await signInWithEmailAndPassword(
+            auth,
+            email,
+            password
+        );
+
+    } catch (error) {
+
+        console.error(error);
+
+        loginError.textContent =
+            "Adresse e-mail ou mot de passe incorrect.";
+    }
+});
+
+// =========================
+// VERIFICATION ADMIN
+// =========================
+
+onAuthStateChanged(auth, async (user) => {
+
+    if (!user) {
+
+        adminLogin.style.display = "flex";
+        adminContent.style.display = "none";
+
+        return;
+    }
+
+    try {
+
+        const adminRef = doc(
+            db,
+            "admins",
+            user.uid
+        );
+
+        const adminSnap =
+            await getDoc(adminRef);
+
+        if (
+            !adminSnap.exists()
+            ||
+            adminSnap.data().role !== "admin"
+        ) {
+
+            console.warn(
+                "Utilisateur connecté mais non administrateur."
+            );
+
+            await signOut(auth);
+
+            loginError.textContent =
+                "Ce compte n'a pas les droits administrateur.";
+
+            adminLogin.style.display = "flex";
+            adminContent.style.display = "none";
+
+            return;
+        }
+
+        // =========================
+        // ADMIN AUTORISÉ
+        // =========================
+
+        adminLogin.style.display = "none";
+        adminContent.style.display = "block";
+		
+		chargerInscriptionsAdmin();
+
+        console.log(
+            "✅ Administrateur authentifié :",
+            user.email
+        );
+
+    } catch (error) {
+
+        console.error(
+            "Erreur vérification admin :",
+            error
+        );
+
+        adminLogin.style.display = "flex";
+        adminContent.style.display = "none";
+    }
+});
+
+const logoutAdmin =
+    document.getElementById("logoutAdmin");
+
+logoutAdmin.addEventListener("click", async () => {
+
+    await signOut(auth);
+
+    window.location.reload();
+});
 
 // =========================
 // HTML
@@ -1426,23 +1667,40 @@ function afficherListe(dataArray){
 // FIRESTORE LIVE
 // =========================
 
-onSnapshot(
-    collection(db, "inscriptions"),
-    (snapshot) => {
+let unsubscribeInscriptions = null;
 
-        allData = [];
+function chargerInscriptionsAdmin() {
 
-        snapshot.forEach(docSnap => {
-
-            allData.push({
-                id: docSnap.id,
-                ...docSnap.data()
-            });
-        });
-
-        afficherListe(allData);
+    if (unsubscribeInscriptions) {
+        unsubscribeInscriptions();
     }
-);
+
+    unsubscribeInscriptions = onSnapshot(
+        collection(db, "inscriptions"),
+        (snapshot) => {
+
+            allData = [];
+
+            snapshot.forEach(docSnap => {
+
+                allData.push({
+                    id: docSnap.id,
+                    ...docSnap.data()
+                });
+            });
+
+            afficherListe(allData);
+        },
+
+        (error) => {
+
+            console.error(
+                "Erreur chargement inscriptions :",
+                error
+            );
+        }
+    );
+}
 
 // =========================
 // RECHERCHE

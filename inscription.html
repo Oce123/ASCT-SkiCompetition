@@ -1734,16 +1734,59 @@ async function chargerMembreExistant(user) {
 // VÉRIFICATION DE L'ACCÈS
 // =====================================================
 
+let utilisateurConnecte = null;
+let authInitialisee = false;
+
 onAuthStateChanged(auth, async (user) => {
 
-    if (!user) {
-        window.location.href = "connexion.html";
+    console.log(
+        "🔐 Changement état Auth :",
+        user ? user.email : "AUCUN UTILISATEUR"
+    );
+
+    // Première vérification
+    if (!authInitialisee) {
+
+        authInitialisee = true;
+
+        if (!user) {
+
+            console.warn(
+                "⚠️ Aucun utilisateur connecté au chargement de l'inscription."
+            );
+
+            window.location.href = "connexion.html";
+            return;
+        }
+    }
+
+    // Si Firebase nous renvoie un utilisateur
+    if (user) {
+
+        utilisateurConnecte = user;
+
+        console.log(
+            "✅ Utilisateur connecté :",
+            user.email
+        );
+
+        await chargerMembreExistant(user);
+
         return;
     }
 
-    console.log("✅ Utilisateur connecté :", user.email);
+    /*
+     * Si on arrive ici après que l'utilisateur
+     * était déjà authentifié, on NE REDIRIGE PAS
+     * immédiatement.
+     *
+     * Cela évite de perdre le formulaire sur une
+     * variation momentanée de l'état Firebase Auth.
+     */
 
-    await chargerMembreExistant(user);
+    console.warn(
+        "⚠️ Firebase signale momentanément une absence d'utilisateur."
+    );
 });
 
 // =====================================================
@@ -1771,11 +1814,15 @@ document.addEventListener("DOMContentLoaded", () => {
 
         e.preventDefault();
 		
-		const user = auth.currentUser;
+		const user = utilisateurConnecte || auth.currentUser;
 
 		if (!user) {
-			alert("Vous devez être connecté pour effectuer une inscription.");
-			window.location.href = "connexion.html";
+
+			alert(
+				"Votre session semble avoir expiré. " +
+				"Veuillez vous reconnecter avant de valider l'inscription."
+			);
+
 			return;
 		}
 
