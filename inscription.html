@@ -69,19 +69,38 @@
 
             <div class="form-row">
                 <input type="date" id="birthdate" required>
-                <select>
-                    <option>Sexe</option>
-                    <option>F</option>
-                    <option>M</option>
-                </select>
+				<select id="sexe">
+					<option value="">Sexe</option>
+					<option value="F">F</option>
+					<option value="M">M</option>
+				</select>
             </div>
 
             <div class="form-row">
-                <input id="adresse" type="text" placeholder="Adresse" style="width:100%;" required>
-				<input type="text" placeholder="Code Postal" style="width:100%;" required>
-				<input type="text" placeholder="Ville" style="width:100%;" required>
-				
-            </div>
+				<input
+					id="adresse"
+					type="text"
+					placeholder="Adresse"
+					style="width:100%;"
+					required
+				>
+
+				<input
+					id="code-postal"
+					type="text"
+					placeholder="Code Postal"
+					style="width:100%;"
+					required
+				>
+
+				<input
+					id="ville"
+					type="text"
+					placeholder="Ville"
+					style="width:100%;"
+					required
+				>
+			</div>
 
             <div class="form-row">
                 <select id="scolarite">
@@ -1633,6 +1652,33 @@ async function chargerMembreExistant(user) {
 
         const champDateNaissance =
             document.getElementById("birthdate");
+			
+		const champSexe =
+			document.getElementById("sexe");
+
+		const champAdresse =
+			document.getElementById("adresse");
+
+		const champCodePostal =
+			document.getElementById("code-postal");
+
+		const champVille =
+			document.getElementById("ville");
+
+		const champSafran =
+			document.getElementById("safran-status");
+
+		const champNomUrgence =
+			document.getElementById("nom-urgence");
+
+		const champPrenomUrgence =
+			document.getElementById("prenom-urgence");
+
+		const champTelephoneUrgence =
+			document.getElementById("telephone-urgence");
+
+		const champLienUrgence =
+			document.getElementById("lien");
 
         if (champNom) {
             champNom.value = membre.nom || "";
@@ -1654,6 +1700,50 @@ async function chargerMembreExistant(user) {
             champDateNaissance.value =
                 membre.dateNaissance || "";
         }
+		
+		// Sexe et adresse
+		if (champSexe) {
+			champSexe.value = membre.sexe || "";
+		}
+
+		if (champAdresse) {
+			champAdresse.value = membre.adresse || "";
+		}
+
+		if (champCodePostal) {
+			champCodePostal.value = membre.codePostal || "";
+		}
+
+		if (champVille) {
+			champVille.value = membre.ville || "";
+		}
+
+		// Lien avec Safran HE
+		if (champSafran) {
+			champSafran.value = membre.statutSafran || "";
+
+			// Mettre à jour l'affichage des champs Safran
+			champSafran.dispatchEvent(
+				new Event("change", { bubbles: true })
+			);
+		}
+
+		// Contact d'urgence
+		if (champNomUrgence) {
+			champNomUrgence.value = membre.nomUrgence || "";
+		}
+
+		if (champPrenomUrgence) {
+			champPrenomUrgence.value = membre.prenomUrgence || "";
+		}
+
+		if (champTelephoneUrgence) {
+			champTelephoneUrgence.value = membre.telephoneUrgence || "";
+		}
+
+		if (champLienUrgence) {
+			champLienUrgence.value = membre.lienUrgence || "";
+		}
 		
 		// ==========================================
 		// ACTUALISATION DES CHAMPS AUTOMATIQUES
@@ -1734,6 +1824,7 @@ async function chargerMembreExistant(user) {
 // VÉRIFICATION DE L'ACCÈS
 // =====================================================
 
+
 let utilisateurConnecte = null;
 let authInitialisee = false;
 
@@ -1744,15 +1835,22 @@ onAuthStateChanged(auth, async (user) => {
         user ? user.email : "AUCUN UTILISATEUR"
     );
 
-    // Première vérification
-    if (!authInitialisee) {
+    // Diagnostic exécuté à CHAQUE changement d'état
+    console.log("🔍 Diagnostic Auth", {
+        authInitialisee,
+        utilisateurConnecte: utilisateurConnecte?.email ?? null,
+        currentUser: auth.currentUser?.email ?? null,
+        uid: auth.currentUser?.uid ?? null,
+        heure: new Date().toISOString()
+    });
 
+    // Première vérification uniquement
+    if (!authInitialisee) {
         authInitialisee = true;
 
         if (!user) {
-
             console.warn(
-                "⚠️ Aucun utilisateur connecté au chargement de l'inscription."
+                "⚠️ Aucun utilisateur connecté au chargement."
             );
 
             window.location.href = "connexion.html";
@@ -1760,34 +1858,20 @@ onAuthStateChanged(auth, async (user) => {
         }
     }
 
-    // Si Firebase nous renvoie un utilisateur
     if (user) {
-
         utilisateurConnecte = user;
 
-        console.log(
-            "✅ Utilisateur connecté :",
-            user.email
-        );
+        console.log("✅ Utilisateur connecté :", user.email);
 
         await chargerMembreExistant(user);
-
         return;
     }
 
-    /*
-     * Si on arrive ici après que l'utilisateur
-     * était déjà authentifié, on NE REDIRIGE PAS
-     * immédiatement.
-     *
-     * Cela évite de perdre le formulaire sur une
-     * variation momentanée de l'état Firebase Auth.
-     */
-
     console.warn(
-        "⚠️ Firebase signale momentanément une absence d'utilisateur."
+        "⚠️ Firebase signale une absence d'utilisateur après initialisation."
     );
 });
+
 
 // =====================================================
 // ATTENTE DU CHARGEMENT DE LA PAGE
@@ -1812,20 +1896,29 @@ document.addEventListener("DOMContentLoaded", () => {
 
     form.addEventListener("submit", async (e) => {
 
+        
         e.preventDefault();
-		
-		const user = utilisateurConnecte || auth.currentUser;
 
-		if (!user) {
+        // Vérifier l'utilisateur réellement authentifié par Firebase
+        const user = auth.currentUser;
 
-			alert(
-				"Votre session semble avoir expiré. " +
-				"Veuillez vous reconnecter avant de valider l'inscription."
-			);
+        console.log("🔎 Vérification Auth avant inscription :", {
+            email: user?.email ?? null,
+            uid: user?.uid ?? null
+        });
 
-			return;
-		}
+        if (!user) {
+            console.error(
+                "❌ Inscription interrompue : aucun utilisateur authentifié."
+            );
 
+            alert(
+                "Votre session n'est plus authentifiée. " +
+                "Veuillez vous reconnecter avant de valider l'inscription."
+            );
+
+            return;
+        }
 
         console.log("=================================");
         console.log("📨 ENVOI DE L'INSCRIPTION");
@@ -1916,6 +2009,15 @@ document.addEventListener("DOMContentLoaded", () => {
 
             adresse:
                 document.getElementById("adresse")?.value || "",
+				
+			sexe:
+				document.getElementById("sexe")?.value || "",
+
+			codePostal:
+				document.getElementById("code-postal")?.value || "",
+
+			ville:
+				document.getElementById("ville")?.value || "",
 
 
             // -----------------------------
@@ -1975,12 +2077,18 @@ document.addEventListener("DOMContentLoaded", () => {
 
             contactUrgence:
                 `${document.getElementById("nom-urgence")?.value || ""} ${document.getElementById("prenom-urgence")?.value || ""}`.trim(),
+				
+			nomUrgence:
+				document.getElementById("nom-urgence")?.value || "",
 
-            telephoneUrgence:
-                document.getElementById("telephone-urgence")?.value || "",
+			prenomUrgence:
+				document.getElementById("prenom-urgence")?.value || "",
 
-            lienUrgence:
-                document.getElementById("lien")?.value || "",
+			telephoneUrgence:
+				document.getElementById("telephone-urgence")?.value || "",
+
+			lienUrgence:
+				document.getElementById("lien")?.value || "",
 
 
             // -----------------------------
@@ -2208,8 +2316,21 @@ document.addEventListener("DOMContentLoaded", () => {
 						nom: data.nom || "",
 						prenom: data.prenom || "",
 						dateNaissance: data.dateNaissance || "",
+						sexe: data.sexe || "",
 						email: data.email || "",
 						telephone: data.telephone || "",
+
+						adresse: data.adresse || "",
+						codePostal: data.codePostal || "",
+						ville: data.ville || "",
+
+						statutSafran: data.statutSafran || "",
+
+						nomUrgence: data.nomUrgence || "",
+						prenomUrgence: data.prenomUrgence || "",
+						telephoneUrgence: data.telephoneUrgence || "",
+						lienUrgence: data.lienUrgence || "",
+
 						updatedAt: new Date().toISOString()
 					}
 				);
@@ -2240,8 +2361,20 @@ document.addEventListener("DOMContentLoaded", () => {
 						nom: data.nom || "",
 						prenom: data.prenom || "",
 						dateNaissance: data.dateNaissance || "",
+						sexe: data.sexe || "",
 						email: data.email || "",
 						telephone: data.telephone || "",
+
+						adresse: data.adresse || "",
+						codePostal: data.codePostal || "",
+						ville: data.ville || "",
+
+						statutSafran: data.statutSafran || "",
+
+						nomUrgence: data.nomUrgence || "",
+						prenomUrgence: data.prenomUrgence || "",
+						telephoneUrgence: data.telephoneUrgence || "",
+						lienUrgence: data.lienUrgence || "",
 						createdAt: new Date().toISOString(),
 						updatedAt: new Date().toISOString()
 					}
