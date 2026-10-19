@@ -1354,6 +1354,29 @@ function mettreAJourDocumentScolarite() {
     }
 }
 
+// Formats et taille acceptés pour les documents.
+// À garder identiques aux règles Firebase Storage.
+const FORMATS_DOCUMENTS_ACCEPTES = [
+    "application/pdf",
+    "image/jpeg",
+    "image/png"
+];
+
+const TAILLE_MAX_DOCUMENT = 10 * 1024 * 1024; // 10 Mo
+
+function messageErreurFichier(fichier) {
+
+    if (!FORMATS_DOCUMENTS_ACCEPTES.includes(fichier.type)) {
+        return "Format non accepté : utilisez un PDF, un JPG ou un PNG.";
+    }
+
+    if (fichier.size >= TAILLE_MAX_DOCUMENT) {
+        return "Fichier trop volumineux : 10 Mo maximum.";
+    }
+
+    return "";
+}
+
 function mettreAJourEtatDocuments() {
 
     mettreAJourDocumentScolarite();
@@ -1367,13 +1390,35 @@ function mettreAJourEtatDocuments() {
 
         if (!input || !check) return;
 
+        // Contrôle du fichier qui vient d'être choisi
+        if (input.files && input.files.length > 0) {
+
+            const erreur = messageErreurFichier(input.files[0]);
+
+            if (erreur) {
+                input.dataset.erreur = erreur;
+                input.value = "";
+            } else {
+                delete input.dataset.erreur;
+            }
+        }
+
         const hasFile = !!(input.files && input.files.length > 0);
+        const erreurFichier = input.dataset.erreur || "";
 
         check.checked = hasFile;
 
         if (name) {
-            name.textContent =
-                hasFile ? input.files[0].name : "Aucun fichier";
+
+            if (hasFile) {
+                name.textContent = input.files[0].name;
+            } else if (erreurFichier) {
+                name.textContent = "⚠️ " + erreurFichier;
+            } else {
+                name.textContent = "Aucun fichier";
+            }
+
+            name.classList.toggle("file-error", !hasFile && !!erreurFichier);
         }
 
         if (row) {
@@ -1414,9 +1459,15 @@ window.reinitialiserDocuments = function () {
         const name = document.getElementById(doc.name);
         const row = document.getElementById(doc.row);
 
-        if (input) input.value = "";
+        if (input) {
+            input.value = "";
+            delete input.dataset.erreur;
+        }
         if (check) check.checked = false;
-        if (name) name.textContent = "Aucun fichier";
+        if (name) {
+            name.textContent = "Aucun fichier";
+            name.classList.remove("file-error");
+        }
         if (row) row.classList.remove("document-ok");
     });
 

@@ -6,86 +6,646 @@
     <meta name="robots" content="index,follow">
     <meta name="description" content="Politique de confidentialité du site ASCT Ski Compétition concernant les inscriptions et les données des adhérents.">
     <title>Politique de confidentialité — ASCT Ski Compétition</title>
-    <style>
-        :root {
-            color-scheme: light;
-            --navy: #073763;
-            --blue: #0b5394;
-            --text: #202733;
-            --muted: #5d6877;
-            --line: #dce3eb;
-            --paper: #ffffff;
-            --page: #f3f6fa;
-        }
-        * { box-sizing: border-box; }
-        html { scroll-behavior: smooth; }
-        body {
-            margin: 0;
-            font-family: Arial, Helvetica, sans-serif;
-            line-height: 1.7;
-            color: var(--text);
-            background: var(--page);
-        }
-        a { color: var(--blue); overflow-wrap: anywhere; }
-        .site-header {
-            background: var(--navy);
-            color: white;
-            padding: 28px 20px;
-        }
-        .header-inner, main, footer {
-            width: min(100% - 32px, 920px);
-            margin-inline: auto;
-        }
-        .site-header h1 { margin: 0 0 8px; font-size: clamp(1.65rem, 4vw, 2.3rem); line-height: 1.2; }
-        .site-header p { margin: 0; color: #e8f0f8; }
-        main {
-            margin-block: 28px;
-            padding: clamp(20px, 4vw, 42px);
-            background: var(--paper);
-            border: 1px solid var(--line);
-            border-radius: 14px;
-            box-shadow: 0 8px 28px rgba(22, 44, 70, .06);
-        }
-        .notice {
-            border-left: 4px solid #d49b27;
-            background: #fff8e7;
-            padding: 14px 16px;
-            border-radius: 6px;
-            margin-bottom: 28px;
-        }
-        h2 { margin-top: 32px; color: var(--navy); font-size: 1.3rem; line-height: 1.35; }
-        h2:first-of-type { margin-top: 0; }
-        h3 { color: var(--navy); font-size: 1.05rem; }
-        p, li { max-width: 78ch; }
-        li { margin: 7px 0; }
-        .meta { color: var(--muted); font-size: .93rem; }
-        .placeholder { background: #fff2cc; padding: 1px 4px; border-radius: 3px; }
-        .site-footer {
-            padding: 0 16px 30px;
-            text-align: center;
-            color: var(--muted);
-            font-size: .92rem;
-        }
-        .back-link { display: inline-block; margin-top: 18px; }
-        @media (max-width: 560px) {
-            main { margin-block: 16px; padding: 20px 17px; }
-            .site-header { padding: 23px 16px; }
-        }
+    <style>		
+		:root {
+			color-scheme: light;
+			--navy: #071525;
+			--navy-soft: #10243a;
+			--blue: #2477bd;
+			--blue-light: #69baff;
+			--text: #202b39;
+			--muted: #657386;
+			--line: #e0e7ef;
+			--paper: #ffffff;
+			--page: #f2f5f9;
+		}
+
+		* {
+			box-sizing: border-box;
+		}
+
+		html {
+			scroll-behavior: smooth;
+			scroll-padding-top: 24px;
+		}
+
+		body {
+			margin: 0;
+			font-family: Arial, Helvetica, sans-serif;
+			line-height: 1.75;
+			color: var(--text);
+			background:
+				radial-gradient(ellipse at 50% 0%, rgba(42, 105, 164, 0.09), transparent 55%),
+				var(--page);
+		}
+
+		a {
+			color: #1767a7;
+			overflow-wrap: anywhere;
+			text-underline-offset: 3px;
+		}
+
+		a:hover {
+			color: #0b477d;
+		}
+
+		/* EN-TÊTE */
+
+		body > .site-header {
+			position: relative;
+			inset: auto;
+			z-index: 2;
+			width: 100%;
+			margin: 0;
+			padding: 58px 20px 52px;
+			overflow: hidden;
+			color: #ffffff;
+			background:
+				radial-gradient(ellipse at 80% 0%, rgba(53, 133, 204, 0.25), transparent 45%),
+				linear-gradient(125deg, #06111e 0%, #0b2036 55%, #123858 100%);
+			border: 0;
+			border-bottom: 1px solid rgba(105, 186, 255, 0.35);
+			border-radius: 0;
+			box-shadow: 0 12px 35px rgba(7, 21, 37, 0.13);
+		}
+
+		body > .site-header::after {
+			content: "";
+			position: absolute;
+			left: 0;
+			right: 0;
+			bottom: 0;
+			height: 2px;
+			background: linear-gradient(
+				90deg,
+				transparent,
+				rgba(105, 186, 255, 0.9),
+				rgba(105, 186, 255, 0.2),
+				transparent
+			);
+		}
+
+		.header-inner {
+			position: relative;
+			z-index: 1;
+			width: min(100%, 920px);
+			margin-inline: auto;
+		}
+
+		.site-header .eyebrow {
+			display: inline-flex;
+			align-items: center;
+			gap: 9px;
+			margin: 0 0 15px;
+			color: #9dcefa;
+			font-size: 0.76rem;
+			font-weight: 700;
+			letter-spacing: 0.15em;
+			text-transform: uppercase;
+		}
+
+		.site-header .eyebrow::before {
+			content: "";
+			display: inline-block;
+			width: 25px;
+			height: 2px;
+			background: var(--blue-light);
+		}
+
+		.site-header h1 {
+			max-width: 780px;
+			margin: 0 0 12px;
+			color: #ffffff;
+			font-size: clamp(2rem, 5vw, 3.25rem);
+			font-weight: 750;
+			line-height: 1.12;
+			letter-spacing: -0.035em;
+		}
+
+		.site-header p {
+			max-width: 680px;
+			margin: 0;
+			color: #d1dfed;
+			font-size: clamp(0.98rem, 2vw, 1.08rem);
+			line-height: 1.65;
+		}
+
+		/* CONTENU */
+
+		body > main {
+			position: relative;
+			display: flow-root;
+			z-index: 1;
+			width: min(100% - 32px, 920px);
+			margin: 34px auto 42px;
+			padding: clamp(22px, 5vw, 52px);
+			background: var(--paper);
+			border: 1px solid rgba(207, 219, 232, 0.9);
+			border-radius: 16px;
+			box-shadow:
+				0 5px 12px rgba(18, 39, 62, 0.025),
+				0 18px 48px rgba(18, 39, 62, 0.055);
+		}
+
+		.notice {
+			position: relative;
+			margin: 0 0 34px;
+			padding: 17px 20px 17px 22px;
+			color: #304c67;
+			background: linear-gradient(110deg, #edf6ff, #f7faff);
+			border: 1px solid #d8e9f8;
+			border-left: 4px solid var(--blue);
+			border-radius: 9px;
+			font-size: 0.95rem;
+			line-height: 1.65;
+		}
+
+		.notice strong {
+			color: #153d62;
+		}
+
+		body > main h2 {
+			display: flex;
+			align-items: baseline;
+			gap: 12px;
+			margin: 42px 0 15px;
+			padding-bottom: 11px;
+			color: var(--navy-soft);
+			border-bottom: 1px solid var(--line);
+			font-size: clamp(1.16rem, 2.6vw, 1.4rem);
+			font-weight: 750;
+			line-height: 1.4;
+			letter-spacing: -0.015em;
+			scroll-margin-top: 20px;
+		}
+
+		body > main h2:first-of-type {
+			margin-top: 0;
+		}
+
+		body > main h2::before {
+			content: "";
+			flex: 0 0 4px;
+			align-self: stretch;
+			min-height: 23px;
+			background: linear-gradient(180deg, #54a9ef, #1767a7);
+			border-radius: 4px;
+		}
+
+		body > main h3 {
+			margin: 25px 0 10px;
+			color: #173e63;
+			font-size: 1.08rem;
+			line-height: 1.45;
+		}
+
+		body > main p {
+			margin: 0 0 16px;
+			max-width: 78ch;
+		}
+
+		body > main ul,
+		body > main ol {
+			margin: 12px 0 22px;
+			padding-left: 25px;
+		}
+
+		body > main li {
+			margin: 9px 0;
+			padding-left: 4px;
+		}
+
+		body > main li::marker {
+			color: var(--blue);
+		}
+
+		body > main strong {
+			color: #172c42;
+		}
+
+		body > main .meta {
+			color: var(--muted);
+			font-size: 0.9rem;
+		}
+
+		body > main .placeholder {
+			padding: 2px 5px;
+			color: #72500a;
+			background: #fff3cd;
+			border-radius: 4px;
+		}
+
+		/* LIENS DE FIN DE PAGE */
+
+		body > main .back-link {
+			display: inline-flex;
+			align-items: center;
+			gap: 8px;
+			margin-top: 30px;
+			padding: 11px 16px;
+			color: #ffffff;
+			background: linear-gradient(135deg, #12395d, #1767a7);
+			border: 1px solid rgba(22, 103, 167, 0.35);
+			border-radius: 8px;
+			font-size: 0.94rem;
+			font-weight: 700;
+			text-decoration: none;
+			transition:
+				transform 180ms ease,
+				box-shadow 180ms ease,
+				background 180ms ease;
+		}
+
+		body > main .back-link:hover {
+			color: #ffffff;
+			background: linear-gradient(135deg, #0c2b49, #12558d);
+			box-shadow: 0 5px 14px rgba(18, 72, 117, 0.2);
+			transform: translateY(-2px);
+		}
+
+		/* FOOTER : ON CONSERVE LE DESIGN COMMUN DU SITE */
+
+		body > footer.site-footer {
+			width: 100%;
+			margin: 0;
+		}
+
+		/* MOBILE */
+
+		@media (max-width: 700px) {
+			body > .site-header {
+				padding: 42px 20px 37px;
+			}
+
+			body > main {
+				width: calc(100% - 24px);
+				margin: 22px auto 28px;
+				padding: 25px 20px;
+				border-radius: 12px;
+			}
+
+			.notice {
+				margin-bottom: 28px;
+				padding: 14px 15px;
+			}
+
+			body > main h2 {
+				gap: 9px;
+				margin-top: 34px;
+				padding-bottom: 9px;
+			}
+
+			body > main ul,
+			body > main ol {
+				padding-left: 21px;
+			}
+		}
+
+		@media (max-width: 420px) {
+			body > .site-header {
+				padding: 34px 17px 31px;
+			}
+
+			.site-header .eyebrow {
+				font-size: 0.68rem;
+				letter-spacing: 0.11em;
+			}
+
+			body > main {
+				width: calc(100% - 20px);
+				padding: 22px 16px;
+			}
+
+			body > main h2 {
+				font-size: 1.13rem;
+			}
+
+			body > main li {
+				padding-left: 1px;
+			}
+		}
+
+		@media (prefers-reduced-motion: reduce) {
+			html {
+				scroll-behavior: auto;
+			}
+
+			body > main .back-link {
+				transition: none;
+			}
+		}
+		
+		/* ==========================================
+		   FOOTER — ASCT SKI COMPÉTITION
+		========================================== */
+
+		.site-footer {
+			position: relative;
+			width: 100%;
+			max-width: 100%;
+			min-width: 0;
+			box-sizing: border-box;
+			overflow: hidden;
+			margin-top: 0;
+			padding: 24px 24px 12px;
+			color: #f5f7fa;
+			background:
+				radial-gradient(
+					circle at 50% 0%,
+					rgba(49, 105, 160, 0.22),
+					transparent 55%
+				),
+				linear-gradient(135deg, #101923 0%, #172635 55%, #0d151e 100%);
+			border-top: 1px solid rgba(255, 255, 255, 0.12);
+		}
+
+		/* Fine ligne décorative en haut */
+		.site-footer::before {
+			content: "";
+			position: absolute;
+			top: 0;
+			left: 10%;
+			width: 80%;
+			height: 2px;
+			background: linear-gradient(
+				90deg,
+				transparent,
+				#5aa9e6,
+				#ffffff,
+				#5aa9e6,
+				transparent
+			);
+			opacity: 0.75;
+		}
+
+		/* Rangée des logos */
+		.footer-logos {
+			width: 100%;
+			max-width: 1000px;
+			min-width: 0;
+			margin: 0 auto 30px;
+			margin-bottom: 16px;
+			box-sizing: border-box;
+
+			display: grid;
+			grid-template-columns: minmax(0, 1fr) minmax(0, 1fr) minmax(0, 1fr);
+			align-items: center;
+			justify-items: center;
+			gap: 16px;
+		}
+
+		/* Logos gauche et centre */
+		.footer-logos img {
+			display: block;
+			width: 100%;
+			max-width: 180px;
+			min-width: 0;
+			height: 58px;
+			object-fit: contain;
+			justify-self: center;
+
+			filter: drop-shadow(0 3px 7px rgba(0, 0, 0, 0.22));
+			transition: transform 0.25s ease;
+		}
+
+		/* Logo de droite : deux fois plus grand */
+		.footer-logos img:nth-child(3) {
+			width: 100%;
+			max-width: 360px;
+			height: 116px;
+		}
+
+		/* Petit effet au survol, ordinateur uniquement */
+		@media (hover: hover) and (pointer: fine) {
+			.footer-logos img:hover {
+				transform: translateY(-3px);
+			}
+		}
+
+		/* Bloc contact */
+		.footer-contact {
+			width: 100%;
+			max-width: 1000px;
+			min-width: 0;
+			box-sizing: border-box;
+			margin: 0 auto;
+			padding: 15px 0;
+			text-align: center;
+			border-top: 1px solid rgba(255, 255, 255, 0.12);
+		}
+
+		.footer-contact p {
+			margin: 0 0 10px;
+			margin-bottom: 6px;
+			color: #ffffff;
+			font-size: 17px;
+			font-weight: 750;
+			letter-spacing: 0.3px;
+		}
+
+		.footer-contact a {
+			display: inline-flex;
+			align-items: center;
+			justify-content: center;
+			gap: 8px;
+
+			color: #a9d9ff;
+			font-size: 14px;
+			font-weight: 600;
+			text-decoration: none;
+
+			transition: color 0.2s ease;
+		}
+
+		.footer-contact a:hover {
+			color: #ffffff;
+			text-decoration: underline;
+			text-underline-offset: 4px;
+		}
+
+		/* Dernière ligne : mentions et copyright */
+		.footer-bottom {
+			width: 100%;
+			max-width: 1000px;
+			min-width: 0;
+			box-sizing: border-box;
+			margin: 0 auto;
+			padding-top: 11px;
+
+			display: flex;
+			flex-wrap: wrap;
+			align-items: center;
+			justify-content: space-between;
+			gap: 8px;
+
+			border-top: 1px solid rgba(255, 255, 255, 0.10);
+			color: #aab7c4;
+			font-size: 12px;
+		}
+
+		.footer-bottom a {
+			color: #c9d9e8;
+			text-decoration: none;
+			transition: color 0.2s ease;
+		}
+
+		.footer-bottom a:hover {
+			color: #ffffff;
+			text-decoration: underline;
+			text-underline-offset: 3px;
+		}
+
+		/* ==========================================
+		   RESPONSIVE — TABLETTES ET MOBILES
+		========================================== */
+
+		@media (max-width: 700px) {
+			.site-footer {
+				padding: 18px 14px 10px;
+			}
+
+			.footer-logos {
+				margin-bottom: 12px;
+				gap: 7px;
+			}
+
+			.footer-logos img {
+				max-width: 100%;
+				height: 43px;
+			}
+
+			.footer-logos img:nth-child(3) {
+				max-width: 100%;
+				height: 86px;
+			}
+
+			.footer-contact {
+				padding: 12px 0;
+			}
+
+			.footer-contact p {
+				font-size: 16px;
+			}
+
+			.footer-contact a {
+				font-size: 13px;
+				overflow-wrap: anywhere;
+			}
+
+			.footer-bottom {
+				flex-direction: column;
+				justify-content: center;
+				text-align: center;
+				gap: 6px;
+				padding-top: 10px;
+				line-height: 1.6;
+			}
+		}
+
+		/* Très petits téléphones */
+		@media (max-width: 380px) {
+			.site-footer {
+				padding-right: 12px;
+				padding-left: 12px;
+				padding: 15px 12px 8px;
+			}
+
+			.footer-logos {
+				gap: 5px;
+			}
+
+			.footer-logos img {
+				height: 38px;
+			}
+
+			.footer-logos img:nth-child(3) {
+				height: 76px;
+			}
+		}
+
+		/* Respect de la réduction des animations */
+		@media (prefers-reduced-motion: reduce) {
+			.footer-logos img,
+			.footer-contact a,
+			.footer-bottom a {
+				transition: none;
+			}
+		}
+
+
+		/* ==========================================
+		   TRANSITION VERS LE FOOTER
+		========================================== */
+
+		.site-footer {
+			isolation: isolate;
+			box-shadow: 0 -18px 45px rgba(18, 76, 120, 0.08);
+		}
+
+		.site-footer::before {
+			height: 2px;
+			background: linear-gradient(
+				90deg,
+				transparent 0%,
+				rgba(90, 169, 230, 0.25) 15%,
+				#78c8ff 50%,
+				rgba(90, 169, 230, 0.25) 85%,
+				transparent 100%
+			);
+			box-shadow: 0 0 14px rgba(88, 183, 255, 0.35);
+		}
+
+		/* Petite icône devant le contact */
+		.footer-contact a::before {
+			content: "✉";
+			font-size: 16px;
+			line-height: 1;
+		}
+
+		/* Icône discrète devant la politique de confidentialité */
+		.footer-bottom a[href*="confidentialite"]::before {
+			content: "♧";
+			display: inline-block;
+			margin-right: 7px;
+			font-size: 15px;
+			color: #8ccfff;
+			transition: transform 0.25s ease;
+		}
+
+		.footer-bottom a[href*="confidentialite"]:hover::before {
+			transform: translateY(-2px);
+		}
+
+		@media (prefers-reduced-motion: reduce) {
+			.footer-bottom a[href*="confidentialite"]::before {
+				transition: none;
+			}
+		}
+
+
     </style>
 </head>
 <body>
-    <header class="site-header">
-        <div class="header-inner">
-            <h1>Politique de confidentialité</h1>
-            <p>ASCT Ski Compétition — informations relatives aux données personnelles</p>
-        </div>
-    </header>
+    
+	<header class="site-header">
+		<div class="header-inner">
+			<p class="eyebrow">ASCT TURBOMECA · SKI COMPÉTITION</p>
+			<h1>Politique de confidentialité</h1>
+			<p>
+				Comment vos données personnelles sont collectées,
+				utilisées et protégées dans le cadre des activités du club.
+			</p>
+		</div>
+	</header>
 
     <main>
-        <p class="meta">Version initiale — à compléter et valider par l'association avant publication définitive.</p>
 
         <div class="notice">
-            <strong>À vérifier avant publication :</strong> cette page décrit les traitements connus à partir du fonctionnement du site. L'association doit confirmer les finalités exactes, les bases légales, les durées de conservation, les éventuels destinataires fédéraux et les modalités de gestion des demandes. Les éléments qui ne sont pas connus ne sont pas inventés ici.
+            <strong>Cette page décrit les traitements connus à partir du fonctionnement du site.</strong>
+			<p>La présente politique de confidentialité explique comment l'ASCT Turbomeca, dans le cadre des activités de sa section Ski Compétition, 
+			collecte, utilise, conserve et protège les données personnelles des adhérents et des utilisateurs du site.</p>
+			<p>Elle s'adresse notamment aux personnes qui consultent le site, créent un compte ou effectuent une inscription, ainsi qu'aux parents et représentants légaux 
+			qui réalisent les démarches pour un adhérent mineur.</p>
         </div>
 
         <h2>1. Responsable du traitement et contact</h2>
@@ -96,67 +656,124 @@
             Avenue Joseph Szydlowski<br>
             64510 Bordes
         </p>
+		<p>Pour toute question relative à la présente politique ou à l'utilisation des données personnelles, tu peux contacter le club à l'adresse suivante :</p>
         <p><strong>Contact :</strong> <a href="mailto:oceane.champagne.pro@gmail.com">oceane.champagne.pro@gmail.com</a></p>
-        <p>Le nom juridique exact de l'association responsable du traitement, ainsi que la qualité de la personne chargée de répondre aux demandes, doivent être confirmés par l'association avant publication.</p>
 
         <h2>2. Données susceptibles d'être collectées</h2>
         <p>Selon les champs du formulaire et la situation de l'adhérent, le site peut traiter les catégories de données suivantes :</p>
         <ul>
-            <li>identité et informations de naissance du participant ;</li>
-            <li>coordonnées et adresse postale ;</li>
-            <li>coordonnées de la personne à contacter en cas d'urgence et lien avec le participant ;</li>
-            <li>informations relatives à l'adhésion, à la licence, à la discipline sportive et à la catégorie de course ;</li>
-            <li>informations administratives et de paiement nécessaires au suivi de l'inscription ;</li>
-            <li>documents transmis dans le cadre du dossier d'inscription, selon les exigences applicables ;</li>
-            <li>informations techniques nécessaires au fonctionnement du site et à la sécurité des accès.</li>
+            <li><strong>Identité </strong> : nom, prénom, date de naissance et autres informations nécessaires à l'identification de l'adhérent;</li>
+            <li><strong>Coordonnées</strong> : adresse postale, code postal, ville, numéro de téléphone et adresse électronique, selon les champs du formulaire;</li>
+            <li><strong>Informations relatives à la famille</strong> : identité et coordonnées des responsables légaux, informations relatives au responsable de l'inscription et liens avec l'adhérent;</li>
+            <li><strong>Informations sportives et administratives</strong> : discipline, catégorie, licence, informations de scolarité et éléments nécessaires au suivi de l'inscription;</li>
+            <li><strong>Informations de santé </strong>: renseignements médicaux utiles à la prise en compte de la situation de l'adhérent et à la gestion d'une éventuelle urgence;</li>
+            <li><strong>Contact d'urgence</strong> : coordonnées de la personne à contacter et lien avec l'adhérent;</li>
+            <li><strong>Documents d'inscription</strong> : fichiers transmis dans le cadre des démarches administratives;</li>
+			<li><strong>Informations de gestion</strong> : état d'avancement du dossier, pièces manquantes, statut de l'inscription et informations relatives au suivi du paiement;</li>
+			<li><strong>Données de compte</strong> : informations nécessaires à la création, à l'authentification et à la gestion de l'espace utilisateur, ainsi que certaines données techniques indispensables à la sécurité et au fonctionnement du service;</li>
         </ul>
         <p>Les données effectivement collectées sont celles demandées dans le formulaire et celles transmises par l'adhérent ou son représentant. N'envoyez pas de données qui ne sont pas demandées ou nécessaires à l'inscription.</p>
 
         <h2>3. Pourquoi ces données sont-elles utilisées ?</h2>
         <p>Les données sont susceptibles d'être utilisées pour :</p>
         <ul>
-            <li>recevoir et gérer les demandes d'inscription ou de réinscription ;</li>
-            <li>vérifier que le dossier est complet et suivre les pièces justificatives reçues ;</li>
-            <li>préparer et archiver la fiche d'inscription et les documents associés ;</li>
-            <li>gérer les informations utiles à l'organisation sportive et administrative du club ;</li>
-            <li>contacter l'adhérent ou la personne désignée en cas de besoin lié au dossier ou à l'activité du club ;</li>
-            <li>assurer la maintenance, la sécurité et le bon fonctionnement du service.</li>
+            <li>permettre la création et la gestion des comptes utilisateurs ;</li>
+            <li>recueillir et traiter les inscriptions des adhérents ;</li>
+            <li>vérifier les informations et les documents transmis ;</li>
+            <li>gérer les dossiers des familles et des membres ;</li>
+            <li>organiser le suivi administratif et sportif des adhérents ;</li>
+            <li>assurer le suivi des paiements et des pièces justificatives nécessaires ;</li>
+			<li>disposer des informations utiles en cas d'urgence concernant un adhérent ;</li>
+			<li>archiver les dossiers d'inscription et les documents associés ;</li>
+			<li>assurer la sécurité du site, contrôler les accès et prévenir les utilisations non autorisées ;</li>
+			<li>répondre aux demandes des adhérents et de leurs représentants légaux.</li>
         </ul>
-        <p>Les finalités exactes et les bases légales de chaque traitement doivent être confirmées par l'association. Les données ne devraient pas être utilisées pour une finalité incompatible avec celle pour laquelle elles ont été collectées.</p>
+        <p>Les données ne devraient pas être utilisées pour une finalité incompatible avec celle pour laquelle elles ont été collectées.</p>
+		
+		<h2>4. Données de santé et informations concernant les mineurs</h2>
+		<p>Certaines informations recueillies lors de l'inscription peuvent concerner la santé des adhérents. 
+		Ces informations sont particulièrement sensibles et doivent faire l'objet d'une protection renforcée.</p>
+		<p>Elles sont demandées uniquement dans la mesure nécessaire aux objectifs annoncés, notamment pour permettre au club de prendre en compte des informations médicales utiles en cas d'urgence.</p>
+		<p>L'accès à ces informations est limité aux responsables autorisés du club, dans le cadre de leurs fonctions et selon les besoins liés à la gestion de l'adhésion et à la sécurité de l'adhérent.</p>
+		<p>Le site peut être utilisé pour inscrire des personnes mineures. Dans ce cas, les démarches sont effectuées par leurs parents ou leurs représentants légaux. 
+		Ces derniers doivent veiller à fournir des informations exactes et à jour.</p>
+		<p>Le club doit déterminer et documenter le fondement juridique autorisant le traitement des données personnelles et, en particulier, la condition applicable au traitement des données de santé.</p>
 
-        <h2>4. Qui peut accéder aux données ?</h2>
-        <p>L'accès doit être limité aux personnes autorisées qui en ont besoin pour gérer les inscriptions et les activités du club. Selon la configuration du service et les autorisations accordées, des prestataires techniques peuvent intervenir dans l'hébergement, l'authentification, le stockage ou l'archivage des données.</p>
-        <p>Le site utilise des services Google/Firebase et un hébergement web. Les services et comptes effectivement utilisés, les catégories de données qu'ils hébergent et leurs conditions de traitement doivent être vérifiés par l'association. Les documents d'inscription ne doivent être accessibles qu'aux personnes disposant des autorisations appropriées.</p>
-        <p>Les éventuelles transmissions à une fédération, à un organisme de licence, à un assureur ou à d'autres organismes doivent être précisées par l'association lorsqu'elles ont lieu.</p>
-
-        <h2>5. Hébergement, stockage et sécurité</h2>
-        <p>Le site est hébergé via Netlify. Les fonctions d'inscription et d'archivage peuvent s'appuyer sur Firebase/Google Cloud, Firestore et Google Drive. La configuration exacte doit être vérifiée avant publication de cette politique.</p>
-        <p>Des mesures de sécurité adaptées doivent être mises en œuvre, notamment la limitation des accès administratifs, la protection des comptes, la gestion des autorisations et la sécurisation des secrets techniques. Aucun service en ligne ne peut toutefois garantir une sécurité absolue.</p>
-        <p>Si des données sont traitées ou accessibles depuis un pays situé hors de l'Espace économique européen, l'association doit vérifier les garanties applicables et les indiquer dans la présente politique lorsque nécessaire.</p>
-
-        <h2>6. Durée de conservation</h2>
-        <p>Les durées de conservation exactes n'ont pas été confirmées pour ce site. Elles doivent être définies par l'association en fonction de chaque catégorie de données et des obligations légales, comptables, sportives ou assurantielles applicables.</p>
-        <p>Avant publication définitive, l'association doit préciser notamment la durée de conservation des dossiers d'inscription, des pièces justificatives, des données de paiement et des journaux techniques, ainsi que les règles d'archivage et de suppression. Les données ne doivent pas être conservées indéfiniment sans justification.</p>
-
-        <h2>7. Vos droits</h2>
-        <p>Dans les conditions prévues par la réglementation applicable, les personnes concernées peuvent notamment demander l'accès à leurs données, leur rectification, leur effacement ou la limitation de certains traitements, et s'opposer à certains traitements. La portabilité peut s'appliquer dans les situations prévues par la loi.</p>
-        <p>Pour exercer un droit ou poser une question sur les données personnelles, contactez le club à l'adresse <a href="mailto:oceane.champagne.pro@gmail.com">oceane.champagne.pro@gmail.com</a>. Pour protéger les données, le club pourra demander les informations nécessaires pour vérifier l'identité du demandeur, sans collecter de justificatifs excessifs.</p>
-        <p>Vous pouvez également introduire une réclamation auprès de la Commission nationale de l'informatique et des libertés (CNIL) : <a href="https://www.cnil.fr/fr/plaintes" target="_blank" rel="noopener noreferrer">www.cnil.fr/fr/plaintes</a>.</p>
-
-        <h2>8. Cookies et traceurs</h2>
-        <p>La présence éventuelle de cookies ou d'autres traceurs doit être vérifiée. Cette page ne présume pas qu'aucun traceur n'est utilisé. Si le site utilise des traceurs non strictement nécessaires, les informations et le mécanisme de consentement appropriés doivent être mis en place.</p>
-
-        <h2>9. Données concernant les mineurs</h2>
-        <p>Le club pouvant accueillir des jeunes participants, les dossiers des mineurs doivent être remplis ou transmis par leur représentant légal lorsque cela est requis. Les informations et documents demandés doivent être limités à ce qui est nécessaire à la gestion de l'inscription et des activités du club.</p>
-
-        <h2>10. Mise à jour de cette politique</h2>
-        <p>Cette politique doit être actualisée si les formulaires, les outils utilisés, les finalités ou les durées de conservation changent. La date de dernière mise à jour doit être ajoutée après validation par l'association.</p>
-
+        <h2>5. Qui peut accéder aux données ?</h2>
+        <p>L'accès aux dossiers complets est réservé aux responsables autorisés de l'ASCT Turbomeca — Section Ski Compétition.</p>
+		<p>Ces responsables peuvent consulter les informations nécessaires à la gestion administrative des inscriptions et les documents archivés. 
+		Ils ne disposent pas d'un accès aux mots de passe des comptes en clair.</p>
+		<p>Les données peuvent également être traitées par les prestataires techniques auxquels le club fait appel pour faire fonctionner le site, gérer l'authentification, stocker les informations ou archiver les documents.</p>
+		<p>Ces prestataires ne constituent pas des destinataires libres de réutiliser les données pour leurs propres finalités : leurs interventions doivent être encadrées conformément aux obligations applicables en matière de protection des données.</p>
+		<p>Le club ne prévoit pas de transmission des dossiers d'inscription à d'autres organismes dans le cadre du fonctionnement décrit par cette politique. Toute transmission supplémentaire devra reposer sur un fondement approprié et être portée à la connaissance 
+		des personnes concernées lorsque cela est nécessaire.</p>
+        
+        <h2>6. Services techniques et hébergement</h2>
+		<p>Le fonctionnement du site repose notamment sur des services techniques tiers, dont Firebase pour certaines fonctionnalités liées aux comptes et aux données, ainsi que Google Drive pour l'archivage des dossiers et des documents.</p>
+		<p>Le site est également publié au moyen d'un service d'hébergement web.</p>
+		<p>Ces services peuvent traiter certaines données pour assurer leurs fonctions techniques. Les conditions de traitement, les mesures de sécurité, les lieux de stockage et les éventuels transferts de données doivent être 
+		vérifiés au regard des services effectivement utilisés et de leurs conditions applicables.</p>
+		<p>Le club s'efforce de limiter les accès aux seules personnes autorisées et de mettre en œuvre des mesures adaptées à la nature des informations traitées.</p>
+		
+        <h2>7. Durée de conservation</h2>
+        <p>La durée de conservation prévue par le club est de cinq ans, sous réserve des obligations légales ou réglementaires qui pourraient imposer une durée différente.</p>
+		<p>Cette durée cible concerne les dossiers d'inscription, les PDF archivés et les documents associés, y compris lorsqu'un adhérent quitte le club.</p>
+		<p>Les données ne doivent pas être conservées au-delà de la durée nécessaire aux finalités poursuivies, sauf lorsqu'une conservation plus longue est légalement justifiée.</p>
+		<p>À ce jour, la suppression automatique des données à l'échéance prévue n'est pas configurée. Le club doit donc mettre en place une procédure effective de vérification et de suppression des données arrivées à échéance, en tenant compte des obligations de conservation applicables.</p>
+		<p>Un adhérent qui quitte le club peut demander la suppression de ses données. Cette demande est examinée au regard des obligations légales de conservation et des éventuelles raisons légitimes justifiant le maintien de certaines informations. 
+		Lorsque la suppression est possible, elle doit être effectuée dans les systèmes concernés, y compris les archives, selon les modalités applicables.</p>
+		
+        <h2>8. Cookies et données de navigation</h2>
+        <p>Le site n'utilise pas Google Analytics et ne prévoit pas de suivi publicitaire de la navigation.</p>
+		<p>Il peut utiliser des mécanismes techniques strictement nécessaires au fonctionnement du site, à l'authentification, à la sécurité ou au maintien de la session utilisateur.</p>
+		<p>Ces mécanismes ne doivent être utilisés que pour les finalités nécessaires au service. Si des cookies ou traceurs supplémentaires soumis au consentement sont ajoutés ultérieurement, 
+		le site devra fournir l'information appropriée et recueillir le consentement préalable lorsque la réglementation l'exige.</p>
+		
+        <h2>9. Sécurité des données</h2>
+        <p>Le club met en œuvre des mesures destinées à protéger les données personnelles contre les accès non autorisés, la perte, la divulgation ou l'altération.</p>
+		<p>Ces mesures comprennent notamment la limitation des accès aux responsables autorisés et l'utilisation de services techniques permettant la gestion des comptes et le stockage des documents.</p>
+		<p>Compte tenu de la présence de données de santé, le niveau de protection doit être adapté à la sensibilité des informations. 
+		Les habilitations, les paramètres de sécurité, les modalités d'archivage et les procédures de suppression doivent être vérifiés et maintenus à jour.</p>
+		<p>Aucun système ne pouvant garantir un risque nul, le club s'engage à traiter les données avec le souci de préserver leur confidentialité et leur intégrité.</p>
+		
+        <h2>10. Quels sont vos droits ?</h2>
+        <p>Conformément à la réglementation applicable en matière de protection des données, les personnes concernées peuvent, selon les conditions prévues par la loi :</p>
+		<li>demander l'accès aux données personnelles les concernant ;</li>
+		<li>demander la rectification des informations inexactes ou incomplètes ;</li>
+		<li>demander l'effacement de leurs données lorsque les conditions légales sont réunies ;</li>
+		<li>demander la limitation de certains traitements ;</li>
+		<li>s'opposer à certains traitements lorsque ce droit est applicable ;</li>
+		<li>demander la portabilité des données lorsque ce droit s'applique ;</li>
+		<li>retirer leur consentement lorsqu'un traitement repose sur celui-ci, sans remettre en cause la licéité du traitement effectué avant ce retrait.</li>
+		<p>Les parents ou représentants légaux peuvent effectuer les démarches appropriées concernant les données d'un mineur qu'ils représentent, dans les limites prévues par la réglementation.</p>
+		<p>Pour exercer ces droits, il est possible d'écrire à : <a href="mailto:oceane.champagne.pro@gmail.com">oceane.champagne.pro@gmail.com</a>.</p>
+		<p>Afin de protéger les informations personnelles, le club peut demander des éléments raisonnables permettant de vérifier l'identité du demandeur ou sa qualité de représentant légal.</p>
+		<p>Une réponse est apportée dans les délais prévus par la réglementation. Si une demande ne peut pas être satisfaite, le club en explique les raisons dans les conditions prévues par la loi.</p>
+		<p>Si une personne estime que ses droits ne sont pas respectés, elle peut également adresser une réclamation à la Commission nationale de l'informatique et des libertés (CNIL), via le site officiel : <a href="https://www.cnil.fr/.">https://www.cnil.fr/.</a></p>
+		
+        <h2>11. Mise à jour de cette politique</h2>
+        <p>La présente politique peut être mise à jour pour refléter les évolutions du site, des services techniques utilisés, des traitements réalisés ou de la réglementation applicable.</p>
+		<p>La version publiée sur le site constitue la version de référence.</p>
+		<p>Pour toute question relative à cette politique, le club peut être contacté à l'adresse suivante : <a href="mailto:oceane.champagne.pro@gmail.com">oceane.champagne.pro@gmail.com</a>.</p>
+		
         <a class="back-link" href="index.html">← Retour à l'accueil du site</a>
     </main>
 
     <footer class="site-footer">
-        <p>ASCT Ski Compétition — Politique de confidentialité</p>
+
+		<div class="footer-logos">
+			<img src="Esf-Logo.png" alt="Logo ESF">
+			<img src="logo-asct2.jpeg" alt="Logo ASCT Ski Compétition">
+			<img src="logo-esf-2024.png" alt="Logo ESF 2024">
+		</div>
+		
+		<div class="footer-bottom">
+			<p>ASCT Ski Compétition — Politique de confidentialité</p>
+			<span>© ASCT Ski Compétition</span>
+		</div>
+		
     </footer>
+	
+	
 </body>
 </html>

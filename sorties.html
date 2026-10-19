@@ -1,0 +1,1036 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Sorties - ASCT Ski Compétition</title>
+
+    <link rel="stylesheet" href="style.css">
+
+    <style>
+        /* ==========================================
+           PAGE SORTIES - ASCT SKI COMPÉTITION
+           Le fond reprend celui de contact.html
+        ========================================== */
+
+        .sorties-page::before {
+            content: "";
+            position: fixed;
+            inset: 0;
+            background: url("image banderole.jpg") no-repeat center center / cover;
+            filter: blur(8px);
+            transform: scale(1.05);
+            z-index: -2;
+            pointer-events: none;
+        }
+
+        .sorties-page::after {
+            content: "";
+            position: fixed;
+            inset: 0;
+            background: rgba(255, 255, 255, 0.6);
+            z-index: -1;
+            pointer-events: none;
+        }
+
+        .sorties-page {
+            min-height: 100vh;
+        }
+
+        .sorties-container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 140px 30px 60px;
+        }
+
+        .sorties-intro {
+            text-align: center;
+            margin-bottom: 35px;
+            color: #fff;
+            text-shadow: 0 2px 8px rgba(0, 0, 0, 0.75);
+        }
+
+        .sorties-intro h2 {
+            font-size: clamp(2rem, 4vw, 3rem);
+            margin: 0 0 12px;
+        }
+
+        .sorties-intro p {
+            font-size: 1.1rem;
+            margin: 0;
+        }
+
+        /* Légende des couleurs */
+
+        .sorties-legend {
+            display: flex;
+            justify-content: center;
+            flex-wrap: wrap;
+            gap: 18px;
+            margin: 25px 0 35px;
+        }
+
+        .legend-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 0.95rem;
+            color: #17324d;
+            font-weight: 600;
+        }
+
+        .legend-dot {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            flex-shrink: 0;
+        }
+
+        .dot-stage {
+            background: #29a8e0;
+        }
+
+        .dot-competition {
+            background: #f0a43a;
+        }
+
+        .dot-sortie {
+            background: #43a66a;
+        }
+
+        /* Disposition calendrier + prochaines sorties */
+
+        .sorties-layout {
+            display: grid;
+            grid-template-columns: minmax(0, 1.4fr) minmax(320px, 0.9fr);
+            gap: 28px;
+            align-items: start;
+        }
+
+        .sorties-panel {
+            background: rgba(255, 255, 255, 0.84);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.8);
+            border-radius: 20px;
+            padding: 28px;
+            box-shadow: 0 10px 35px rgba(0, 35, 75, 0.15);
+        }
+
+        .panel-title {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin: 0 0 22px;
+            color: #004080;
+            font-size: 1.45rem;
+        }
+
+        .panel-title span {
+            font-size: 1.5rem;
+        }
+
+        /* En-tête du calendrier */
+
+        .calendar-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 12px;
+            margin-bottom: 22px;
+        }
+
+        .calendar-header h3 {
+            color: #17324d;
+            text-align: center;
+            font-size: 1.35rem;
+            margin: 0;
+            text-transform: capitalize;
+        }
+
+        .calendar-nav {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 40px;
+            height: 40px;
+            border: none;
+            border-radius: 12px;
+            background: #004080;
+            color: white;
+            font-size: 1.4rem;
+            cursor: pointer;
+            transition: background 0.2s, transform 0.2s;
+        }
+
+        .calendar-nav:hover:not(:disabled) {
+            background: #0066cc;
+            transform: translateY(-2px);
+        }
+
+        .calendar-nav:disabled {
+            opacity: 0.3;
+            cursor: not-allowed;
+        }
+
+        /* Grille des jours */
+
+        .calendar-grid {
+            display: grid;
+            grid-template-columns: repeat(7, minmax(0, 1fr));
+            gap: 7px;
+        }
+
+        .calendar-weekday {
+            text-align: center;
+            color: #52677b;
+            font-size: 0.85rem;
+            font-weight: 700;
+            padding: 8px 0;
+        }
+
+        .calendar-day {
+            position: relative;
+            min-width: 0;
+            min-height: 65px;
+            padding: 8px 3px;
+            border: 1px solid rgba(0, 64, 128, 0.08);
+            border-radius: 12px;
+            background: rgba(255, 255, 255, 0.65);
+            color: #24394d;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 5px;
+            font: inherit;
+            cursor: default;
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+
+        .calendar-day.empty {
+            background: transparent;
+            border-color: transparent;
+        }
+
+        .calendar-day.has-event {
+            cursor: pointer;
+            font-weight: 700;
+        }
+
+        .calendar-day.has-event:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 5px 14px rgba(0, 35, 75, 0.15);
+        }
+
+        .calendar-day.selected {
+            outline: 3px solid #004080;
+            outline-offset: 1px;
+        }
+
+        .day-number {
+            font-size: 1rem;
+        }
+
+        .day-event-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+        }
+
+        .event-stage {
+            background: #29a8e0;
+        }
+
+        .event-competition {
+            background: #f0a43a;
+        }
+
+        .event-sortie {
+            background: #43a66a;
+        }
+
+        .calendar-day.event-stage {
+            background: rgba(41, 168, 224, 0.17);
+            border-color: rgba(41, 168, 224, 0.4);
+        }
+
+        .calendar-day.event-competition {
+            background: rgba(240, 164, 58, 0.2);
+            border-color: rgba(240, 164, 58, 0.5);
+        }
+
+        .calendar-day.event-sortie {
+            background: rgba(67, 166, 106, 0.17);
+            border-color: rgba(67, 166, 106, 0.4);
+        }
+
+        .calendar-day.event-range {
+            box-shadow: inset 0 -4px 0 rgba(41, 168, 224, 0.55);
+        }
+
+        .calendar-hint {
+            margin: 18px 0 0;
+            text-align: center;
+            color: #60758a;
+            font-size: 0.85rem;
+        }
+
+        /* Détail de l'événement sélectionné */
+
+        .selected-event {
+            margin-top: 22px;
+            padding: 18px;
+            background: rgba(0, 64, 128, 0.07);
+            border-left: 4px solid #0066cc;
+            border-radius: 10px;
+        }
+
+        .selected-event h4 {
+            color: #004080;
+            margin: 0 0 8px;
+            font-size: 1.05rem;
+        }
+
+        .selected-event p {
+            color: #40576d;
+            margin: 5px 0;
+            line-height: 1.5;
+        }
+
+        /* Prochaines sorties */
+
+        .upcoming-list {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+
+        .upcoming-event {
+            display: flex;
+            gap: 15px;
+            padding: 15px;
+            border-radius: 15px;
+            background: rgba(255, 255, 255, 0.8);
+            border: 1px solid rgba(0, 64, 128, 0.09);
+            cursor: pointer;
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+
+        .upcoming-event:hover,
+        .upcoming-event.active {
+            transform: translateY(-2px);
+            box-shadow: 0 7px 20px rgba(0, 35, 75, 0.12);
+        }
+
+        .upcoming-event.active {
+            border-color: #0066cc;
+        }
+
+        .event-date {
+            min-width: 66px;
+            width: 66px;
+            min-height: 75px;
+            border-radius: 12px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+            color: #fff;
+        }
+
+        .event-date strong {
+            font-size: 1.65rem;
+            line-height: 1.2;
+        }
+
+        .event-date span {
+            font-size: 0.78rem;
+            text-transform: uppercase;
+            font-weight: 700;
+        }
+
+        .event-date.event-stage {
+            background: #168bbd;
+        }
+
+        .event-date.event-competition {
+            background: #dc8a19;
+        }
+
+        .event-date.event-sortie {
+            background: #328b54;
+        }
+
+        .event-info {
+            min-width: 0;
+            flex: 1;
+        }
+
+        .event-info h4 {
+            color: #17324d;
+            font-size: 1rem;
+            line-height: 1.4;
+            margin: 2px 0 7px;
+        }
+
+        .event-info p {
+            color: #60758a;
+            font-size: 0.88rem;
+            line-height: 1.45;
+            margin: 0 0 9px;
+        }
+
+        .event-tag {
+            display: inline-block;
+            padding: 5px 9px;
+            border-radius: 20px;
+            font-size: 0.72rem;
+            font-weight: 700;
+        }
+
+        .tag-stage {
+            background: #d8f1fc;
+            color: #08658a;
+        }
+
+        .tag-competition {
+            background: #fff0d6;
+            color: #925400;
+        }
+
+        .tag-sortie {
+            background: #dcf4e4;
+            color: #226c3b;
+        }
+
+        .no-events {
+            padding: 25px 10px;
+            color: #60758a;
+            text-align: center;
+            line-height: 1.6;
+        }
+
+        .season-note {
+            margin-top: 22px;
+            padding: 15px;
+            border-radius: 12px;
+            background: rgba(0, 64, 128, 0.07);
+            color: #40576d;
+            font-size: 0.88rem;
+            line-height: 1.6;
+        }
+
+        .season-note strong {
+            color: #004080;
+        }
+
+        /* Responsive */
+
+        @media (max-width: 1000px) {
+            .sorties-layout {
+                grid-template-columns: 1fr;
+            }
+
+            .sorties-panel {
+                padding: 24px;
+            }
+
+            .upcoming-list {
+                display: grid;
+                grid-template-columns: repeat(2, minmax(0, 1fr));
+            }
+        }
+
+        @media (max-width: 600px) {
+            .sorties-container {
+                padding: 120px 14px 35px;
+            }
+
+            .sorties-intro {
+                margin-bottom: 25px;
+            }
+
+            .sorties-intro h2 {
+                font-size: 2rem;
+            }
+
+            .sorties-intro p {
+                font-size: 0.95rem;
+            }
+
+            .sorties-legend {
+                gap: 10px 15px;
+                margin: 20px 0 25px;
+            }
+
+            .legend-item {
+                font-size: 0.8rem;
+            }
+
+            .sorties-panel {
+                padding: 17px 12px;
+                border-radius: 16px;
+            }
+
+            .panel-title {
+                font-size: 1.2rem;
+                margin-bottom: 18px;
+            }
+
+            .calendar-grid {
+                gap: 4px;
+            }
+
+            .calendar-day {
+                min-height: 48px;
+                padding: 5px 1px;
+                border-radius: 8px;
+                gap: 4px;
+            }
+
+            .calendar-weekday {
+                font-size: 0.72rem;
+            }
+
+            .day-number {
+                font-size: 0.88rem;
+            }
+
+            .day-event-dot {
+                width: 6px;
+                height: 6px;
+            }
+
+            .calendar-header h3 {
+                font-size: 1.1rem;
+            }
+
+            .calendar-nav {
+                width: 35px;
+                height: 35px;
+            }
+
+            .upcoming-list {
+                display: flex;
+            }
+
+            .upcoming-event {
+                padding: 12px;
+                gap: 12px;
+            }
+
+            .event-date {
+                width: 58px;
+                min-width: 58px;
+                min-height: 68px;
+            }
+
+            .event-date strong {
+                font-size: 1.45rem;
+            }
+        }
+
+        @media (prefers-reduced-motion: reduce) {
+            .calendar-day,
+            .upcoming-event,
+            .calendar-nav {
+                transition: none;
+            }
+        }
+    </style>
+</head>
+
+<body class="sorties-page">
+
+    <!-- En-tête commun au site -->
+    <header id="header">
+        <div class="header-container">
+            <img src="logo.png" class="logo" alt="Logo ASCT Ski Compétition">
+            <h1>Sorties</h1>
+        </div>
+
+        <div class="burger" id="burger" aria-label="Ouvrir le menu" role="button" tabindex="0">
+            <span></span>
+            <span></span>
+            <span></span>
+        </div>
+
+        <nav id="nav">
+            <a href="index.html">Accueil</a>
+            <a href="infos.html">Infos Saison</a>
+            <a href="galerie.html">Galerie</a>
+            <a href="sorties.html" aria-current="page">Sorties</a>
+            <a href="exercices.html">Exercices</a>
+            <a href="contact.html">Contact</a>
+            <a href="connexion.html">Connexion</a>
+        </nav>
+    </header>
+
+    <main class="sorties-container">
+
+        <!-- Présentation -->
+        <section class="sorties-intro">
+            <h2>Calendrier des sorties</h2>
+            <p>Retrouve tous les rendez-vous de la saison 2026–2027 !</p>
+        </section>
+
+        <!-- Légende -->
+        <div class="sorties-legend" aria-label="Légende des événements">
+            <div class="legend-item">
+                <span class="legend-dot dot-stage"></span>
+                Stages
+            </div>
+            <div class="legend-item">
+                <span class="legend-dot dot-competition"></span>
+                Compétitions
+            </div>
+            <div class="legend-item">
+                <span class="legend-dot dot-sortie"></span>
+                Ouvertures et sorties
+            </div>
+        </div>
+
+        <div class="sorties-layout">
+
+            <!-- CALENDRIER -->
+            <section class="sorties-panel" aria-labelledby="calendar-title">
+                <h3 class="panel-title" id="calendar-title">
+                    <span aria-hidden="true">📅</span>
+                    Le calendrier
+                </h3>
+
+                <div class="calendar-header">
+                    <button class="calendar-nav" id="prev-month"
+                            type="button" aria-label="Mois précédent">
+                        &#8249;
+                    </button>
+
+                    <h3 id="calendar-month">Novembre 2026</h3>
+
+                    <button class="calendar-nav" id="next-month"
+                            type="button" aria-label="Mois suivant">
+                        &#8250;
+                    </button>
+                </div>
+
+                <div class="calendar-grid" id="calendar-grid"
+                     role="grid" aria-label="Calendrier des événements">
+                </div>
+
+                <p class="calendar-hint">
+                    Clique sur un jour coloré pour afficher les informations de la sortie.
+                </p>
+
+                <div class="selected-event" id="selected-event" aria-live="polite">
+                    <h4>Ouverture de la station</h4>
+                    <p>📆 25 novembre 2026</p>
+                    <p>Retrouve les premières informations sur cette sortie de la saison.</p>
+                </div>
+            </section>
+
+            <!-- PROCHAINES SORTIES -->
+            <aside class="sorties-panel" aria-labelledby="upcoming-title">
+                <h3 class="panel-title" id="upcoming-title">
+                    <span aria-hidden="true">⛷️</span>
+                    Les prochaines sorties
+                </h3>
+
+                <div class="upcoming-list" id="upcoming-list">
+                    <!-- Les événements sont ajoutés automatiquement par JavaScript. -->
+                </div>
+
+                <div class="season-note">
+                    <strong>À noter !</strong><br>
+                    Les dates et informations complémentaires pourront être actualisées
+                    au fil de la saison. Pense à consulter régulièrement le calendrier.
+                </div>
+            </aside>
+
+        </div>
+    </main>
+
+    <script>
+        /* ==========================================
+           ÉVÉNEMENTS DE LA SAISON
+           Les dates sont modifiables ici.
+           À terme, ces données pourront venir de Firestore.
+        ========================================== */
+
+        const events = [
+            {
+                id: 1,
+                title: "Ouverture de la station",
+                category: "sortie",
+                start: "2026-11-25",
+                end: "2026-11-25",
+                description: "Ouverture de la station et lancement de la saison de ski.",
+                location: "Luz Ardiden"
+            },
+            {
+                id: 2,
+                title: "Stage à Font-Romeu",
+                category: "stage",
+                start: "2026-12-19",
+                end: "2026-12-22",
+                description: "Stage de ski du club sur plusieurs jours.",
+                location: "Font-Romeu"
+            },
+            {
+                id: 3,
+                title: "Ardiden Turbo Cup",
+                category: "competition",
+                start: "2027-01-07",
+                end: "2027-01-07",
+                description: "Rendez-vous pour l'Ardiden Turbo Cup.",
+                location: "Luz Ardiden"
+            },
+            {
+                id: 4,
+                title: "Fédéraux 2027 – La Clusaz",
+                category: "competition",
+                start: "2027-03-20",
+                end: "2027-03-22",
+                description: "Événement fédéral organisé sur plusieurs jours.",
+                location: "La Clusaz"
+            }
+        ];
+
+        const categoryLabels = {
+            stage: "Stage",
+            competition: "Compétition",
+            sortie: "Ouverture / sortie"
+        };
+
+        const categoryClasses = {
+            stage: "event-stage",
+            competition: "event-competition",
+            sortie: "event-sortie"
+        };
+
+        const tagClasses = {
+            stage: "tag-stage",
+            competition: "tag-competition",
+            sortie: "tag-sortie"
+        };
+
+        const monthNames = [
+            "Janvier", "Février", "Mars", "Avril",
+            "Mai", "Juin", "Juillet", "Août",
+            "Septembre", "Octobre", "Novembre", "Décembre"
+        ];
+
+        const shortMonthNames = [
+            "janv.", "févr.", "mars", "avr.",
+            "mai", "juin", "juil.", "août",
+            "sept.", "oct.", "nov.", "déc."
+        ];
+
+        const calendarGrid = document.getElementById("calendar-grid");
+        const calendarMonth = document.getElementById("calendar-month");
+        const prevButton = document.getElementById("prev-month");
+        const nextButton = document.getElementById("next-month");
+        const upcomingList = document.getElementById("upcoming-list");
+        const selectedEventBox = document.getElementById("selected-event");
+
+        let displayedYear = 2026;
+        let displayedMonth = 10; // Novembre
+        let selectedEventId = 1;
+
+        function parseDate(dateString) {
+            const [year, month, day] = dateString.split("-").map(Number);
+            return new Date(year, month - 1, day);
+        }
+
+        function formatDate(dateString) {
+            const date = parseDate(dateString);
+            return date.getDate() + " " +
+                monthNames[date.getMonth()].toLowerCase() + " " +
+                date.getFullYear();
+        }
+
+        function formatEventDates(event) {
+            if (event.start === event.end) {
+                return formatDate(event.start);
+            }
+
+            const start = parseDate(event.start);
+            const end = parseDate(event.end);
+
+            if (start.getMonth() === end.getMonth() &&
+                start.getFullYear() === end.getFullYear()) {
+                return start.getDate() + "–" + end.getDate() + " " +
+                    monthNames[start.getMonth()].toLowerCase() + " " +
+                    start.getFullYear();
+            }
+
+            return formatDate(event.start) + " – " + formatDate(event.end);
+        }
+
+        function getEventForDate(year, month, day) {
+            const date = new Date(year, month, day);
+
+            return events.find(event => {
+                const start = parseDate(event.start);
+                const end = parseDate(event.end);
+                return date >= start && date <= end;
+            });
+        }
+
+        function renderCalendar() {
+            calendarGrid.innerHTML = "";
+            calendarMonth.textContent =
+                monthNames[displayedMonth] + " " + displayedYear;
+
+            prevButton.disabled =
+                displayedYear === 2026 && displayedMonth === 10;
+
+            nextButton.disabled =
+                displayedYear === 2027 && displayedMonth === 2;
+
+            const weekdays = ["Lun", "Mar", "Mer", "Jeu", "Ven", "Sam", "Dim"];
+
+            weekdays.forEach(day => {
+                const cell = document.createElement("div");
+                cell.className = "calendar-weekday";
+                cell.textContent = day;
+                cell.setAttribute("role", "columnheader");
+                calendarGrid.appendChild(cell);
+            });
+
+            const firstDay = new Date(displayedYear, displayedMonth, 1);
+            const offset = (firstDay.getDay() + 6) % 7;
+            const daysInMonth =
+                new Date(displayedYear, displayedMonth + 1, 0).getDate();
+
+            for (let i = 0; i < offset; i++) {
+                const emptyCell = document.createElement("div");
+                emptyCell.className = "calendar-day empty";
+                emptyCell.setAttribute("aria-hidden", "true");
+                calendarGrid.appendChild(emptyCell);
+            }
+
+            for (let day = 1; day <= daysInMonth; day++) {
+                const event = getEventForDate(
+                    displayedYear, displayedMonth, day
+                );
+
+                const cell = document.createElement(event ? "button" : "div");
+
+                cell.className = "calendar-day";
+                cell.setAttribute("role", "gridcell");
+
+                if (event) {
+                    cell.type = "button";
+                    cell.classList.add("has-event", categoryClasses[event.category]);
+
+                    if (event.start !== event.end) {
+                        cell.classList.add("event-range");
+                    }
+
+                    if (event.id === selectedEventId) {
+                        cell.classList.add("selected");
+                        cell.setAttribute("aria-pressed", "true");
+                    } else {
+                        cell.setAttribute("aria-pressed", "false");
+                    }
+
+                    cell.setAttribute(
+                        "aria-label",
+                        day + " " + monthNames[displayedMonth] +
+                        " : " + event.title
+                    );
+
+                    cell.addEventListener("click", () => {
+                        selectEvent(event.id);
+                    });
+                }
+
+                const number = document.createElement("span");
+                number.className = "day-number";
+                number.textContent = day;
+                cell.appendChild(number);
+
+                if (event) {
+                    const dot = document.createElement("span");
+                    dot.className =
+                        "day-event-dot " + categoryClasses[event.category];
+                    dot.setAttribute("aria-hidden", "true");
+                    cell.appendChild(dot);
+                }
+
+                calendarGrid.appendChild(cell);
+            }
+        }
+
+        function renderUpcomingEvents() {
+            upcomingList.innerHTML = "";
+
+            const sortedEvents = [...events].sort((a, b) =>
+                a.start.localeCompare(b.start)
+            );
+
+            if (sortedEvents.length === 0) {
+                upcomingList.innerHTML =
+                    '<p class="no-events">Aucune sortie programmée pour le moment.</p>';
+                return;
+            }
+
+            sortedEvents.forEach(event => {
+                const start = parseDate(event.start);
+
+                const card = document.createElement("article");
+                card.className = "upcoming-event";
+
+                if (event.id === selectedEventId) {
+                    card.classList.add("active");
+                }
+
+                card.tabIndex = 0;
+                card.setAttribute("role", "button");
+                card.setAttribute("aria-label", event.title);
+
+                const dateBox = document.createElement("div");
+                dateBox.className =
+                    "event-date " + categoryClasses[event.category];
+
+                const day = document.createElement("strong");
+                day.textContent = String(start.getDate()).padStart(2, "0");
+
+                const month = document.createElement("span");
+                month.textContent = shortMonthNames[start.getMonth()];
+
+                dateBox.append(day, month);
+
+                const info = document.createElement("div");
+                info.className = "event-info";
+
+                const title = document.createElement("h4");
+                title.textContent = event.title;
+
+                const dates = document.createElement("p");
+                dates.textContent = formatEventDates(event);
+
+                const tag = document.createElement("span");
+                tag.className =
+                    "event-tag " + tagClasses[event.category];
+                tag.textContent = categoryLabels[event.category];
+
+                info.append(title, dates, tag);
+                card.append(dateBox, info);
+
+                const activate = () => selectEvent(event.id);
+
+                card.addEventListener("click", activate);
+                card.addEventListener("keydown", e => {
+                    if (e.key === "Enter" || e.key === " ") {
+                        e.preventDefault();
+                        activate();
+                    }
+                });
+
+                upcomingList.appendChild(card);
+            });
+        }
+
+        function renderSelectedEvent() {
+            const event = events.find(e => e.id === selectedEventId);
+
+            if (!event) {
+                selectedEventBox.innerHTML =
+                    "<h4>Aucune sortie sélectionnée</h4>";
+                return;
+            }
+
+            selectedEventBox.innerHTML = "";
+
+            const title = document.createElement("h4");
+            title.textContent = event.title;
+
+            const dates = document.createElement("p");
+            dates.textContent = "📆 " + formatEventDates(event);
+
+            const location = document.createElement("p");
+            location.textContent = "📍 " + event.location;
+
+            const description = document.createElement("p");
+            description.textContent = event.description;
+
+            selectedEventBox.append(title, dates, location, description);
+        }
+
+        function selectEvent(eventId) {
+            const event = events.find(e => e.id === eventId);
+            if (!event) return;
+
+            selectedEventId = eventId;
+
+            const start = parseDate(event.start);
+            displayedYear = start.getFullYear();
+            displayedMonth = start.getMonth();
+
+            renderCalendar();
+            renderUpcomingEvents();
+            renderSelectedEvent();
+        }
+
+        prevButton.addEventListener("click", () => {
+            if (displayedYear === 2026 && displayedMonth === 10) return;
+
+            displayedMonth--;
+
+            if (displayedMonth < 0) {
+                displayedMonth = 11;
+                displayedYear--;
+            }
+
+            renderCalendar();
+        });
+
+        nextButton.addEventListener("click", () => {
+            if (displayedYear === 2027 && displayedMonth === 2) return;
+
+            displayedMonth++;
+
+            if (displayedMonth > 11) {
+                displayedMonth = 0;
+                displayedYear++;
+            }
+
+            renderCalendar();
+        });
+
+        // Initialisation
+        renderCalendar();
+        renderUpcomingEvents();
+        renderSelectedEvent();
+    </script>
+
+    <!-- Script commun : menu, header et effets du site -->
+    <script src="script.js"></script>
+
+<footer class="site-footer">
+    <div class="footer-logos">
+        <img src="Esf-Logo.png" alt="Logo ESF">
+        <img src="logo-asct2.jpeg" alt="Logo ASCT Ski Compétition">
+        <img src="logo-esf-2024.png" alt="Logo ESF 2024">
+    </div>
+
+    <div class="footer-contact">
+        <p>ASCT Ski Compétition</p>
+        <a href="mailto:oceane.champagne.pro@gmail.com">
+            Nous contacter
+        </a>
+    </div>
+
+    <div class="footer-bottom">
+        <a href="confidentialite.html">
+            Politique de confidentialité
+        </a>
+        <span>© ASCT Ski Compétition</span>
+    </div>
+</footer>
+
+</body>
+</html>

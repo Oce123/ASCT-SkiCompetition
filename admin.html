@@ -213,6 +213,70 @@
 			color:white;
 		}
 
+
+        /* Tableau de bord */
+        body { color:#172b4d; }
+        .dashboard-header { max-width:1250px; margin:0 auto 24px; display:flex; align-items:center; justify-content:space-between; gap:16px; flex-wrap:wrap; }
+        .dashboard-header h2 { margin:0 0 6px; color:#123b63; font-size:26px; }
+        .dashboard-header p { margin:0; color:#667085; }
+        .stats-grid { max-width:1250px; margin:0 auto 22px; display:grid; grid-template-columns:repeat(4,minmax(0,1fr)); gap:14px; }
+        .stat-card { background:#fff; border:1px solid #e5eaf0; border-radius:16px; padding:18px; box-shadow:0 4px 14px rgba(16,24,40,.04); }
+        .stat-label { color:#667085; font-size:13px; font-weight:600; }
+        .stat-value { color:#123b63; font-size:30px; font-weight:800; margin-top:8px; }
+        .stat-note { color:#667085; font-size:12px; margin-top:4px; }
+        .dashboard-tools { max-width:1250px; margin:0 auto 18px; background:#fff; padding:16px; border:1px solid #e5eaf0; border-radius:16px; }
+        .filter-tabs { display:flex; flex-wrap:wrap; gap:8px; margin-bottom:14px; }
+        .filter-tab { background:#f2f5f9; color:#344054; padding:10px 14px; border:1px solid #e1e7ef; border-radius:10px; }
+        .filter-tab.active { background:#004080; color:#fff; border-color:#004080; }
+        .filter-row { display:flex; align-items:center; gap:10px; flex-wrap:wrap; }
+        .filter-row input { box-sizing:border-box; border:1px solid #d0d5dd; background:#fff; flex:1 1 250px; width:auto; }
+        .filter-row select { padding:12px; border:1px solid #d0d5dd; border-radius:10px; background:#fff; min-width:180px; }
+        .counter { max-width:1250px; margin:0 auto 14px; text-align:left; font-size:14px; color:#667085; font-weight:600; }
+        #liste { max-width:1250px; margin:0 auto; }
+        .card { max-width:none; border:1px solid #e5eaf0; box-shadow:0 4px 14px rgba(16,24,40,.05); cursor:default; }
+        .card h2 { display:flex; align-items:center; justify-content:space-between; gap:14px; flex-wrap:wrap; }
+        .person-meta { display:flex; gap:8px; align-items:center; flex-wrap:wrap; }
+        .season-tag { background:#eef4fb; color:#164a7b; border-radius:999px; padding:5px 9px; font-size:12px; font-weight:700; }
+        .drive-tag { background:#f2f4f7; color:#475467; border-radius:999px; padding:5px 9px; font-size:12px; font-weight:700; }
+        .drive-tag.ok { background:#e7f6ec; color:#216e39; }
+        .drive-tag.error { background:#feeceb; color:#b42318; }
+        .status-editor { display:flex; align-items:center; gap:8px; flex-wrap:wrap; margin:12px 0 16px; padding:12px; border-radius:12px; background:#f8fafc; border:1px solid #e5eaf0; }
+        .status-editor label { font-size:13px; font-weight:700; color:#344054; }
+        .status-editor select { max-width:240px; padding:9px 10px; border:1px solid #cbd5e1; border-radius:8px; background:white; }
+        .status-save-note { font-size:12px; color:#667085; }
+        .status-save-note.error { color:#b42318; }
+        .non-reinscrit-note { background:#fff7e6; color:#8a4b08; border:1px solid #f6d99a; padding:10px 12px; border-radius:10px; margin:8px 0 14px; font-size:13px; }
+        .empty-state { background:#fff; border:1px dashed #cbd5e1; border-radius:16px; padding:32px; text-align:center; color:#667085; }
+        .dashboard-loading { max-width:1250px; margin:16px auto; color:#667085; }
+        @media(max-width:900px){ .stats-grid{grid-template-columns:repeat(2,minmax(0,1fr));} }
+        @media(max-width:520px){ .stats-grid{grid-template-columns:1fr 1fr; gap:8px;} .stat-card{padding:12px;} .stat-value{font-size:24px;} .dashboard-tools{padding:12px;} .filter-row select{width:100%;} }
+
+
+
+        .inscription-modal-backdrop{position:fixed;inset:0;background:rgba(15,23,42,.62);display:none;align-items:center;justify-content:center;padding:18px;z-index:9999;}
+        .inscription-modal-backdrop.active{display:flex;}
+        .inscription-modal{background:#fff;border-radius:18px;width:min(900px,100%);max-height:90vh;overflow:auto;box-shadow:0 20px 60px rgba(0,0,0,.25);padding:24px;}
+        .modal-head{display:flex;align-items:flex-start;justify-content:space-between;gap:16px;border-bottom:1px solid #e5e7eb;padding-bottom:16px;margin-bottom:18px;}
+        .modal-head h2{margin:0;color:#004080;}
+        .modal-close{font-size:22px;background:#eef2f7;color:#243447;padding:6px 12px;}
+        .modal-section{margin:18px 0;}
+        .modal-section h3{color:#004080;margin:0 0 10px;}
+        .modal-info-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:10px;}
+        .modal-info{background:#f5f7fb;border-radius:10px;padding:12px;overflow-wrap:anywhere;}
+        .modal-info strong{display:block;color:#526174;font-size:12px;margin-bottom:5px;}
+        .doc-status{padding:6px 0;}
+        .modal-actions{display:flex;flex-wrap:wrap;gap:10px;border-top:1px solid #e5e7eb;padding-top:18px;margin-top:20px;}
+        .modal-actions button{flex:1 1 150px;}
+        .modal-edit-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:12px;}
+        .modal-edit-field label{display:block;font-size:13px;font-weight:bold;margin-bottom:5px;color:#344054;}
+        .modal-edit-field input,.modal-edit-field textarea,.modal-edit-field select{box-sizing:border-box;width:100%;padding:10px;border:1px solid #ccd3dd;border-radius:8px;font:inherit;}
+        .modal-edit-field textarea{min-height:72px;resize:vertical;}
+        .modal-notice{font-size:13px;color:#667085;margin-top:10px;}
+        .btn-secondary{background:#e8edf4;color:#203047;}
+        .btn-success{background:#00875a;color:white;}
+        .btn-warning{background:#f5a623;color:#241800;}
+        @media(max-width:600px){.inscription-modal{padding:16px}.modal-head{align-items:center}}
+
     </style>
 </head>
 
@@ -256,31 +320,73 @@
 
 <div id="adminContent" style="display:none;">
 
-<div class="counter" id="counter">
-    0 inscription
+<section class="dashboard-header">
+    <div>
+        <h2>Tableau de bord des inscriptions</h2>
+        <p>Suivi des adhésions, des statuts administratifs et de l'archivage Google Drive.</p>
+    </div>
+    <div class="topbar" style="margin:0;">
+        <button id="exportPDF" class="export">📄 Export PDF</button>
+        <button id="exportCSV" class="csv">📊 Export Excel (.xlsx)</button>
+        <button id="logoutAdmin" class="logout">🚪 Déconnexion</button>
+    </div>
+</section>
+
+<section class="stats-grid" aria-label="Indicateurs des inscriptions">
+    <div class="stat-card"><div class="stat-label">Membres suivis cette saison</div><div class="stat-value" id="statTotal">0</div><div class="stat-note">Inscriptions et non-réinscrits</div></div>
+    <div class="stat-card"><div class="stat-label">Validées</div><div class="stat-value" id="statValidees">0</div><div class="stat-note">Statut administratif</div></div>
+    <div class="stat-card"><div class="stat-label">À traiter</div><div class="stat-value" id="statATraiter">0</div><div class="stat-note">En attente de décision</div></div>
+    <div class="stat-card"><div class="stat-label">Incomplètes</div><div class="stat-value" id="statIncompletes">0</div><div class="stat-note">Statut administratif</div></div>
+</section>
+
+<section class="dashboard-tools">
+    <div class="filter-tabs" id="filterTabs">
+        <button class="filter-tab active" data-filter="tous">Tous</button>
+        <button class="filter-tab" data-filter="Validée">Validées</button>
+        <button class="filter-tab" data-filter="À traiter">À traiter</button>
+        <button class="filter-tab" data-filter="Incomplète">Incomplètes</button>
+        <button class="filter-tab" data-filter="drive-error">Erreur Drive</button>
+        <button class="filter-tab" data-filter="Non réinscrit">Non réinscrits</button>
+        <button class="filter-tab" data-filter="current-season">Saison 2026/2027</button>
+        <button class="filter-tab" data-filter="previous-season">Saison précédente</button>
+    </div>
+    <div class="filter-row">
+        <input id="search" placeholder="Rechercher par nom, prénom ou e-mail…" aria-label="Rechercher un participant">
+        <select id="seasonFilter" aria-label="Filtrer par saison">
+            <option value="current">Saison 2026/2027</option>
+            <option value="previous">Saison précédente (2025/2026)</option>
+            <option value="all">Toutes les saisons</option>
+        </select>
+        <select id="statusFilter" aria-label="Filtrer par statut">
+            <option value="all">Tous les statuts</option>
+            <option value="Validée">Validée</option>
+            <option value="À traiter">À traiter</option>
+            <option value="Incomplète">Incomplète</option>
+            <option value="Non réinscrit">Non réinscrit</option>
+            <option value="Refusée">Refusée</option>
+            <option value="Annulée">Annulée</option>
+        </select>
+    </div>
+</section>
+
+<div class="counter" id="counter">Chargement des inscriptions…</div>
+<div id="liste"><div class="dashboard-loading">Chargement des données Firestore…</div></div>
+
+
+<div class="inscription-modal-backdrop" id="inscriptionModalBackdrop" aria-hidden="true">
+  <section class="inscription-modal" role="dialog" aria-modal="true" aria-labelledby="modalParticipantTitle">
+    <div class="modal-head">
+      <div><h2 id="modalParticipantTitle">Inscription</h2><div id="modalSeasonLabel" class="modal-notice"></div></div>
+      <button type="button" class="modal-close" id="modalCloseBtn" aria-label="Fermer">✕</button>
+    </div>
+    <div id="modalViewContent"></div>
+    <div id="modalEditContent" style="display:none"></div>
+    <div id="modalMessage" class="modal-notice" role="status"></div>
+  </section>
 </div>
-
-<div class="topbar">
-
-    <input id="search" placeholder="Rechercher un participant...">
-
-    <button id="exportPDF" class="export">
-        📄 Export PDF
-    </button>
-
-    <button id="exportCSV" class="csv">
-        📊 Export CSV
-    </button>
-
-    <button id="logoutAdmin" class="logout">
-        🚪 Déconnexion
-    </button>
-
-</div>
-
-<div id="liste"></div>
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
 
 <script type="module">
 
@@ -299,7 +405,8 @@ import {
     onSnapshot,
     deleteDoc,
     doc,
-    getDoc
+    getDoc,
+    updateDoc
 }
 from "https://www.gstatic.com/firebasejs/12.12.0/firebase-firestore.js";
 
@@ -490,12 +597,331 @@ const exportCSV =
 
 const counter =
     document.getElementById("counter");
-
-// =========================
-// DATA
-// =========================
-
+const seasonFilter = document.getElementById("seasonFilter");
+const statusFilter = document.getElementById("statusFilter");
+const filterTabs = document.getElementById("filterTabs");
+const CURRENT_SEASON = "2026/2027";
+const PREVIOUS_SEASON = "2025/2026";
+const STATUSES = ["À traiter", "Validée", "Incomplète", "Non réinscrit", "Refusée", "Annulée"];
+let activeQuickFilter = "tous";
 let allData = [];
+let dashboardData = [];
+let visibleData = [];
+
+function normaliserSaison(value) {
+    if (!value) return CURRENT_SEASON;
+    return String(value).replace(/^saison\s*/i, "").trim().replace(/-/g, "/");
+}
+
+function normaliserTexte(value) {
+    return String(value || "").trim().toLocaleLowerCase("fr-FR");
+}
+
+function getStatut(person) {
+    const raw = person.isNonReinscrit
+        ? (person.adminStatus || "Non réinscrit")
+        : (person.statutInscription || person.adminStatus || "À traiter");
+    const value = normaliserTexte(raw);
+    if (value === "en attente" || value === "en cours" || value === "à valider" || value === "a valider") return "À traiter";
+    if (value === "validee") return "Validée";
+    if (value === "incomplete") return "Incomplète";
+    if (value === "non reinscrit") return "Non réinscrit";
+    return raw;
+}
+
+function getDriveState(person) {
+    return normaliserTexte(person.driveArchive);
+}
+
+function statutClassName(statut) {
+    const value = normaliserTexte(statut);
+    if (value.includes("valid")) return "ok";
+    if (value.includes("incompl") || value.includes("non réinscrit") || value.includes("refus") || value.includes("annul")) return "error";
+    return "";
+}
+
+function construireDonneesDashboard() {
+    const current = allData.filter(p => normaliserSaison(p.saison || p.driveSaison) === CURRENT_SEASON);
+    const previous = allData.filter(p => normaliserSaison(p.saison || p.driveSaison) === PREVIOUS_SEASON);
+    const currentKeys = new Set(current.filter(p => p.familleId && p.membreId).map(p => `${p.familleId}::${p.membreId}`));
+    const synthetic = [];
+
+    previous.forEach(previousPerson => {
+        if (!previousPerson.familleId || !previousPerson.membreId) return;
+        const key = `${previousPerson.familleId}::${previousPerson.membreId}`;
+        if (currentKeys.has(key)) return;
+        synthetic.push({
+            ...previousPerson,
+            id: previousPerson.id,
+            isNonReinscrit: true,
+            sourcePreviousId: previousPerson.id,
+            saison: CURRENT_SEASON,
+            adminStatus: previousPerson.suiviSaisonSuivanteCible === CURRENT_SEASON
+                ? (previousPerson.suiviSaisonSuivanteStatut || "Non réinscrit")
+                : "Non réinscrit",
+            driveArchive: "non applicable"
+        });
+    });
+
+    // L'écran principal suit la saison courante : inscriptions courantes + anciens membres non réinscrits.
+    dashboardData = [...current, ...synthetic];
+    updateKpis();
+}
+
+function updateKpis() {
+    document.getElementById("statTotal").textContent = dashboardData.length;
+    document.getElementById("statValidees").textContent = dashboardData.filter(p => normaliserTexte(getStatut(p)) === "validée" || normaliserTexte(getStatut(p)) === "validee").length;
+    document.getElementById("statATraiter").textContent = dashboardData.filter(p => normaliserTexte(getStatut(p)) === "à traiter").length;
+    document.getElementById("statIncompletes").textContent = dashboardData.filter(p => normaliserTexte(getStatut(p)) === "incomplète" || normaliserTexte(getStatut(p)) === "incomplete").length;
+}
+
+function appliquerFiltres() {
+    const search = normaliserTexte(searchInput.value);
+    const seasonMode = seasonFilter.value;
+    const statusMode = statusFilter.value;
+    let source;
+
+    if (seasonMode === "previous" || activeQuickFilter === "previous-season") {
+        source = allData.filter(p => normaliserSaison(p.saison || p.driveSaison) === PREVIOUS_SEASON);
+    } else if (seasonMode === "all") {
+        source = [...allData, ...dashboardData.filter(p => p.isNonReinscrit)];
+    } else {
+        source = [...dashboardData];
+    }
+
+    let filtered = source.filter(person => {
+        const statut = getStatut(person);
+        const haystack = normaliserTexte(`${person.nom || ""} ${person.prenom || ""} ${person.email || ""}`);
+        if (search && !haystack.includes(search)) return false;
+        if (statusMode !== "all" && statut !== statusMode) return false;
+
+        if (activeQuickFilter === "drive-error" && getDriveState(person) !== "erreur") return false;
+        if (["Validée", "À traiter", "Incomplète", "Non réinscrit"].includes(activeQuickFilter) && statut !== activeQuickFilter) return false;
+        if (activeQuickFilter === "current-season" && normaliserSaison(person.saison || person.driveSaison) !== CURRENT_SEASON) return false;
+        if (activeQuickFilter === "previous-season" && normaliserSaison(person.saison || person.driveSaison) !== PREVIOUS_SEASON) return false;
+        return true;
+    });
+
+    // Évite de compter deux fois les entrées synthétiques si « toutes les saisons » est sélectionné.
+    const seen = new Set();
+    filtered = filtered.filter(p => {
+        const key = `${p.isNonReinscrit ? "missing" : "real"}::${p.id}::${p.isNonReinscrit ? p.suiviSaisonSuivanteStatut || "" : ""}`;
+        if (seen.has(key)) return false;
+        seen.add(key);
+        return true;
+    });
+    visibleData = filtered;
+    afficherListe(filtered);
+}
+
+
+// =========================
+// FICHE INSCRIPTION ADMIN
+// =========================
+let inscriptionModalPerson = null;
+const modalBackdrop = document.getElementById("inscriptionModalBackdrop");
+const modalViewContent = document.getElementById("modalViewContent");
+const modalEditContent = document.getElementById("modalEditContent");
+const modalMessage = document.getElementById("modalMessage");
+const modalText = value => {
+    if (value === null || value === undefined || value === "") return "—";
+    if (typeof value === "object") {
+        const url = value.url || value.downloadURL || value.href || "";
+        const name = value.name || value.nom || value.fileName || value.filename || "";
+        return name || url || JSON.stringify(value);
+    }
+    if (typeof value === "boolean") return value ? "Oui" : "Non";
+    return String(value);
+};
+const modalEsc = value => modalText(value).replace(/[&<>"']/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+
+// =========================
+// PROTECTION CONTRE L'INJECTION DE CODE (XSS)
+// =========================
+
+// Échappe un texte avant de l'insérer dans du HTML
+const esc = (valeur, parDefaut = "") => {
+    if (valeur === null || valeur === undefined || valeur === "") return parDefaut;
+    return String(valeur).replace(/[&<>"']/g, c => ({
+        "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;"
+    }[c]));
+};
+
+// Marque un morceau de HTML déjà sûr (écrit par nous) : il ne sera pas échappé
+class HtmlBrut {
+    constructor(valeur) { this.valeur = valeur; }
+}
+const brut = valeur => new HtmlBrut(valeur);
+
+// Modèle étiqueté : html`...` échappe automatiquement chaque ${valeur}
+const html = (morceaux, ...valeurs) =>
+    morceaux.reduce((resultat, morceau, i) => {
+        if (i >= valeurs.length) return resultat + morceau;
+        const v = valeurs[i];
+        return resultat + morceau + (v instanceof HtmlBrut ? v.valeur : esc(v));
+    }, "");
+
+// N'accepte que les liens https (refuse javascript:, data:, etc.)
+const urlHttps = valeur => {
+    try {
+        const u = new URL(String(valeur));
+        return u.protocol === "https:" ? u.href : "";
+    } catch (e) {
+        return "";
+    }
+};
+
+function docPresent(value) {
+    if (value === true) return true;
+    if (value === false || value == null || value === "") return false;
+    if (typeof value === "object") return Boolean(value.url || value.downloadURL || value.href || value.name || value.fileName || value.filename);
+    return !["non", "false", "à fournir", "a fournir", "manquant", "non fourni"].includes(String(value).trim().toLowerCase());
+}
+function openInscriptionModal(person) {
+    inscriptionModalPerson = person;
+    const season = normaliserSaison(person.saison || person.driveSaison);
+    document.getElementById("modalParticipantTitle").textContent = `${person.prenom || ""} ${person.nom || ""}`.trim() || "Participant";
+    document.getElementById("modalSeasonLabel").textContent = `Saison ${season}`;
+    modalMessage.textContent = "";
+    modalEditContent.style.display = "none";
+    modalViewContent.style.display = "block";
+
+    const status = getStatut(person);
+    const dateInscription = person.dateInscription || person.createdAt || person.created_at || person.dateCreation || person.inscriptionDate || person.dateValidation || "—";
+    // Les fichiers sont stockés dans l'objet imbriqué person.documents (Storage Firebase),
+    // et non dans des champs de premier niveau comme pieceIdentite/photoIdentite.
+    const docsObject = person.documents && typeof person.documents === "object" ? person.documents : {};
+    const docs = [
+      ["Carte nationale d'identité", ["cni", "pieceIdentite", "carteIdentite"]],
+      ["Photo d'identité", ["photo", "photoIdentite"]],
+      ["Certificat scolaire", ["certificatScolaire", "certificatScolarite"]],
+      ["Document SAFRAN", ["safran", "inscriptionSafran"]]
+    ];
+    const docRows = docs.map(([label, keys]) => {
+      let value;
+      for (const key of keys) {
+        if (docsObject[key] !== undefined && docsObject[key] !== null && docsObject[key] !== "") { value = docsObject[key]; break; }
+        if (person[key] !== undefined && person[key] !== null && person[key] !== "") { value = person[key]; break; }
+      }
+      const present = docPresent(value);
+      const url = urlHttps(value && typeof value === "object" ? (value.url || value.downloadURL || value.href || value.downloadUrl || "") : (typeof value === "string" ? value : ""));
+      const fileName = value && typeof value === "object" ? (value.nom || value.name || value.fileName || value.filename || "") : "";
+      // Le certificat scolaire n'est requis que si un niveau de scolarité est renseigné.
+      // Les valeurs vides ou « / » signifient qu'il n'est pas requis.
+      // Le select HTML conserve « Scolarité » comme valeur par défaut si aucun niveau n'a été choisi.
+      // Ce champ décrit le niveau : il ne doit jamais être interprété comme un fichier téléversé.
+      const scolarite = String(person.scolarite ?? person.niveauScolarite ?? "")
+        .trim().normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase();
+      const notRequired = label === "Certificat scolaire" && (
+        person.certificatScolaireRequis === false ||
+        scolarite === "" || scolarite === "/" || scolarite === "scolarite" ||
+        scolarite === "non renseigne" || scolarite === "non renseigné" || scolarite === "aucun"
+      );
+      const effectivePresent = present && !notRequired;
+      return `<div class="doc-status">${notRequired ? "➖" : effectivePresent ? "✅" : "❌"} <strong>${modalEsc(label)}</strong> — ${notRequired ? "Non requis" : effectivePresent ? `Fourni${fileName ? ` : ${modalEsc(fileName)}` : ""}` : "Manquant"}${!notRequired && url ? ` · <a href="${modalEsc(url)}" target="_blank" rel="noopener">Ouvrir le document</a>` : ""}</div>`;
+    }).join("");
+
+    const driveState = getDriveState(person);
+    const driveUrl = urlHttps(person.drivePdfUrl || person.pdfUrl || person.driveFileUrl || person.fichePdfUrl || person.ficheInscriptionUrl || person.driveUrl || person.pdfURL || "");
+    const driveHtml = driveUrl ? `<a href="${modalEsc(driveUrl)}" target="_blank" rel="noopener">📄 Voir le PDF</a>` : `<span class="modal-notice">Lien du PDF non enregistré dans les données de cette inscription.</span>`;
+
+    const sections = [
+      ["Coordonnées", [
+        ["Nom", person.nom], ["Prénom", person.prenom], ["Date de naissance", person.dateNaissance], ["E-mail", person.email], ["Téléphone", person.telephone],
+        ["Adresse", person.adresse], ["Code postal", person.codePostal], ["Ville", person.ville]
+      ]],
+      ["Activités et niveau", [
+        ["Niveau ski", person.niveauSki], ["Niveau snowboard", person.niveauSnow], ["Scolarité", person.scolarite], ["Encadrant", person.encadrant],
+        ["Licence fédérale", person.federaux], ["Rôle fédéral", person.federauxRole], ["Discipline fédérale", person.federauxDiscipline], ["Numéro de licence", person.federauxLicence], ["Catégorie", person.federauxCategorie]
+      ]],
+      ["Situation SAFRAN et forfaits", [
+        ["Situation SAFRAN", person.safranStatus || person.statutSafran || person.safran], ["Quotient familial", person.qf], ["Service", person.service],
+        ["Correspondant", person.correspondant], ["Téléphone TM", person.telTM], ["E-mail TM", person.mailTM], ["Carte N’Py", person.npy], ["Forfait Luz", person.forfaitLuz], ["Numéro N’Py", person.numeroNpy]
+      ]],
+      ["Contact d'urgence", [
+        ["Nom", person.nomUrgence || person.contactUrgence], ["Prénom", person.prenomUrgence], ["Téléphone", person.telephoneUrgence], ["Lien avec le participant", person.lien || person.lienUrgence]
+      ]],
+      ["Informations médicales", [
+        ["Allergies", person.allergies], ["Traitement", person.traitement], ["Détails du traitement", person.detailsTraitement], ["Antécédents", person.antecedents],
+        ["Recommandations", person.recommandations], ["Groupe sanguin", person.groupeSanguin], ["Médecin", person.medecin]
+      ]],
+      ["Location de matériel", [
+        ["Pack", person.pack || person.materiel], ["Taille", person.locTaille], ["Poids", person.locPoids], ["Pointure", person.locPointure]
+      ]],
+      ["Autorisations et paiement", [
+        ["Droit à l’image", person.droitImage || person.droitImageAccord], ["Mode de paiement", person.paiement || person.moyenPaiement || person.locPaiement],
+        ["Nombre de chèques", person.nbCheques], ["Banque", person.banqueCheque || person.banque], ["Cotisation", person.cotisation || person.montantCotisation],
+        ["Montant forfait", person.montantForfait || person.prixForfait], ["Montant total", person.montantTotal || person.total || person.montant]
+      ]]
+    ];
+    const sectionHtml = sections.map(([title, fields]) => {
+      const usefulFields = fields.filter(([, value]) => value !== undefined && value !== null && value !== "");
+      return `<div class="modal-section"><h3>${modalEsc(title)}</h3><div class="modal-info-grid">${(usefulFields.length ? usefulFields : [["Informations", "—"]]).map(([label,value]) => `<div class="modal-info"><strong>${modalEsc(label)}</strong>${modalEsc(value)}</div>`).join("")}</div></div>`;
+    }).join("");
+
+    modalViewContent.innerHTML = `
+      <div class="modal-section"><div class="modal-info-grid">
+        <div class="modal-info"><strong>Statut</strong>${modalEsc(status)}</div>
+        <div class="modal-info"><strong>Inscription</strong>${modalEsc(dateInscription)}</div>
+        <div class="modal-info"><strong>Saison</strong>${modalEsc(season)}</div>
+        <div class="modal-info"><strong>ID membre</strong>${modalEsc(person.membreId || person.id)}</div>
+      </div></div>
+      ${sectionHtml}
+      <div class="modal-section"><h3>Documents transmis</h3>${docRows}</div>
+      <div class="modal-section"><h3>Fiche d'inscription</h3>${driveHtml}</div>
+      <div class="modal-section"><h3>Google Drive</h3><div>${driveState === "archivée" ? "✅ Archivée" : driveState === "erreur" ? "❌ Erreur d'archivage" : `⏳ ${modalEsc(person.driveArchive || "En attente d'archivage")}`}</div>${person.driveArchiveError ? `<div class="modal-notice">${modalEsc(person.driveArchiveError)}</div>` : ""}</div>
+      <div class="modal-actions">
+        <button type="button" class="btn-secondary" id="modalModifyBtn">✏️ Modifier</button>
+        <button type="button" class="pdf" id="modalRegeneratePdfBtn">📄 Régénérer PDF</button>
+        <button type="button" class="delete" id="modalDeleteBtn" ${person.isNonReinscrit ? "disabled" : ""}>🗑️ Supprimer</button>
+      </div>`;
+    document.getElementById("modalModifyBtn").addEventListener("click", () => afficherEditionInscription(person));
+    document.getElementById("modalRegeneratePdfBtn").addEventListener("click", () => {
+      const card = [...document.querySelectorAll("#liste .card")].find(c => c.dataset.personId === String(person.id));
+      if (card) card.querySelector(".pdf")?.click();
+      else modalMessage.textContent = "Impossible de retrouver la fiche dans la liste. Ferme la fenêtre puis réessaie.";
+    });
+    document.getElementById("modalDeleteBtn").addEventListener("click", async () => {
+      if (person.isNonReinscrit) return;
+      if (!confirm(`Supprimer définitivement l'inscription de ${person.prenom || ""} ${person.nom || ""} ? Cette action est irréversible.`)) return;
+      try { await deleteDoc(doc(db, "inscriptions", person.id)); closeInscriptionModal(); }
+      catch (error) { console.error(error); modalMessage.textContent = "Échec de la suppression. Vérifie les droits Firestore."; }
+    });
+    modalBackdrop.classList.add("active");
+    modalBackdrop.setAttribute("aria-hidden", "false");
+}
+function afficherEditionInscription(person) {
+    const fields = [
+      ["prenom","Prénom"],["nom","Nom"],["dateNaissance","Date de naissance"],["email","E-mail"],["telephone","Téléphone"],
+      ["adresse","Adresse"],["codePostal","Code postal"],["ville","Ville"],["niveauSki","Niveau ski"],["niveauSnow","Niveau snowboard"],
+      ["scolarite","Scolarité"],["federaux","Licence fédérale"],["federauxRole","Rôle fédéral"],["federauxDiscipline","Discipline fédérale"],
+      ["federauxLicence","Numéro de licence"],["federauxCategorie","Catégorie"],["safranStatus","Situation SAFRAN"],["qf","QF"],
+      ["nomUrgence","Nom contact urgence"],["prenomUrgence","Prénom contact urgence"],["telephoneUrgence","Téléphone urgence"],["lien","Lien avec le participant"],
+      ["allergies","Allergies"],["traitement","Traitement"],["detailsTraitement","Détails traitement"],["antecedents","Antécédents médicaux"],
+      ["recommandations","Recommandations médicales"],["groupeSanguin","Groupe sanguin"],["medecin","Médecin"],
+      ["pack","Pack location"],["locTaille","Taille"],["locPoids","Poids"],["locPointure","Pointure"],
+      ["droitImage","Droit à l'image"],["paiement","Mode de paiement"],["nbCheques","Nombre de chèques"],["banqueCheque","Banque des chèques"]
+    ];
+    modalViewContent.style.display = "none";
+    modalEditContent.style.display = "block";
+    modalEditContent.innerHTML = `<h3>Modifier l'inscription</h3><p class="modal-notice">Les changements seront enregistrés dans Firestore. Les documents téléversés et les données techniques ne sont pas modifiables ici.</p><form id="modalEditForm"><div class="modal-edit-grid">${fields.map(([key,label])=>{
+      const value = person[key]; const multi = ["adresse","allergies","traitement","detailsTraitement","antecedents","recommandations"].includes(key);
+      const safeValue = value && typeof value === "object" ? "" : (value ?? "");
+      return `<div class="modal-edit-field"><label for="edit-${key}">${label}</label>${multi ? `<textarea id="edit-${key}" name="${key}">${modalEsc(safeValue)}</textarea>` : `<input id="edit-${key}" name="${key}" value="${modalEsc(safeValue)}">`}</div>`;
+    }).join("")}</div><div class="modal-actions"><button class="btn-success" type="submit">💾 Enregistrer</button><button class="btn-secondary" type="button" id="modalCancelEditBtn">Annuler</button></div></form>`;
+    document.getElementById("modalCancelEditBtn").addEventListener("click",()=>{modalEditContent.style.display="none";modalViewContent.style.display="block";});
+    document.getElementById("modalEditForm").addEventListener("submit", async event=>{
+      event.preventDefault(); const submit=event.currentTarget.querySelector('[type="submit"]'); submit.disabled=true; modalMessage.textContent="Enregistrement…";
+      const changes={}; for (const [key] of fields) { const el=event.currentTarget.elements.namedItem(key); if (el) changes[key]=el.value.trim(); }
+      changes.modifieLe = new Date().toISOString(); changes.modifiePar = auth.currentUser?.email || "administrateur";
+      try { await updateDoc(doc(db,"inscriptions",person.id),changes); Object.assign(person,changes); modalMessage.textContent="Modifications enregistrées."; openInscriptionModal(person); }
+      catch(error){console.error("Erreur modification inscription",error);modalMessage.textContent="Échec de l'enregistrement. Vérifie les règles Firestore.";submit.disabled=false;}
+    });
+}
+function closeInscriptionModal(){modalBackdrop.classList.remove("active");modalBackdrop.setAttribute("aria-hidden","true");inscriptionModalPerson=null;}
+document.getElementById("modalCloseBtn").addEventListener("click",closeInscriptionModal);
+modalBackdrop.addEventListener("click",event=>{if(event.target===modalBackdrop)closeInscriptionModal();});
+document.addEventListener("keydown",event=>{if(event.key==="Escape" && modalBackdrop.classList.contains("active"))closeInscriptionModal();});
 
 // =========================
 // AFFICHAGE
@@ -514,13 +940,32 @@ function afficherListe(dataArray){
             document.createElement("div");
 
         card.classList.add("card");
+        card.dataset.personId = person.id;
+        card.dataset.personName = `${person.prenom || ""} ${person.nom || ""}`.trim();
 
-        card.innerHTML = `
+        const currentStatus = getStatut(person);
+        const seasonLabel = normaliserSaison(person.saison || person.driveSaison);
+        const driveState = getDriveState(person);
+        const driveLabel = person.isNonReinscrit ? "Sans inscription cette saison" : (person.driveArchive || "En attente d'archivage");
+        const statusOptions = brut(STATUSES.map(status => `<option value="${esc(status)}" ${status === currentStatus ? "selected" : ""}>${esc(status)}</option>`).join(""));
+
+        card.innerHTML = html`
 
             <h2>
-                ${person.prenom || ""} ${person.nom || ""}
+                <span>${person.prenom || ""} ${person.nom || ""}</span>
+                <span class="person-meta">
+                    <span class="season-tag">Saison ${seasonLabel}</span>
+                    <span class="drive-tag ${driveState === "erreur" ? "error" : driveState === "archivée" ? "ok" : ""}">Drive : ${driveLabel}</span>
+                </span>
             </h2>
 
+            <div class="status-editor">
+                <label for="status-${person.id}-${person.isNonReinscrit ? "missing" : "real"}">Statut administratif</label>
+                <select class="admin-status" id="status-${person.id}-${person.isNonReinscrit ? "missing" : "real"}">${statusOptions}</select>
+                <span class="status-save-note">Modifiable librement par l'administration</span>
+            </div>
+            ${person.isNonReinscrit ? brut(`<div class="non-reinscrit-note">Ce membre était inscrit en ${PREVIOUS_SEASON}, mais aucune inscription n'a été retrouvée pour ${CURRENT_SEASON}. Le statut ci-dessus est un suivi administratif : il ne crée pas une nouvelle inscription.</div>`) : ""}
+			
             <div class="grid">
 
                 <div class="bloc">
@@ -639,12 +1084,63 @@ function afficherListe(dataArray){
 						📄 PDF individuel
 					</button>
 
+                    <button class="xlsx">
+                        📊 Excel individuel (.xlsx)
+                    </button>
+
 					<button class="delete">
 						🗑️ Supprimer
 					</button>
 
 				</div>
 			`;
+
+        // =========================
+        // MODIFICATION DU STATUT ADMINISTRATIF
+        // =========================
+        const statusSelect = card.querySelector(".admin-status");
+        const statusNote = card.querySelector(".status-save-note");
+        if (person.isNonReinscrit) {
+            card.querySelector(".delete").style.display = "none";
+        }
+        statusSelect.addEventListener("click", event => event.stopPropagation());
+        statusSelect.addEventListener("change", async () => {
+            const nouveauStatut = statusSelect.value;
+            statusSelect.disabled = true;
+            statusNote.textContent = "Enregistrement…";
+            statusNote.classList.remove("error");
+            try {
+                if (person.isNonReinscrit) {
+                    await updateDoc(doc(db, "inscriptions", person.sourcePreviousId), {
+                        suiviSaisonSuivanteCible: CURRENT_SEASON,
+                        suiviSaisonSuivanteStatut: nouveauStatut,
+                        suiviSaisonSuivanteModifieLe: new Date().toISOString()
+                    });
+                } else {
+                    await updateDoc(doc(db, "inscriptions", person.id), {
+                        statutInscription: nouveauStatut,
+                        statutModifieLe: new Date().toISOString(),
+                        statutModifiePar: auth.currentUser?.email || "administrateur"
+                    });
+                }
+                statusNote.textContent = "Enregistré";
+                if (person.isNonReinscrit) {
+                    person.adminStatus = nouveauStatut;
+                    person.suiviSaisonSuivanteStatut = nouveauStatut;
+                    person.suiviSaisonSuivanteCible = CURRENT_SEASON;
+                } else {
+                    person.statutInscription = nouveauStatut;
+                }
+                updateKpis();
+            } catch (error) {
+                console.error("Erreur de mise à jour du statut :", error);
+                statusNote.textContent = "Échec de l'enregistrement — vérifie les règles Firestore.";
+                statusNote.classList.add("error");
+                statusSelect.value = getStatut(person);
+            } finally {
+                statusSelect.disabled = false;
+            }
+        });
 
         // =========================
         // DELETE
@@ -662,6 +1158,13 @@ function afficherListe(dataArray){
                     doc(db, "inscriptions", person.id)
                 );
             }
+        });
+
+        // =========================
+        // EXPORT EXCEL INDIVIDUEL
+        // =========================
+        card.querySelector(".xlsx").addEventListener("click", () => {
+            exporterExcelASCT(person);
         });
 
         // =========================
@@ -1642,21 +2145,10 @@ function afficherListe(dataArray){
 
 		});
 		
-		const details =
-			card.querySelector(".details");
-
 		card.addEventListener("click", (e) => {
-
-			if(
-				e.target.classList.contains("delete")
-				||
-				e.target.classList.contains("pdf")
-			){
-				return;
-			}
-
-			details.classList.toggle("active");
-		});
+            if (e.target.closest("button, select, input, a, label")) return;
+            openInscriptionModal(person);
+        });
 
         liste.appendChild(card);
 
@@ -1689,7 +2181,8 @@ function chargerInscriptionsAdmin() {
                 });
             });
 
-            afficherListe(allData);
+            construireDonneesDashboard();
+            appliquerFiltres();
         },
 
         (error) => {
@@ -1703,38 +2196,26 @@ function chargerInscriptionsAdmin() {
 }
 
 // =========================
-// RECHERCHE
+// FILTRES ET RECHERCHE
 // =========================
 
-searchInput.addEventListener("input", () => {
-
-    const value =
-        searchInput.value.toLowerCase();
-
-    const filtered = allData.filter(person => {
-
-        return (
-
-            (person.nom || "")
-            .toLowerCase()
-            .includes(value)
-
-            ||
-
-            (person.prenom || "")
-            .toLowerCase()
-            .includes(value)
-
-            ||
-
-            (person.email || "")
-            .toLowerCase()
-            .includes(value)
-
-        );
-    });
-
-    afficherListe(filtered);
+searchInput.addEventListener("input", appliquerFiltres);
+seasonFilter.addEventListener("change", () => {
+    activeQuickFilter = "tous";
+    filterTabs.querySelectorAll(".filter-tab").forEach(button => button.classList.toggle("active", button.dataset.filter === "tous"));
+    appliquerFiltres();
+});
+statusFilter.addEventListener("change", appliquerFiltres);
+filterTabs.addEventListener("click", event => {
+    const button = event.target.closest(".filter-tab");
+    if (!button) return;
+    activeQuickFilter = button.dataset.filter;
+    filterTabs.querySelectorAll(".filter-tab").forEach(tab => tab.classList.toggle("active", tab === button));
+    if (activeQuickFilter === "previous-season") seasonFilter.value = "previous";
+    else if (activeQuickFilter === "current-season") seasonFilter.value = "current";
+    else if (activeQuickFilter === "tous") seasonFilter.value = "current";
+    if (["Validée", "À traiter", "Incomplète", "Non réinscrit"].includes(activeQuickFilter)) statusFilter.value = "all";
+    appliquerFiltres();
 });
 
 // =========================
@@ -1752,14 +2233,14 @@ exportPDF.addEventListener("click", () => {
     pdf.setFontSize(18);
 
     pdf.text(
-        "Liste des inscriptions ASCT",
+        "Suivi des inscriptions ASCT",
         20,
         y
     );
 
     y += 20;
 
-    allData.forEach(person => {
+    visibleData.forEach(person => {
 
         pdf.setFontSize(12);
 
@@ -1789,40 +2270,239 @@ exportPDF.addEventListener("click", () => {
 });
 
 // =========================
-// EXPORT CSV
+// EXPORT EXCEL MULTI-ONGLETS
 // =========================
 
-exportCSV.addEventListener("click", () => {
+function valeurExport(value) {
+    if (value === null || value === undefined || value === "") return "";
+    if (typeof value === "boolean") return value ? "Oui" : "Non";
+    if (value instanceof Date) return value.toLocaleString("fr-FR");
+    if (Array.isArray(value)) return value.map(valeurExport).join(" ; ");
+    if (typeof value === "object") {
+        // Les champs d'upload peuvent être stockés comme URL, nom ou objet.
+        const url = value.url || value.downloadURL || value.href || "";
+        const nom = value.name || value.nom || value.fileName || value.filename || "";
+        if (nom && url) return `${nom} — ${url}`;
+        if (url) return String(url);
+        if (nom) return String(nom);
+        try { return JSON.stringify(value); } catch (_) { return "[donnée]"; }
+    }
+    return String(value);
+}
 
-    let csv =
-        "Nom;Prenom;Email;Telephone\n";
+function premierChamp(person, keys) {
+    for (const key of keys) {
+        if (person[key] !== undefined && person[key] !== null && person[key] !== "") {
+            return person[key];
+        }
+    }
+    return "";
+}
 
-    allData.forEach(person => {
+function ligneBase(person) {
+    return {
+        "Saison suivie": normaliserSaison(person.saison || person.driveSaison || (person.isNonReinscrit ? CURRENT_SEASON : "")),
+        "Statut administratif": getStatut(person),
+        "Nom": valeurExport(person.nom),
+        "Prénom": valeurExport(person.prenom),
+        "E-mail": valeurExport(person.email),
+        "Téléphone": valeurExport(person.telephone),
+        "Identifiant membre": valeurExport(person.membreId),
+        "Identifiant famille": valeurExport(person.familleId),
+        "ID inscription Firestore": valeurExport(person.id),
+        "Membre non réinscrit": person.isNonReinscrit ? "Oui" : "Non"
+    };
+}
 
-        csv +=
-            `${person.nom || ""};`
-            + `${person.prenom || ""};`
-            + `${person.email || ""};`
-            + `${person.telephone || ""}\n`;
+function creerFeuille(wb, nom, lignes) {
+    // Génération avec SheetJS standard pour maximiser la compatibilité Excel.
+    const ws = XLSX.utils.json_to_sheet(lignes, { defval: "" });
+    const headers = lignes.length ? Object.keys(lignes[0]) : [];
+    ws['!cols'] = headers.map(header => ({ wch: Math.min(36, Math.max(14, header.length + 3)) }));
+    if (ws['!ref']) {
+        ws['!autofilter'] = { ref: ws['!ref'] };
+    }
+    XLSX.utils.book_append_sheet(wb, ws, nom.slice(0, 31));
+}
+
+function exporterExcelASCT(participant = null) {
+    if (typeof XLSX === "undefined") {
+        alert("La bibliothèque Excel n'a pas pu être chargée. Vérifie ta connexion Internet puis réessaie.");
+        return;
+    }
+
+    // Sans participant fourni : export complet de toutes les saisons.
+    // Avec un participant : classeur individuel avec exactement une ligne par onglet.
+    const ids = new Set();
+    const exportRows = [];
+    const sourceRows = participant
+        ? [participant]
+        : [...allData, ...dashboardData.filter(p => p.isNonReinscrit)];
+    sourceRows.forEach(person => {
+        const key = person.isNonReinscrit
+            ? `non-reinscrit::${person.familleId || ""}::${person.membreId || person.id || ""}`
+            : `inscription::${person.id || `${person.familleId || ""}::${person.membreId || ""}::${person.saison || person.driveSaison || ""}`}`;
+        if (ids.has(key)) return;
+        ids.add(key);
+        exportRows.push(person);
     });
 
-    const blob =
-        new Blob([csv], {
-            type:"text/csv"
-        });
+    const wb = XLSX.utils.book_new();
+    const meta = exportRows.map(person => ({
+        ...ligneBase(person),
+        "État Google Drive": person.isNonReinscrit ? "Non applicable — non réinscrit" : valeurExport(person.driveArchive || "En attente d'archivage"),
+        "Détail erreur Drive": valeurExport(person.driveArchiveError),
+        "Date archivage Drive": valeurExport(person.driveArchiveDate),
+        "E-mail responsable / famille": valeurExport(premierChamp(person, ["emailResponsable", "responsableEmail", "mailResponsable"])),
+        "Nom du responsable": valeurExport(premierChamp(person, ["nomResponsable", "responsableNom"])),
+        "Prénom du responsable": valeurExport(premierChamp(person, ["prenomResponsable", "responsablePrenom"]))
+    }));
+    creerFeuille(wb, "Suivi administratif", meta);
 
-    const url =
-        URL.createObjectURL(blob);
+    creerFeuille(wb, "Participant", exportRows.map(p => ({
+        ...ligneBase(p),
+        "Date de naissance": valeurExport(p.dateNaissance),
+        "Catégorie calculée": p.dateNaissance ? (calculerAgeExport(p.dateNaissance) < 18 ? "Enfant" : "Adulte") : "",
+        "Sexe": valeurExport(p.sexe),
+        "Famille / responsable": valeurExport(p.nomResponsable || p.responsable || p.familleNom)
+    })));
 
-    const a =
-        document.createElement("a");
+    creerFeuille(wb, "Coordonnées", exportRows.map(p => ({
+        ...ligneBase(p),
+        "Adresse": valeurExport(p.adresse),
+        "Code postal": valeurExport(p.codePostal),
+        "Ville": valeurExport(p.ville),
+        "Téléphone secondaire": valeurExport(p.telephoneSecondaire),
+        "E-mail secondaire": valeurExport(p.emailSecondaire)
+    })));
 
-    a.href = url;
+    creerFeuille(wb, "Activités", exportRows.map(p => ({
+        ...ligneBase(p),
+        "Niveau ski": valeurExport(p.niveauSki),
+        "Niveau snowboard": valeurExport(p.niveauSnow),
+        "Scolarité": valeurExport(p.scolarite),
+        "Participation aux fédéraux": valeurExport(p.federaux || p.participationFederaux),
+        "Rôle fédéraux": valeurExport(p.federauxRole),
+        "Discipline fédéraux": valeurExport(p.federauxDiscipline),
+        "Licence fédéraux": valeurExport(p.federauxLicence),
+        "Catégorie course": valeurExport(p.federauxCategorie),
+        "Encadrant": valeurExport(p.encadrant)
+    })));
 
-    a.download = "inscriptions.csv";
+    creerFeuille(wb, "Situation SAFRAN", exportRows.map(p => ({
+        ...ligneBase(p),
+        "Statut SAFRAN": valeurExport(p.safranStatus || p.statutSafran || p.safran),
+        "Quotient familial (QF)": valeurExport(p.qf),
+        "Service": valeurExport(p.service),
+        "Correspondant TM": valeurExport(p.correspondant),
+        "Téléphone TM": valeurExport(p.telTM || p.telephoneTM || p.telTm),
+        "E-mail TM": valeurExport(p.mailTM || p.emailTM || p.mailTm),
+        "Inscription SAFRAN / justificatif": valeurExport(p.inscriptionSafran)
+    })));
 
-    a.click();
-});
+    creerFeuille(wb, "Carte N'Py", exportRows.map(p => ({
+        ...ligneBase(p),
+        "Commande / recharge N'Py": valeurExport(p.npy),
+        "Numéro de carte N'Py": valeurExport(p.numeroNpy || p.npyNumber || p.numeroCarteNpy),
+        "Forfait Luz Ardiden": valeurExport(p.forfaitLuz)
+    })));
+
+    creerFeuille(wb, "Contact urgence", exportRows.map(p => ({
+        ...ligneBase(p),
+        "Nom contact urgence": valeurExport(p.nomUrgence || p.contactUrgence),
+        "Prénom contact urgence": valeurExport(p.prenomUrgence),
+        "Téléphone contact urgence": valeurExport(p.telephoneUrgence),
+        "Lien avec le participant": valeurExport(p.lien || p.lienUrgence)
+    })));
+
+    creerFeuille(wb, "Informations médicales", exportRows.map(p => ({
+        ...ligneBase(p),
+        "Allergies": valeurExport(p.allergies),
+        "Traitement": valeurExport(p.traitement),
+        "Détails traitement": valeurExport(p.detailsTraitement),
+        "Antécédents": valeurExport(p.antecedents),
+        "Recommandations médicales": valeurExport(p.recommandations),
+        "Groupe sanguin": valeurExport(p.groupeSanguin),
+        "Médecin": valeurExport(p.medecin),
+        "Téléphone médecin": valeurExport(p.telephoneMedecin)
+    })));
+
+    creerFeuille(wb, "Location matériel", exportRows.map(p => ({
+        ...ligneBase(p),
+        "Location matériel": valeurExport(p.materiel),
+        "Pack": valeurExport(p.pack),
+        "Taille": valeurExport(p.locTaille),
+        "Poids": valeurExport(p.locPoids),
+        "Pointure": valeurExport(p.locPointure),
+        "Paiement location": valeurExport(p.locPaiement)
+    })));
+
+    creerFeuille(wb, "Autorisations", exportRows.map(p => ({
+        ...ligneBase(p),
+        "Droit à l'image": valeurExport(p.droitImage || p.droitImageAccord),
+        "Autorisation parentale": valeurExport(p.autorisationParentale || p.autorisationParent),
+        "Consentement règlement": valeurExport(p.acceptationReglement || p.reglementAccepte),
+        "Autres autorisations": valeurExport(p.autorisations || p.autorisation)
+    })));
+
+    creerFeuille(wb, "Paiement", exportRows.map(p => ({
+        ...ligneBase(p),
+        "Type de participant": valeurExport(p.typeParticipant || (p.dateNaissance ? (calculerAgeExport(p.dateNaissance) < 18 ? "Enfant" : "Adulte") : "")),
+        "Statut SAFRAN / tarif": valeurExport(p.safranStatus || p.statutSafran || p.safran),
+        "Forfait Luz Ardiden": valeurExport(p.npy === "oui" || p.forfaitLuz === true),
+        "Cotisation enregistrée": valeurExport(p.cotisation || p.montantCotisation),
+        "Montant forfait enregistré": valeurExport(p.montantForfait || p.prixForfait),
+        "Montant total enregistré": valeurExport(p.montantTotal || p.total || p.montant),
+        "Moyen de paiement": valeurExport(p.paiement || p.moyenPaiement || p.locPaiement),
+        "Nombre de chèques": valeurExport(p.nbCheques),
+        "Banque des chèques": valeurExport(p.banqueCheque || p.banque),
+        "Statut du paiement": valeurExport(p.statutPaiement || p.paiementStatut),
+        "Commentaire paiement": valeurExport(p.commentairePaiement)
+    })));
+
+    creerFeuille(wb, "Documents", exportRows.map(p => ({
+        ...ligneBase(p),
+        "Pièce d'identité": valeurExport(p.pieceIdentite),
+        "Photo d'identité": valeurExport(p.photoIdentite),
+        "Certificat scolaire": valeurExport(p.certificatScolaire),
+        "Justificatif SAFRAN": valeurExport(p.inscriptionSafran),
+        "Autres documents": valeurExport(p.documents || p.fichiers),
+        "État archivage Drive": valeurExport(p.driveArchive),
+        "Erreur archivage Drive": valeurExport(p.driveArchiveError)
+    })));
+
+    creerFeuille(wb, "Signature", exportRows.map(p => ({
+        ...ligneBase(p),
+        "Nom signataire": valeurExport(p.nomSignataire || p.signataireNom),
+        "Prénom signataire": valeurExport(p.prenomSignataire || p.signatairePrenom),
+        "Signature": valeurExport(p.signature || p.signatureResponsable || p.signatureParent),
+        "Date de signature": valeurExport(p.dateSignature || p.signatureDate),
+        "Date de soumission": valeurExport(p.dateCreation || p.createdAt || p.dateInscription || p.created_at)
+    })));
+
+    const date = new Date().toISOString().slice(0, 10);
+    if (participant) {
+        const nomFichier = `${participant.prenom || ""}_${participant.nom || "Participant"}`
+            .normalize("NFD").replace(/[\u0300-\u036f]/g, "")
+            .replace(/[^a-zA-Z0-9_-]+/g, "_").replace(/^_+|_+$/g, "");
+        const saison = normaliserSaison(participant.saison || participant.driveSaison || (participant.isNonReinscrit ? CURRENT_SEASON : ""));
+        XLSX.writeFile(wb, `ASCT_${nomFichier || "Participant"}_${saison.replace(/[^0-9]/g, "-")}_${date}.xlsx`);
+    } else {
+        XLSX.writeFile(wb, `ASCT_Inscriptions_${date}.xlsx`);
+    }
+}
+
+function calculerAgeExport(value) {
+    const birth = new Date(value);
+    if (Number.isNaN(birth.getTime())) return 999;
+    const today = new Date();
+    let age = today.getFullYear() - birth.getFullYear();
+    const month = today.getMonth() - birth.getMonth();
+    if (month < 0 || (month === 0 && today.getDate() < birth.getDate())) age--;
+    return age;
+}
+
+exportCSV.addEventListener("click", exporterExcelASCT);
 
 </script>
 

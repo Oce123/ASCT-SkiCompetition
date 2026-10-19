@@ -264,13 +264,13 @@
 			<h3>Représentant légal 2</h3>
 
             <div class="form-row">
-                <input type="text" placeholder="Nom">
-                <input type="text" placeholder="Prénom">
+                <input type="text" id="legal2-nom" placeholder="Nom">
+                <input type="text" id="legal2-prenom" placeholder="Prénom">
             </div>
 
             <div class="form-row">
-                <input type="tel" placeholder="Téléphone">
-                <input type="email" placeholder="Email">
+                <input type="tel" id="legal2-tel" placeholder="Téléphone">
+                <input type="email" id="legal2-mail" placeholder="Email">
             </div>
 
             <button type="button" class="next btn-submit">Suivant</button>
@@ -1984,6 +1984,23 @@ document.addEventListener("DOMContentLoaded", () => {
         // CREATION DES DONNEES
         // =================================================
 
+        // Une section non concernée (désactivée) ne doit rien enregistrer :
+        // par exemple les champs « représentant légal » d'un adulte,
+        // ou la location de matériel si l'adhérent n'en loue pas.
+        const sectionActive = id =>
+            !document
+                .getElementById(id)
+                ?.classList.contains("step-disabled");
+
+        const mineurActif = sectionActive("mineur-section");
+        const materielActif = sectionActive("materiel-section");
+        const federauxActif = sectionActive("federaux-section");
+
+        const valeurSi = (actif, id) =>
+            actif
+                ? (document.getElementById(id)?.value || "").trim()
+                : "";
+
         const data = {
 
             // -----------------------------
@@ -2247,6 +2264,83 @@ document.addEventListener("DOMContentLoaded", () => {
             cautionMateriel:
                 Number(paiement.caution) || 0,
 
+
+
+            // -----------------------------
+            // RESPONSABLES LEGAUX (mineurs)
+            // -----------------------------
+
+            responsableLegal1Nom:
+                valeurSi(mineurActif, "legal1-nom"),
+
+            responsableLegal1Prenom:
+                valeurSi(mineurActif, "legal1-prenom"),
+
+            responsableLegal1Telephone:
+                valeurSi(mineurActif, "legal1-tel"),
+
+            responsableLegal1Email:
+                valeurSi(mineurActif, "legal1-mail"),
+
+            responsableLegal2Nom:
+                valeurSi(mineurActif, "legal2-nom"),
+
+            responsableLegal2Prenom:
+                valeurSi(mineurActif, "legal2-prenom"),
+
+            responsableLegal2Telephone:
+                valeurSi(mineurActif, "legal2-tel"),
+
+            responsableLegal2Email:
+                valeurSi(mineurActif, "legal2-mail"),
+
+
+            // -----------------------------
+            // LOCATION DE MATERIEL (détails)
+            // -----------------------------
+
+            locationTaille:
+                valeurSi(materielActif, "loc-taille"),
+
+            locationPoids:
+                valeurSi(materielActif, "loc-poids"),
+
+            locationPointure:
+                valeurSi(materielActif, "loc-pointure"),
+
+            locationModePaiement:
+                valeurSi(materielActif, "loc-paiement"),
+
+            locationBanque:
+                valeurSi(materielActif, "loc-banque"),
+
+
+            // -----------------------------
+            // FEDERAUX (détails)
+            // -----------------------------
+
+            federauxRole:
+                valeurSi(federauxActif, "federaux-role"),
+
+            federauxDiscipline:
+                valeurSi(federauxActif, "federaux-discipline"),
+
+            federauxLicence:
+                valeurSi(federauxActif, "federaux-licence"),
+
+            federauxCategorie:
+                valeurSi(federauxActif, "federaux-categorie"),
+
+
+            // -----------------------------
+            // CONTACT TM (salariés)
+            // -----------------------------
+
+            telephoneTm:
+                (document.getElementById("tel-tm")?.value || "").trim(),
+
+            emailTm:
+                (document.getElementById("mail-tm")?.value || "").trim(),
 
             // -----------------------------
             // DATE

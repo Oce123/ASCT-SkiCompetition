@@ -1443,6 +1443,48 @@
 		} from "https://www.gstatic.com/firebasejs/12.12.0/firebase-firestore.js";
 
 
+		// =====================================================
+		// PROTECTION CONTRE L'INJECTION DE CODE (XSS)
+		// =====================================================
+
+		// Échappe un texte avant de l'insérer dans du HTML
+		const esc = (valeur, parDefaut = "") => {
+			if (valeur === null || valeur === undefined || valeur === "") return parDefaut;
+			return String(valeur).replace(/[&<>"']/g, c => ({
+				"&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;"
+			}[c]));
+		};
+
+		// Représente un morceau de HTML déjà sûr : il ne sera pas échappé une seconde fois
+		class HtmlSur {
+			constructor(valeur) { this.valeur = valeur; }
+			toString() { return this.valeur; }
+		}
+
+		// Marque un texte comme HTML sûr (à utiliser pour du HTML écrit par nous)
+		const brut = valeur => new HtmlSur(String(valeur));
+
+		// Modèle étiqueté : html`...` échappe automatiquement chaque ${valeur}
+		const html = (morceaux, ...valeurs) =>
+			new HtmlSur(
+				morceaux.reduce((resultat, morceau, i) => {
+					if (i >= valeurs.length) return resultat + morceau;
+					const v = valeurs[i];
+					return resultat + morceau + (v instanceof HtmlSur ? v.valeur : esc(v));
+				}, "")
+			);
+
+		// N'accepte que les liens https (refuse javascript:, data:, etc.)
+		const urlHttps = valeur => {
+			try {
+				const u = new URL(String(valeur));
+				return u.protocol === "https:" ? u.href : "";
+			} catch (e) {
+				return "";
+			}
+		};
+
+
         const firebaseConfig = {
 
 			apiKey: "AIzaSyD_xW5F5iRRXHRuolefgfsN--f-lWMB-9A",
@@ -1511,7 +1553,7 @@
 
 				if (snapshot.empty) {
 
-					membresContainer.innerHTML = `
+					membresContainer.innerHTML = html`
 						<div class="empty-state">
 
 							<div class="empty-icon">
@@ -1596,7 +1638,7 @@
 						"member-item";
 
 
-					membreElement.innerHTML = `
+					membreElement.innerHTML = html`
 
 						<div class="member-main">
 
@@ -1674,7 +1716,7 @@
 							dossier.className =
 								"member-profile";
 
-							dossier.innerHTML = `
+							dossier.innerHTML = html`
 								<div class="member-loading">
 									Chargement du dossier...
 								</div>
@@ -1762,7 +1804,7 @@
 													inscription.statutInscription ||
 													"En attente";
 
-												return `
+												return html`
 													<div class="member-inscription">
 
 														<div class="member-inscription-main">
@@ -1806,7 +1848,7 @@
 								}
 
 
-								dossier.innerHTML = `
+								dossier.innerHTML = html`
 
 									<div class="member-profile-header">
 
@@ -1902,7 +1944,7 @@
 
 									<div class="member-profile-inscriptions">
 										<h4>📋 Inscriptions</h4>
-										${inscriptionsHTML}
+										${brut(inscriptionsHTML)}
 									</div>
 
 									<div class="member-profile-actions">
@@ -1927,7 +1969,7 @@
 									error
 								);
 
-								dossier.innerHTML = `
+								dossier.innerHTML = html`
 									<div class="members-error">
 										Impossible de charger
 										le dossier de ce membre.
@@ -2029,7 +2071,7 @@
 
 				nouvelleInscription.className = "new-inscription-container";
 
-				nouvelleInscription.innerHTML = `
+				nouvelleInscription.innerHTML = html`
 					<a href="inscription.html" class="primary-btn">
 						+ Nouvelle inscription
 					</a>
@@ -2044,7 +2086,7 @@
 					error
 				);
 
-				membresContainer.innerHTML = `
+				membresContainer.innerHTML = html`
 
 					<div class="members-error">
 
@@ -2080,7 +2122,7 @@
 			detail.className =
 				"inscription-detail";
 
-			detail.innerHTML = `
+			detail.innerHTML = html`
 
 				<div class="inscription-detail-header">
 
@@ -2161,7 +2203,7 @@
 					<h4>Documents transmis</h4>
 
 					<div class="inscription-documents-list">
-						${afficherDocumentsInscription(inscription)}
+						${brut(afficherDocumentsInscription(inscription))}
 					</div>
 
 				</div>
@@ -2206,14 +2248,13 @@
 					const nom =
 						documentData.nom || key;
 
-					const url =
-						documentData.url;
+					const url = urlHttps(documentData.url);
 
 					if (!url) {
 						return "";
 					}
 
-					return `
+					return html`
 						<a
 							href="${url}"
 							target="_blank"
@@ -2249,7 +2290,7 @@
 
 				if (snapshot.empty) {
 
-					container.innerHTML = `
+					container.innerHTML = html`
 						<p class="empty-message">
 							Aucune inscription enregistrée pour le moment.
 						</p>
@@ -2301,7 +2342,7 @@
 
 					carte.className = "inscription-item";
 
-					carte.innerHTML = `
+					carte.innerHTML = html`
 						<div class="inscription-main">
 
 							<div class="inscription-person">
@@ -2325,7 +2366,7 @@
 
 								${
 									dateInscription
-									? `<span class="inscription-date">
+									? html`<span class="inscription-date">
 										Inscrite le ${dateInscription}
 									   </span>`
 									: ""
@@ -2360,7 +2401,7 @@
 
 						if (dossierExistant) {
 							dossierExistant.remove();
-							boutonDossier.innerHTML = `
+							boutonDossier.innerHTML = html`
 								Voir le dossier
 								<span>→</span>
 							`;
@@ -2371,7 +2412,7 @@
 
 						dossier.className = "inscription-dossier";
 
-						dossier.innerHTML = `
+						dossier.innerHTML = html`
 							<div class="dossier-separator"></div>
 
 							<div class="dossier-grid">
@@ -2455,7 +2496,7 @@
 
 							documentsCount.textContent = "Aucun document";
 
-							documentsList.innerHTML = `
+							documentsList.innerHTML = html`
 								<div class="document-empty">
 									Aucun document enregistré pour cette inscription.
 								</div>
@@ -2472,7 +2513,7 @@
 
 								documentItem.className = "document-item";
 
-								documentItem.innerHTML = `
+								documentItem.innerHTML = html`
 									<div class="document-info">
 
 										<div class="document-icon">
@@ -2487,7 +2528,7 @@
 									</div>
 
 									<a
-										href="${documentData.url}"
+										href="${urlHttps(documentData.url) || '#'}"
 										target="_blank"
 										rel="noopener noreferrer"
 										class="document-button"
@@ -2501,7 +2542,7 @@
 							});
 						}
 
-						boutonDossier.innerHTML = `
+						boutonDossier.innerHTML = html`
 							Fermer
 							<span>↑</span>
 						`;
@@ -2516,7 +2557,7 @@
 					error
 				);
 
-				container.innerHTML = `
+				container.innerHTML = html`
 					<p class="error-message">
 						Impossible de charger vos inscriptions.
 					</p>
