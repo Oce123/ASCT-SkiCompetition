@@ -6,6 +6,10 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
     <title>Admin - ASCT</title>
+    <script>
+        window.va = window.va || function () { (window.vaq = window.vaq || []).push(arguments); };
+    </script>
+    <script defer src="/_vercel/insights/script.js"></script>
 
     <style>
 
@@ -1123,7 +1127,7 @@ function afficherListe(dataArray){
                         statutModifiePar: auth.currentUser?.email || "administrateur"
                     });
                 }
-                statusNote.textContent = "Enregistré";
+                statusNote.textContent = "Enregistr��";
                 if (person.isNonReinscrit) {
                     person.adminStatus = nouveauStatut;
                     person.suiviSaisonSuivanteStatut = nouveauStatut;
