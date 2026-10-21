@@ -362,17 +362,21 @@
 <script type="module">
 
     import {
-        initializeApp
-    }
-    from "https://www.gstatic.com/firebasejs/12.12.0/firebase-app.js";
-
+		initializeApp
+	} from "https://www.gstatic.com/firebasejs/12.12.0/firebase-app.js";
 
     import {
-        getAuth,
-        signInWithEmailAndPassword,
-        sendPasswordResetEmail
-    }
-    from "https://www.gstatic.com/firebasejs/12.12.0/firebase-auth.js";
+		getAuth,
+		signInWithEmailAndPassword,
+		sendPasswordResetEmail,
+		signOut
+	} from "https://www.gstatic.com/firebasejs/12.12.0/firebase-auth.js";
+
+	import {
+		getFirestore,
+		doc,
+		getDoc
+	} from "https://www.gstatic.com/firebasejs/12.12.0/firebase-firestore.js";
 
 
     // =========================================================
@@ -397,8 +401,8 @@
 
 
     const app = initializeApp(firebaseConfig);
-
     const auth = getAuth(app);
+	const db = getFirestore(app);
 
 
     // =========================================================
@@ -522,116 +526,97 @@
     // CONNEXION
     // =========================================================
 
-    loginForm.addEventListener("submit", async (event) => {
+    
+	loginForm.addEventListener("submit", async (event) => {
+		event.preventDefault();
 
-        event.preventDefault();
+		const email = emailInput.value.trim();
+		const password = passwordInput.value;
 
+		if (!email || !password) {
+			afficherMessage(
+				loginMessage,
+				"Veuillez renseigner votre adresse e-mail et votre mot de passe.",
+				"error"
+			);
+			return;
+		}
 
-        const email =
-            emailInput.value.trim();
+		loginButton.disabled = true;
+		loginButton.textContent = "Vérification…";
+		cacherMessage(loginMessage);
 
-        const password =
-            passwordInput.value;
+		try {
+			// 1. Vérifier les identifiants Firebase
+			const userCredential = await signInWithEmailAndPassword(
+				auth,
+				email,
+				password
+			);
 
+			const user = userCredential.user;
 
-        if (!email || !password) {
+			// 2. Vérifier l'existence du profil famille dans Firestore
+			const familleRef = doc(db, "familles", user.uid);
+			const familleSnap = await getDoc(familleRef);
 
-            afficherMessage(
-                loginMessage,
-                "Veuillez renseigner votre adresse e-mail et votre mot de passe.",
-                "error"
-            );
+			// 3. Si le profil famille n'existe pas, refuser l'accès
+			if (!familleSnap.exists()) {
+				await signOut(auth);
 
-            return;
+				afficherMessage(
+					loginMessage,
+					"Compte introuvable, veuillez réessayer ou créer votre espace famille.",
+					"error"
+				);
 
-        }
+				return;
+			}
 
+			// 4. Profil famille trouvé : autoriser l'accès
+			afficherMessage(
+				loginMessage,
+				"Connexion réussie. Redirection…",
+				"success"
+			);
 
-        loginButton.disabled = true;
+			window.location.href = "espace-adherent.html";
 
-        loginButton.textContent =
-            "Connexion…";
+		} catch (error) {
+			console.error("Erreur de connexion :", error);
 
-        cacherMessage(loginMessage);
+			let texte =
+				"Impossible de vous connecter. Veuillez réessayer.";
 
+			if (
+				error.code === "auth/invalid-credential" ||
+				error.code === "auth/wrong-password" ||
+				error.code === "auth/user-not-found"
+			) {
+				texte =
+					"Compte introuvable ou identifiants incorrects. Réessayez ou créez votre espace famille.";
+			} else if (error.code === "auth/invalid-email") {
+				texte =
+					"L'adresse e-mail renseignée n'est pas valide.";
+			} else if (error.code === "auth/too-many-requests") {
+				texte =
+					"Trop de tentatives. Veuillez patienter quelques instants.";
+			} else if (
+				error.code === "permission-denied" ||
+				error.code === "firestore/permission-denied"
+			) {
+				texte =
+					"Impossible de vérifier votre espace famille. Vérifiez votre connexion ou réessayez plus tard.";
+			}
 
-        try {
+			afficherMessage(loginMessage, texte, "error");
 
-            await signInWithEmailAndPassword(
-                auth,
-                email,
-                password
-            );
+		} finally {
+			loginButton.disabled = false;
+			loginButton.textContent = "Se connecter";
+		}
+	});
 
-
-            afficherMessage(
-                loginMessage,
-                "Connexion réussie. Redirection…",
-                "success"
-            );
-
-
-            window.location.href =
-                "espace-adherent.html";
-
-
-        } catch (error) {
-
-            console.error(error);
-
-
-            let texte =
-                "Impossible de vous connecter.";
-
-
-            if (
-                error.code === "auth/invalid-credential" ||
-                error.code === "auth/wrong-password" ||
-                error.code === "auth/user-not-found"
-            ) {
-
-                texte =
-                    "Adresse e-mail ou mot de passe incorrect.";
-
-            }
-
-
-            if (
-                error.code === "auth/invalid-email"
-            ) {
-
-                texte =
-                    "L'adresse e-mail renseignée n'est pas valide.";
-
-            }
-
-
-            if (
-                error.code === "auth/too-many-requests"
-            ) {
-
-                texte =
-                    "Trop de tentatives. Veuillez patienter quelques instants.";
-
-            }
-
-
-            afficherMessage(
-                loginMessage,
-                texte,
-                "error"
-            );
-
-        } finally {
-
-            loginButton.disabled = false;
-
-            loginButton.textContent =
-                "Se connecter";
-
-        }
-
-    });
 
 
     // =========================================================
