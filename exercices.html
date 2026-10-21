@@ -1,0 +1,782 @@
+
+<!DOCTYPE html>
+<html lang="fr">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Exercices techniques - ASCT Ski Compétition</title>
+    <meta name="description" content="Retrouvez les exercices techniques de ski de l'ASCT Ski Compétition : épaules, angulation, ski extérieur, équilibre et transitions.">
+
+    <link rel="stylesheet" href="style.css">
+    <script src="script.js" defer></script>
+</head>
+
+<body class="exercices-page">
+
+<header id="header">
+    <div class="header-container">
+        <img src="logo.png" class="logo" alt="Logo ASCT">
+        <h1>Exercices</h1>
+    </div>
+
+    <div class="burger" id="burger" aria-label="Ouvrir le menu" aria-expanded="false">
+        <span></span>
+        <span></span>
+        <span></span>
+    </div>
+
+    <nav id="nav">
+        <a href="index.html">Accueil</a>
+        <a href="infos.html">Infos Saison</a>
+        <a href="galerie.html">Galerie</a>
+        <a href="sorties.html">Sorties</a>
+        <a href="exercices.html" aria-current="page">Exercices</a>
+        <a href="contact.html">Contact</a>
+        <a href="connexion.html">Connexion</a>
+    </nav>
+</header>
+
+<main class="exercises-main">
+
+    <!-- INTRODUCTION -->
+    <section class="exercises-hero">
+        <div class="exercises-hero-content">
+            <span class="exercises-eyebrow">ASCT SKI COMPÉTITION</span>
+            <h2>Travaille ta technique.</h2>
+            <p>
+                Des exercices pour améliorer tes sensations, affiner
+                tes virages et progresser sur les skis.
+            </p>
+            <a href="#bibliotheque-exercices" class="exercises-hero-link">
+                Découvrir les exercices <span>↓</span>
+            </a>
+        </div>
+
+        <div class="exercises-hero-decoration" aria-hidden="true">
+            <span></span>
+            <span></span>
+            <span></span>
+        </div>
+    </section>
+
+    <!-- BIBLIOTHÈQUE -->
+    <section class="exercise-library" id="bibliotheque-exercices">
+
+        <div class="exercise-section-heading">
+            <div>
+                <span class="exercises-eyebrow">À TOI DE JOUER</span>
+                <h2>Les exercices techniques</h2>
+                <p>
+                    Sélectionne un thème pour retrouver les exercices
+                    qui correspondent à ton objectif.
+                </p>
+            </div>
+
+            <span class="exercise-count" id="exercise-count">
+                13 exercices
+            </span>
+        </div>
+
+		<!-- RECHERCHE -->
+		<div class="exercise-search">
+			<label for="exercise-search-input">
+				Rechercher un exercice
+			</label>
+
+			<div class="exercise-search-field">
+				<span aria-hidden="true">⌕</span>
+				<input
+					type="search"
+					id="exercise-search-input"
+					placeholder="Ex. : équilibre, bâtons, Superman..."
+					autocomplete="off"
+				>
+				<button
+					type="button"
+					id="exercise-search-clear"
+					aria-label="Effacer la recherche"
+					hidden
+				>
+					Effacer
+				</button>
+			</div>
+		</div>
+
+		<!-- FILTRES -->
+		<div class="exercise-filters">
+
+            <span class="filter-label">Filtrer par objectif</span>
+
+            <div class="filter-buttons" id="exercise-filters">
+                <button type="button" class="filter-button active"
+                    data-filter="all" aria-pressed="true">
+                    Tous
+                </button>
+
+                <button type="button" class="filter-button"
+                    data-filter="epaules" aria-pressed="false">
+                    Ligne d’épaules
+                </button>
+
+                <button type="button" class="filter-button"
+                    data-filter="ski-exterieur" aria-pressed="false">
+                    Ski extérieur
+                </button>
+
+                <button type="button" class="filter-button"
+                    data-filter="angulation" aria-pressed="false">
+                    Angulation
+                </button>
+
+                <button type="button" class="filter-button"
+                    data-filter="position-basse" aria-pressed="false">
+                    Position basse
+                </button>
+
+                <button type="button" class="filter-button"
+                    data-filter="haut-bas" aria-pressed="false">
+                    Dissociation haut / bas
+                </button>
+
+                <button type="button" class="filter-button"
+                    data-filter="transition" aria-pressed="false">
+                    Transition et rythme
+                </button>
+
+                <button type="button" class="filter-button"
+                    data-filter="equilibre" aria-pressed="false">
+                    Équilibre
+                </button>
+
+                <button type="button" class="filter-button"
+                    data-filter="engagement" aria-pressed="false">
+                    Engagement vers l’avant
+                </button>
+
+                <button type="button" class="filter-button"
+                    data-filter="bras" aria-pressed="false">
+                    Placement des bras
+                </button>
+            </div>
+        </div>
+
+        <p class="filter-result" id="filter-result" aria-live="polite">
+            13 exercices affichés
+        </p>
+
+        <!-- CARTES DES EXERCICES -->
+        <div class="exercise-grid" id="exercise-grid">
+
+            <!-- 1 -->
+            <article class="exercise-card"
+                data-tags="epaules angulation haut-bas">
+
+                <div class="exercise-media">
+                    <img src="images/exercices/01-batons-tendus-devant.jpg"
+                        alt="Exercice de ski avec les bâtons tendus devant"
+                        loading="lazy">
+                    <span class="exercise-number">01</span>
+                </div>
+
+                <div class="exercise-card-content">
+                    <h3>Bâtons tendus devant</h3>
+
+                    <div class="exercise-detail">
+                        <span>Application</span>
+                        <p>
+                            Tenir les bâtons tendus devant soi, à hauteur
+                            de bassin et légèrement inclinés vers le bas.
+                        </p>
+                    </div>
+
+                    <div class="exercise-detail exercise-goal">
+                        <span>Objectifs</span>
+                        <ul>
+                            <li>Garder les épaules à l’horizontale.</li>
+                            <li>Améliorer l’angulation.</li>
+                            <li>Garder le haut du corps face à la pente.</li>
+                        </ul>
+                    </div>
+
+                    <div class="exercise-tags">
+                        <span>Épaules</span>
+                        <span>Angulation</span>
+                    </div>
+                </div>
+            </article>
+
+            <!-- 2 -->
+            <article class="exercise-card"
+                data-tags="epaules angulation position-basse transition ski-exterieur">
+
+                <div class="exercise-media">
+                    <img src="images/exercices/02-batons-traines-dans-la-neige.jpg"
+                        alt="Exercice consistant à traîner les deux bâtons dans la neige"
+                        loading="lazy">
+                    <span class="exercise-number">02</span>
+                </div>
+
+                <div class="exercise-card-content">
+                    <h3>Bâtons traînés dans la neige</h3>
+
+                    <div class="exercise-detail">
+                        <span>Application</span>
+                        <p>
+                            Traîner les deux bâtons de chaque côté
+                            dans la neige pendant les virages.
+                        </p>
+                    </div>
+
+                    <div class="exercise-detail exercise-goal">
+                        <span>Objectifs</span>
+                        <ul>
+                            <li>Maintenir les épaules à l’horizontale.</li>
+                            <li>Améliorer l’angulation.</li>
+                            <li>Travailler la position basse.</li>
+                            <li>Travailler la flexion à la transition.</li>
+                            <li>Favoriser l’abaissement de l’épaule extérieure pour éviter le transfert du poids sur le ski intérieur.</li>
+                        </ul>
+                    </div>
+
+                    <div class="exercise-tags">
+                        <span>Épaules</span>
+                        <span>Ski extérieur</span>
+                        <span>Position basse</span>
+                    </div>
+                </div>
+            </article>
+
+            <!-- 3 -->
+            <article class="exercise-card"
+                data-tags="transition engagement bras ski-exterieur">
+
+                <div class="exercise-media">
+                    <img src="images/exercices/03-passage-du-baton.jpg"
+                        alt="Exercice de passage du bâton d'une main à l'autre"
+                        loading="lazy">
+                    <span class="exercise-number">03</span>
+                </div>
+
+                <div class="exercise-card-content">
+                    <h3>Passage du bâton</h3>
+
+                    <div class="exercise-detail">
+                        <span>Application</span>
+                        <p>
+                            Passer un bâton de ski d’une main à l’autre.
+                            C’est la main extérieure qui doit avoir le bâton.
+                        </p>
+                    </div>
+
+                    <div class="exercise-detail exercise-goal">
+                        <span>Objectifs</span>
+                        <ul>
+                            <li>Garder de l’élan pendant le virage.</li>
+                            <li>Créer une impulsion.</li>
+                        </ul>
+                    </div>
+
+                    <div class="exercise-tags">
+                        <span>Transition</span>
+                        <span>Bras</span>
+                    </div>
+                </div>
+            </article>
+
+            <!-- 4 -->
+            <article class="exercise-card"
+                data-tags="epaules haut-bas bras">
+
+                <div class="exercise-media">
+                    <img src="images/exercices/04-robocop.jpg"
+                        alt="Exercice de ski Robocop avec deux bâtons placés devant et derrière"
+                        loading="lazy">
+                    <span class="exercise-number">04</span>
+                </div>
+
+                <div class="exercise-card-content">
+                    <h3>Robocop</h3>
+
+                    <div class="exercise-detail">
+                        <span>Application</span>
+                        <p>
+                            Tenir un bâton tendu en arrière au niveau
+                            des coudes et un autre devant au niveau des hanches.
+                        </p>
+                    </div>
+
+                    <div class="exercise-tags">
+                        <span>Épaules</span>
+                        <span>Placement des bras</span>
+                    </div>
+                </div>
+            </article>
+
+            <!-- 5 -->
+            <article class="exercise-card"
+                data-tags="position-basse">
+
+                <div class="exercise-media">
+                    <img src="images/exercices/05-short-ski-poles.jpg"
+                        alt="Exercice Short ski poles"
+                        loading="lazy">
+                    <span class="exercise-number">05</span>
+                </div>
+
+                <div class="exercise-card-content">
+                    <h3>Short ski poles</h3>
+
+                    <div class="exercise-detail">
+                        <span>Application</span>
+                        <p>
+                            Tenir les bâtons à la verticale en les
+                            prenant à mi-hauteur.
+                        </p>
+                    </div>
+
+                    <div class="exercise-detail exercise-goal">
+                        <span>Objectif</span>
+                        <ul>
+                            <li>Descendre en position basse.</li>
+                        </ul>
+                    </div>
+
+                    <div class="exercise-tags">
+                        <span>Position basse</span>
+                    </div>
+                </div>
+            </article>
+
+            <!-- 6 -->
+            <article class="exercise-card"
+                data-tags="angulation epaules ski-exterieur haut-bas">
+
+                <div class="exercise-media">
+                    <img src="images/exercices/06-superman.jpg"
+                        alt="Exercice Superman en ski"
+                        loading="lazy">
+                    <span class="exercise-number">06</span>
+                </div>
+
+                <div class="exercise-card-content">
+                    <h3>Superman</h3>
+
+                    <div class="exercise-detail">
+                        <span>Application</span>
+                        <p>À chaque virage :</p>
+                        <ul>
+                            <li>La main liée au pied extérieur vient sur la hanche en arrière.</li>
+                            <li>La main liée au pied intérieur vient en avant, en position Superman.</li>
+                        </ul>
+                    </div>
+
+                    <div class="exercise-detail exercise-goal">
+                        <span>Objectifs</span>
+                        <ul>
+                            <li>Projeter les hanches dans le virage grâce à l’angulation.</li>
+                            <li>Garder la ligne d’épaules bien droite.</li>
+                        </ul>
+                    </div>
+
+                    <div class="exercise-tags">
+                        <span>Angulation</span>
+                        <span>Épaules</span>
+                    </div>
+                </div>
+            </article>
+
+            <!-- 7 -->
+            <article class="exercise-card"
+                data-tags="transition angulation epaules">
+
+                <div class="exercise-media">
+                    <img src="images/exercices/06-superman.jpg"
+                        alt="Exercice Superman, variante avec clap de main"
+                        loading="lazy">
+                    <span class="exercise-number">07</span>
+                </div>
+
+                <div class="exercise-card-content">
+                    <h3>Superman — clap de main</h3>
+
+                    <div class="exercise-detail">
+                        <span>Application</span>
+                        <p>
+                            Reprendre le principe de Superman et ajouter
+                            un clap de main à la transition entre les virages.
+                        </p>
+                    </div>
+
+                    <div class="exercise-detail exercise-goal">
+                        <span>Objectif</span>
+                        <ul>
+                            <li>Raccourcir la phase de pression lors de la transition.</li>
+                        </ul>
+                    </div>
+
+                    <div class="exercise-tags">
+                        <span>Transition</span>
+                        <span>Angulation</span>
+                    </div>
+                </div>
+            </article>
+
+            <!-- 8 -->
+            <article class="exercise-card"
+                data-tags="bras haut-bas">
+
+                <div class="exercise-media">
+                    <img src="images/exercices/07-mains-sur-les-hanches.jpg"
+                        alt="Exercice de ski avec les mains sur les hanches"
+                        loading="lazy">
+                    <span class="exercise-number">08</span>
+                </div>
+
+                <div class="exercise-card-content">
+                    <h3>Mains sur les hanches</h3>
+
+                    <div class="exercise-detail">
+                        <span>Application</span>
+                        <p>
+                            Skier en gardant les mains posées sur les hanches.
+                        </p>
+                    </div>
+
+                    <div class="exercise-detail exercise-goal">
+                        <span>Objectif</span>
+                        <ul>
+                            <li>Garder les bras plus statiques.</li>
+                        </ul>
+                    </div>
+
+                    <div class="exercise-tags">
+                        <span>Placement des bras</span>
+                    </div>
+                </div>
+            </article>
+
+            <!-- 9 -->
+            <article class="exercise-card"
+                data-tags="ski-exterieur equilibre">
+
+                <div class="exercise-media">
+                    <img src="images/exercices/08-skier-sur-un-ski.jpg"
+                        alt="Exercice de ski sur un seul ski"
+                        loading="lazy">
+                    <span class="exercise-number">09</span>
+                </div>
+
+                <div class="exercise-card-content">
+                    <h3>Skier sur un ski</h3>
+
+                    <div class="exercise-detail">
+                        <span>Application</span>
+                        <p>
+                            Le document fourni ne précise pas davantage
+                            les consignes de réalisation.
+                        </p>
+                    </div>
+
+                    <div class="exercise-tags">
+                        <span>Équilibre</span>
+                        <span>Ski extérieur</span>
+                    </div>
+                </div>
+            </article>
+
+            <!-- 10 -->
+            <article class="exercise-card"
+                data-tags="ski-exterieur equilibre transition">
+
+                <div class="exercise-media">
+                    <img src="images/exercices/09-javelin-turn.jpg"
+                        alt="Exercice de ski Javelin turn"
+                        loading="lazy">
+                    <span class="exercise-number">10</span>
+                </div>
+
+                <div class="exercise-card-content">
+                    <h3>Javelin turn</h3>
+
+                    <div class="exercise-detail">
+                        <span>Application</span>
+                        <ul>
+                            <li>À chaque virage, lever le ski intérieur.</li>
+                            <li>S’appuyer sur le ski extérieur pour effectuer le virage.</li>
+                            <li>Variation : donner une impulsion lors du changement de pied.</li>
+                        </ul>
+                    </div>
+
+                    <div class="exercise-detail exercise-goal">
+                        <span>Objectifs</span>
+                        <ul>
+                            <li>Garder l’équilibre sur le pied extérieur.</li>
+                            <li>Changer de rythme entre chaque virage.</li>
+                        </ul>
+                    </div>
+
+                    <div class="exercise-tags">
+                        <span>Ski extérieur</span>
+                        <span>Équilibre</span>
+                        <span>Transition</span>
+                    </div>
+                </div>
+            </article>
+
+            <!-- 11 -->
+            <article class="exercise-card"
+                data-tags="position-basse angulation">
+
+                <div class="exercise-media">
+                    <img src="images/exercices/10-position-de-recherche.jpg"
+                        alt="Exercice de ski en position de recherche"
+                        loading="lazy">
+                    <span class="exercise-number">11</span>
+                </div>
+
+                <div class="exercise-card-content">
+                    <h3>Position de recherche</h3>
+
+                    <div class="exercise-detail">
+                        <span>Application</span>
+                        <p>
+                            Effectuer des virages tout en restant
+                            dans la même position.
+                        </p>
+                    </div>
+
+                    <div class="exercise-detail exercise-goal">
+                        <span>Objectifs</span>
+                        <ul>
+                            <li>Travailler la position basse.</li>
+                            <li>Travailler le basculement des jambes.</li>
+                        </ul>
+                    </div>
+
+                    <div class="exercise-tags">
+                        <span>Position basse</span>
+                        <span>Angulation</span>
+                    </div>
+                </div>
+            </article>
+
+            <!-- 12 -->
+            <article class="exercise-card"
+                data-tags="epaules haut-bas bras">
+
+                <div class="exercise-media">
+                    <img src="images/exercices/11-batons-derriere-la-nuque.jpg"
+                        alt="Exercice avec les bâtons derrière la nuque"
+                        loading="lazy">
+                    <span class="exercise-number">12</span>
+                </div>
+
+                <div class="exercise-card-content">
+                    <h3>Bâtons derrière la nuque</h3>
+
+                    <div class="exercise-detail">
+                        <span>Application</span>
+                        <p>
+                            Placer les bâtons derrière la nuque
+                            pendant les virages.
+                        </p>
+                    </div>
+
+                    <div class="exercise-detail exercise-goal">
+                        <span>Objectifs</span>
+                        <ul>
+                            <li>Garder les épaules droites.</li>
+                            <li>Garder le haut du corps dans le sens de la pente.</li>
+                            <li>Travailler la séparation du haut et du bas du corps.</li>
+                        </ul>
+                    </div>
+
+                    <div class="exercise-tags">
+                        <span>Épaules</span>
+                        <span>Dissociation haut / bas</span>
+                    </div>
+                </div>
+            </article>
+
+            <!-- 13 -->
+            <article class="exercise-card"
+                data-tags="engagement epaules haut-bas">
+
+                <div class="exercise-media">
+                    <img src="images/exercices/12-superman-inverse.jpg"
+                        alt="Exercice Superman inverse en ski"
+                        loading="lazy">
+                    <span class="exercise-number">13</span>
+                </div>
+
+                <div class="exercise-card-content">
+                    <h3>Superman inverse</h3>
+
+                    <div class="exercise-detail">
+                        <span>Application</span>
+                        <p>À chaque virage :</p>
+                        <ul>
+                            <li>La main liée au pied intérieur vient sur la hanche en arrière.</li>
+                            <li>La main liée au pied extérieur vient en avant, en position Superman.</li>
+                        </ul>
+                    </div>
+
+                    <div class="exercise-detail exercise-goal">
+                        <span>Objectifs</span>
+                        <ul>
+                            <li>Se projeter vers l’avant.</li>
+                            <li>Garder l’engagement tout au long du virage.</li>
+                        </ul>
+                    </div>
+
+                    <div class="exercise-tags">
+                        <span>Engagement</span>
+                        <span>Épaules</span>
+                    </div>
+                </div>
+            </article>
+
+        </div>
+
+        <p class="no-exercises" id="no-exercises" hidden>
+            Aucun exercice ne correspond à ce filtre.
+            Essaie un autre thème.
+        </p>
+
+    </section>
+
+    <section class="exercise-footer-note">
+        <span class="exercise-note-icon" aria-hidden="true">❄</span>
+        <div>
+            <h2>Un objectif à la fois</h2>
+            <p>
+                Concentre-toi sur une consigne technique à chaque passage.
+                Les exercices sont à adapter aux conditions de neige
+                et à ton niveau.
+            </p>
+        </div>
+    </section>
+
+</main>
+
+<footer class="site-footer">
+    <div class="footer-logos">
+        <img src="Esf-Logo.png" alt="Logo ESF">
+        <img src="logo-asct2.jpeg" alt="Logo ASCT Ski Compétition">
+        <img src="logo-esf-2024.png" alt="Logo ESF 2024">
+    </div>
+
+    <div class="footer-contact">
+        <p>ASCT Ski Compétition</p>
+        <a href="mailto:oceane.champagne.pro@gmail.com">
+            Nous contacter
+        </a>
+    </div>
+
+    <div class="footer-bottom">
+        <a href="confidentialite.html">
+            Politique de confidentialité
+        </a>
+        <span>© ASCT Ski Compétition</span>
+    </div>
+</footer>
+
+
+<script>
+document.addEventListener("DOMContentLoaded", function () {
+    const filterButtons = document.querySelectorAll(".filter-button");
+    const cards = document.querySelectorAll(".exercise-card");
+    const count = document.getElementById("exercise-count");
+    const result = document.getElementById("filter-result");
+    const emptyMessage = document.getElementById("no-exercises");
+
+    const searchInput = document.getElementById("exercise-search-input");
+    const clearButton = document.getElementById("exercise-search-clear");
+
+    let activeFilter = "all";
+    let searchText = "";
+
+    function filterExercises() {
+        let visibleCount = 0;
+
+        cards.forEach(function (card) {
+            const tags = (card.dataset.tags || "").split(/\s+/);
+            const matchesFilter =
+                activeFilter === "all" || tags.includes(activeFilter);
+
+            const searchableText = (
+                card.textContent + " " + (card.dataset.tags || "")
+            ).toLocaleLowerCase("fr");
+
+            const matchesSearch = searchableText.includes(searchText);
+
+            const visible = matchesFilter && matchesSearch;
+
+            card.hidden = !visible;
+
+            if (visible) {
+                visibleCount++;
+            }
+        });
+
+        filterButtons.forEach(function (button) {
+            const active = button.dataset.filter === activeFilter;
+            button.classList.toggle("active", active);
+            button.setAttribute("aria-pressed", String(active));
+        });
+
+        count.textContent = visibleCount +
+            (visibleCount > 1 ? " exercices" : " exercice");
+
+        result.textContent = visibleCount +
+            (visibleCount > 1
+                ? " exercices affichés"
+                : " exercice affiché");
+
+        emptyMessage.hidden = visibleCount !== 0;
+
+        if (clearButton) {
+            clearButton.hidden = searchText.length === 0;
+        }
+
+        if (emptyMessage) {
+            emptyMessage.textContent = searchText
+                ? "Aucun exercice ne correspond à ta recherche et à ce filtre. Essaie d'autres mots."
+                : "Aucun exercice ne correspond à ce filtre. Essaie un autre thème.";
+        }
+    }
+
+    filterButtons.forEach(function (button) {
+        button.addEventListener("click", function () {
+            activeFilter = button.dataset.filter;
+            filterExercises();
+        });
+    });
+
+    if (searchInput) {
+        searchInput.addEventListener("input", function () {
+            searchText = searchInput.value
+                .trim()
+                .toLocaleLowerCase("fr");
+
+            filterExercises();
+        });
+    }
+
+    if (clearButton && searchInput) {
+        clearButton.addEventListener("click", function () {
+            searchInput.value = "";
+            searchText = "";
+            searchInput.focus();
+            filterExercises();
+        });
+    }
+
+    filterExercises();
+});
+</script>
+
+</body>
+</html>

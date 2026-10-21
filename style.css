@@ -4615,3 +4615,919 @@ main > section.section:first-child > .cards {
         opacity: 0.45;
     }
 }
+
+
+/* =========================================================
+   PAGE EXERCICES — ASCT SKI COMPÉTITION
+   ========================================================= */
+
+.exercices-page {
+    --exercise-blue: #1769aa;
+    --exercise-navy: #071a2d;
+    --exercise-muted: #64748b;
+    --exercise-border: #e3eaf1;
+    background: #f3f6fa;
+}
+
+.exercises-main {
+    width: 100%;
+    overflow: hidden;
+}
+
+/* HERO */
+
+.exercises-hero {
+    position: relative;
+    isolation: isolate;
+    overflow: hidden;
+    display: flex;
+    align-items: center;
+    min-height: 330px;
+    padding: 64px max(6%, calc((100% - 1200px) / 2));
+    color: #fff;
+    background:
+        radial-gradient(ellipse at 85% 25%, rgba(46, 132, 204, .35), transparent 42%),
+        linear-gradient(115deg, #071a2d 0%, #102e4c 58%, #164e79 100%);
+}
+
+.exercises-hero-content {
+    position: relative;
+    z-index: 2;
+    max-width: 660px;
+}
+
+.exercises-eyebrow {
+    display: inline-block;
+    margin-bottom: 12px;
+    color: #70baff;
+    font-size: .76rem;
+    font-weight: 800;
+    letter-spacing: .16em;
+}
+
+.exercises-hero h2 {
+    margin: 0 0 16px;
+    font-size: clamp(2.2rem, 5vw, 4rem);
+    line-height: 1.08;
+    letter-spacing: -.045em;
+}
+
+.exercises-hero p {
+    max-width: 540px;
+    margin: 0;
+    color: #d5e3f0;
+    font-size: 1.05rem;
+    line-height: 1.8;
+}
+
+.exercises-hero-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 14px;
+    margin-top: 28px;
+    padding: 12px 18px;
+    color: #fff;
+    text-decoration: none;
+    font-size: .92rem;
+    font-weight: 700;
+    border: 1px solid rgba(255, 255, 255, .35);
+    border-radius: 8px;
+    transition: background .2s ease, transform .2s ease;
+}
+
+.exercises-hero-link:hover {
+    background: rgba(255, 255, 255, .1);
+    transform: translateY(-2px);
+}
+
+.exercises-hero-decoration {
+    position: absolute;
+    z-index: 1;
+    top: -130px;
+    right: -30px;
+    width: 42%;
+    height: 650px;
+    pointer-events: none;
+    transform: rotate(25deg);
+}
+
+.exercises-hero-decoration span {
+    position: absolute;
+    display: block;
+    width: 2px;
+    height: 850px;
+    background: rgba(127, 190, 239, .2);
+}
+
+.exercises-hero-decoration span:nth-child(1) {
+    left: 20%;
+}
+
+.exercises-hero-decoration span:nth-child(2) {
+    left: 48%;
+    background: rgba(255, 255, 255, .1);
+}
+
+.exercises-hero-decoration span:nth-child(3) {
+    left: 76%;
+}
+
+/* CONTENU */
+
+.exercise-library {
+    width: min(1200px, 90%);
+    margin: 0 auto;
+    padding: 64px 0 76px;
+}
+
+.exercise-section-heading {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-end;
+    gap: 24px;
+    margin-bottom: 30px;
+}
+
+.exercise-section-heading h2 {
+    margin: 0 0 10px;
+    color: #0d2238;
+    font-size: clamp(1.7rem, 3vw, 2.4rem);
+    letter-spacing: -.035em;
+}
+
+.exercise-section-heading p {
+    margin: 0;
+    color: #64748b;
+    line-height: 1.7;
+}
+
+.exercise-count {
+    flex-shrink: 0;
+    padding: 9px 13px;
+    color: #145a91;
+    background: #e5f2ff;
+    border-radius: 7px;
+    font-size: .82rem;
+    font-weight: 800;
+}
+
+/* FILTRES */
+
+.exercise-filters {
+    margin-bottom: 16px;
+    padding: 22px;
+    background: #fff;
+    border: 1px solid var(--exercise-border);
+    border-radius: 14px;
+}
+
+.filter-label {
+    display: block;
+    margin-bottom: 14px;
+    color: #25384d;
+    font-size: .88rem;
+    font-weight: 800;
+}
+
+.filter-buttons {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 9px;
+}
+
+.filter-button {
+    padding: 10px 14px;
+    color: #40536a;
+    background: #f5f8fb;
+    border: 1px solid #dce5ef;
+    border-radius: 7px;
+    font: inherit;
+    font-size: .82rem;
+    font-weight: 650;
+    cursor: pointer;
+    transition:
+        color .2s ease,
+        background .2s ease,
+        border-color .2s ease,
+        transform .2s ease;
+}
+
+.filter-button:hover {
+    color: #145a91;
+    border-color: #86b9e5;
+    transform: translateY(-1px);
+}
+
+.filter-button.active {
+    color: #fff;
+    background: #123d61;
+    border-color: #123d61;
+}
+
+.filter-button:focus-visible,
+.exercises-hero-link:focus-visible {
+    outline: 3px solid #65aef0;
+    outline-offset: 3px;
+}
+
+.filter-result {
+    margin: 0 0 20px;
+    color: #68798c;
+    font-size: .84rem;
+}
+
+/* GRILLE ET CARTES */
+
+.exercise-grid {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 24px;
+    align-items: stretch;
+}
+
+.exercise-card {
+    min-width: 0;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    background: #fff;
+    border: 1px solid #e2eaf2;
+    border-radius: 13px;
+    box-shadow: 0 5px 18px rgba(16, 42, 67, .045);
+    transition:
+        transform .25s ease,
+        box-shadow .25s ease;
+}
+
+.exercise-card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 14px 32px rgba(16, 42, 67, .11);
+}
+
+.exercise-card[hidden] {
+    display: none !important;
+}
+
+.exercise-media {
+    position: relative;
+    overflow: hidden;
+    height: 225px;
+    background: #dce7f0;
+}
+
+.exercise-media img {
+    display: block;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: center;
+    transition: transform .4s ease;
+}
+
+.exercise-card:hover .exercise-media img {
+    transform: scale(1.035);
+}
+
+.exercise-number {
+    position: absolute;
+    left: 14px;
+    top: 14px;
+    display: grid;
+    place-items: center;
+    width: 37px;
+    height: 37px;
+    color: #fff;
+    background: rgba(7, 26, 45, .88);
+    border: 1px solid rgba(255, 255, 255, .35);
+    border-radius: 8px;
+    font-size: .8rem;
+    font-weight: 800;
+}
+
+.exercise-card-content {
+    display: flex;
+    flex: 1;
+    flex-direction: column;
+    padding: 22px;
+}
+
+.exercise-card-content h3 {
+    margin: 0 0 20px;
+    color: #102a43;
+    font-size: 1.2rem;
+    line-height: 1.35;
+    letter-spacing: -.02em;
+}
+
+.exercise-detail {
+    margin-bottom: 17px;
+}
+
+.exercise-detail > span {
+    display: block;
+    margin-bottom: 7px;
+    color: #2877b7;
+    font-size: .71rem;
+    font-weight: 850;
+    letter-spacing: .09em;
+    text-transform: uppercase;
+}
+
+.exercise-detail p,
+.exercise-detail li {
+    color: #506175;
+    font-size: .88rem;
+    line-height: 1.65;
+}
+
+.exercise-detail p {
+    margin: 0;
+}
+
+.exercise-detail ul {
+    margin: 5px 0 0;
+    padding-left: 19px;
+}
+
+.exercise-detail li + li {
+    margin-top: 5px;
+}
+
+.exercise-goal {
+    padding-top: 16px;
+    border-top: 1px solid #edf1f5;
+}
+
+.exercise-tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 7px;
+    margin-top: auto;
+    padding-top: 8px;
+}
+
+.exercise-tags span {
+    padding: 6px 9px;
+    color: #315d7d;
+    background: #edf6fd;
+    border-radius: 5px;
+    font-size: .71rem;
+    font-weight: 750;
+}
+
+.no-exercises {
+    padding: 40px 20px;
+    color: #64748b;
+    text-align: center;
+    background: #fff;
+    border: 1px dashed #cbd8e5;
+    border-radius: 12px;
+}
+
+.no-exercises[hidden] {
+    display: none;
+}
+
+/* NOTE DE FIN */
+
+.exercise-footer-note {
+    display: flex;
+    align-items: flex-start;
+    gap: 20px;
+    width: min(1200px, 90%);
+    margin: 0 auto 70px;
+    padding: 26px 30px;
+    background: linear-gradient(110deg, #eaf4fd, #f8fbfe);
+    border: 1px solid #d8e8f7;
+    border-radius: 12px;
+}
+
+.exercise-note-icon {
+    display: grid;
+    flex: 0 0 46px;
+    place-items: center;
+    width: 46px;
+    height: 46px;
+    color: #fff;
+    background: #164c76;
+    border-radius: 10px;
+    font-size: 1.4rem;
+}
+
+.exercise-footer-note h2 {
+    margin: 0 0 8px;
+    color: #102a43;
+    font-size: 1.05rem;
+}
+
+.exercise-footer-note p {
+    margin: 0;
+    color: #52677c;
+    font-size: .9rem;
+    line-height: 1.75;
+}
+
+/* TABLETTE */
+
+@media (max-width: 1000px) {
+    .exercise-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 18px;
+    }
+
+    .exercise-media {
+        height: 215px;
+    }
+
+    .exercises-hero {
+        min-height: 300px;
+    }
+}
+
+/* MOBILE */
+
+@media (max-width: 600px) {
+    .exercises-hero {
+        min-height: 290px;
+        padding: 45px 6%;
+    }
+
+    .exercises-hero h2 {
+        font-size: 2.3rem;
+    }
+
+    .exercises-hero p {
+        font-size: .95rem;
+    }
+
+    .exercises-hero-decoration {
+        right: -120px;
+        width: 70%;
+        opacity: .65;
+    }
+
+    .exercise-library {
+        width: 90%;
+        padding: 42px 0 48px;
+    }
+
+    .exercise-section-heading {
+        align-items: flex-start;
+        flex-direction: column;
+        gap: 14px;
+    }
+
+    .exercise-section-heading h2 {
+        font-size: 1.75rem;
+    }
+
+    .exercise-filters {
+        padding: 16px;
+        border-radius: 10px;
+    }
+
+    .filter-buttons {
+        gap: 7px;
+    }
+
+    .filter-button {
+        padding: 9px 11px;
+        font-size: .77rem;
+    }
+
+    .exercise-grid {
+        grid-template-columns: 1fr;
+        gap: 18px;
+    }
+
+    .exercise-media {
+        height: auto;
+        aspect-ratio: 4 / 3;
+    }
+
+    .exercise-card-content {
+        padding: 20px;
+    }
+
+    .exercise-card-content h3 {
+        font-size: 1.18rem;
+    }
+
+    .exercise-footer-note {
+        width: 90%;
+        margin-bottom: 42px;
+        padding: 21px 18px;
+        gap: 13px;
+    }
+
+    .exercise-note-icon {
+        flex-basis: 38px;
+        width: 38px;
+        height: 38px;
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .exercise-card,
+    .exercise-media img,
+    .filter-button,
+    .exercises-hero-link {
+        transition: none;
+    }
+}
+
+
+/* ==========================================
+   CORRECTION FOND FLOU — PAGE INSCRIPTION
+   ========================================== */
+
+body.inscription-page {
+    position: relative;
+    isolation: isolate;
+    min-height: 100vh;
+    background: transparent !important;
+}
+
+/* Photo de banderole floutée sur toute la page */
+body.inscription-page::before {
+    content: "";
+    position: fixed;
+    inset: -12px;
+    width: auto;
+    height: auto;
+
+    background-image: url("image banderole.jpg");
+    background-position: center;
+    background-repeat: no-repeat;
+    background-size: cover;
+
+    filter: blur(8px);
+    transform: scale(1.02);
+
+    z-index: -2;
+    pointer-events: none;
+}
+
+/* Voile clair conservé sur toute la page */
+body.inscription-page::after {
+    content: "";
+    position: fixed;
+    inset: 0;
+
+    background: rgba(255, 255, 255, 0.60);
+    z-index: -1;
+    pointer-events: none;
+}
+
+/* La section principale ne doit pas masquer la photo */
+body.inscription-page main,
+body.inscription-page main > .section {
+    background: transparent !important;
+}
+
+/* Le questionnaire garde son fond blanc */
+body.inscription-page form#form {
+    background: rgba(255, 255, 255, 0.95);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+}
+
+
+/* =========================================
+   GALERIE PAR SAISON ET PAR ALBUM
+   ========================================= */
+
+.gallery-page {
+    width: min(1200px, 92%);
+    margin: 0 auto;
+    padding: 30px 0 70px;
+}
+
+.gallery-toolbar {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-wrap: wrap;
+    gap: 12px;
+    margin-bottom: 34px;
+}
+
+.gallery-toolbar label {
+    font-weight: 700;
+    color: #17304f;
+}
+
+.gallery-toolbar select {
+    min-width: 210px;
+    padding: 12px 16px;
+    border: 1px solid rgba(30, 60, 90, 0.2);
+    border-radius: 12px;
+    background: #fff;
+    color: #17304f;
+    font: inherit;
+    cursor: pointer;
+}
+
+.gallery-heading {
+    margin: 0 0 24px;
+    text-align: center;
+}
+
+.gallery-heading h2 {
+    margin-bottom: 8px;
+    color: #17304f;
+}
+
+.gallery-heading p {
+    color: #65758b;
+}
+
+.gallery-albums {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: 22px;
+    margin-bottom: 38px;
+}
+
+.gallery-album {
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    padding: 0;
+    border: 2px solid transparent;
+    border-radius: 18px;
+    background: rgba(255, 255, 255, 0.96);
+    color: #17304f;
+    text-align: left;
+    cursor: pointer;
+    box-shadow: 0 8px 26px rgba(14, 35, 60, 0.10);
+    transition: transform 0.25s ease, box-shadow 0.25s ease,
+                border-color 0.25s ease;
+}
+
+.gallery-album:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 14px 34px rgba(14, 35, 60, 0.16);
+}
+
+.gallery-album[aria-pressed="true"] {
+    border-color: #3c83bd;
+    box-shadow: 0 0 0 3px rgba(60, 131, 189, 0.13);
+}
+
+.gallery-album > img {
+    display: block;
+    width: 100%;
+    height: 175px;
+    object-fit: cover;
+    background: #e7edf3;
+}
+
+.gallery-album-content {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 7px;
+    padding: 17px;
+}
+
+.gallery-album-content strong {
+    font-size: 1.05rem;
+}
+
+.gallery-album-content > span {
+    color: #65758b;
+    font-size: 0.9rem;
+}
+
+.gallery-album-content small {
+    margin-top: 3px;
+    color: #347bb2;
+    font-weight: 700;
+}
+
+.gallery-page .gallery-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: 16px;
+}
+
+.gallery-page .gallery-item {
+    display: block;
+    width: 100%;
+    height: 230px;
+    object-fit: cover;
+    border-radius: 14px;
+    cursor: zoom-in;
+    background: #e7edf3;
+    box-shadow: 0 5px 18px rgba(14, 35, 60, 0.10);
+    transition: transform 0.25s ease, box-shadow 0.25s ease;
+}
+
+.gallery-page .gallery-item:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 10px 25px rgba(14, 35, 60, 0.18);
+}
+
+.lightbox .close,
+.lightbox .prev-lightbox,
+.lightbox .next-lightbox {
+    border: 0;
+    color: white;
+    cursor: pointer;
+    font: inherit;
+}
+
+.lightbox .close {
+    background: transparent;
+}
+
+.lightbox .prev-lightbox,
+.lightbox .next-lightbox {
+    background: rgba(0, 0, 0, 0.3);
+    border-radius: 50%;
+    padding: 12px 16px;
+}
+
+body.lightbox-open {
+    overflow: hidden;
+}
+
+@media (max-width: 600px) {
+    .gallery-page {
+        width: 92%;
+        padding-top: 20px;
+    }
+
+    .gallery-albums {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 12px;
+    }
+
+    .gallery-album > img {
+        height: 125px;
+    }
+
+    .gallery-album-content {
+        padding: 12px;
+    }
+
+    .gallery-page .gallery-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 9px;
+    }
+
+    .gallery-page .gallery-item {
+        height: 150px;
+        border-radius: 10px;
+    }
+}
+
+@media (max-width: 360px) {
+    .gallery-albums {
+        grid-template-columns: 1fr;
+    }
+}
+
+
+.gallery-season-buttons {
+    display: flex;
+    justify-content: center;
+    flex-wrap: wrap;
+    gap: 16px;
+    margin: 30px auto;
+}
+
+.gallery-season-button,
+.gallery-back-button {
+    padding: 14px 22px;
+    border: 1px solid rgba(50, 100, 150, 0.25);
+    border-radius: 12px;
+    background: white;
+    color: #17304f;
+    font: inherit;
+    font-weight: 700;
+    cursor: pointer;
+    transition: transform 0.2s ease, background 0.2s ease;
+}
+
+.gallery-season-button:hover,
+.gallery-back-button:hover {
+    transform: translateY(-2px);
+    background: #edf5fc;
+}
+
+.gallery-season-button[aria-pressed="true"] {
+    background: #17304f;
+    color: white;
+}
+
+.gallery-back-button {
+    flex-basis: 100%;
+    justify-self: start;
+    margin-bottom: 8px;
+}
+
+@media (max-width: 600px) {
+    .gallery-season-buttons {
+        flex-direction: column;
+        padding: 0 12px;
+    }
+
+    .gallery-season-button {
+        width: 100%;
+    }
+}
+
+
+/* =========================================
+   RECHERCHE - PAGE EXERCICES
+========================================= */
+
+.exercise-search {
+    margin: 0 0 24px;
+}
+
+.exercise-search > label {
+    display: block;
+    margin-bottom: 9px;
+    color: #17304f;
+    font-weight: 700;
+}
+
+.exercise-search-field {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    width: 100%;
+    box-sizing: border-box;
+    padding: 5px 14px;
+    border: 1px solid rgba(50, 100, 150, 0.25);
+    border-radius: 12px;
+    background: rgba(255, 255, 255, 0.96);
+    box-shadow: 0 5px 18px rgba(14, 35, 60, 0.06);
+    transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.exercise-search-field:focus-within {
+    border-color: #3c83bd;
+    box-shadow: 0 0 0 3px rgba(60, 131, 189, 0.13);
+}
+
+.exercise-search-field > span {
+    color: #347bb2;
+    font-size: 1.6rem;
+    line-height: 1;
+}
+
+.exercise-search-field input {
+    flex: 1;
+    min-width: 0;
+    padding: 12px 0;
+    border: 0;
+    outline: 0;
+    background: transparent;
+    color: #17304f;
+    font: inherit;
+}
+
+.exercise-search-field input::placeholder {
+    color: #8190a3;
+}
+
+.exercise-search-field button {
+    padding: 8px 10px;
+    border: 0;
+    border-radius: 8px;
+    background: #edf5fc;
+    color: #17304f;
+    font: inherit;
+    font-size: 0.85rem;
+    font-weight: 700;
+    cursor: pointer;
+}
+
+.exercise-search-field button:hover {
+    background: #dcecf9;
+}
+
+.exercise-search-field button[hidden] {
+    display: none;
+}
+
+@media (max-width: 600px) {
+    .exercise-search {
+        margin-bottom: 20px;
+    }
+
+    .exercise-search-field {
+        gap: 8px;
+        padding: 4px 10px;
+    }
+
+    .exercise-search-field input {
+        font-size: 0.95rem;
+    }
+}
+
+

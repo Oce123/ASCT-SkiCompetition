@@ -1199,6 +1199,94 @@
 		</div>
 		
 		<!-- ===================================== -->
+		<!-- REGLEMENT (cotisation et forfait) -->
+		<!-- ===================================== -->
+
+		<div class="form-step" id="reglement-section">
+
+			<h3>Règlement de la cotisation et du forfait</h3>
+
+			<div class="form-block">
+
+				<p>
+					Montant de la cotisation et du forfait :
+					<strong id="reglement-total">—</strong>
+				</p>
+
+				<p id="reglement-location-info" style="display:none;">
+					🎿 La location de matériel et la caution ont leur propre
+					moyen de paiement, choisi à l'étape « Location de matériel ».
+					Vous pouvez payer différemment.
+				</p>
+
+				<div class="form-row">
+
+					<div class="form-group">
+						<label for="reglement-mode">
+							Comment souhaitez-vous régler la cotisation et le forfait ?
+						</label>
+
+						<select id="reglement-mode">
+							<option value="">Choisir</option>
+							<option value="CB">CB</option>
+							<option value="Espèces">Espèces</option>
+							<option value="Chèques">Chèques</option>
+						</select>
+					</div>
+
+				</div>
+
+				<div id="reglement-cheques" style="display:none;">
+
+					<div class="form-row">
+
+						<div class="form-group">
+							<label for="reglement-nb-cheques">
+								Nombre de chèques
+							</label>
+
+							<select id="reglement-nb-cheques">
+								<option value="">Choisir</option>
+								<option value="1">1 chèque</option>
+								<option value="2">2 chèques</option>
+								<option value="3">3 chèques</option>
+							</select>
+						</div>
+
+						<div class="form-group">
+							<label for="reglement-banque">
+								Nom de la banque
+							</label>
+
+							<input
+								type="text"
+								id="reglement-banque"
+								placeholder="Nom de la banque"
+							>
+						</div>
+
+					</div>
+
+					<div id="reglement-detail"></div>
+
+				</div>
+
+			</div>
+
+			<div class="form-buttons">
+
+				<button type="button" class="prev btn-secondary">
+					Retour
+				</button>
+
+				<button type="button" class="next btn-submit">
+					Suivant
+				</button>
+
+			</div>
+
+		</div>
+		<!-- ===================================== -->
 		<!-- RECAP FINAL -->
 		<!-- ===================================== -->
 
@@ -1422,6 +1510,21 @@
 							Montant :
 							<strong id="paiement-total"></strong>
 						</div>
+
+					<div>
+						Total à régler (cotisation, forfait et location) :
+						<strong id="paiement-total-general"></strong>
+					</div>
+
+					<div>
+						Règlement cotisation et forfait :
+						<strong id="paiement-mode-final"></strong>
+					</div>
+
+					<div id="paiement-ligne-location" style="display:none;">
+						Règlement location :
+						<strong id="paiement-mode-location"></strong>
+					</div>
 
 						<div id="paiement-caution"
 							 style="display:none; margin-top:10px;">
@@ -1954,6 +2057,57 @@ document.addEventListener("DOMContentLoaded", () => {
 
 
         // =================================================
+        // VERIFICATION DU REGLEMENT
+        // =================================================
+
+        const modeReglement =
+            document.getElementById("reglement-mode")?.value || "";
+
+        const nbChequesChoisi =
+            document.getElementById("reglement-nb-cheques")?.value || "";
+
+        const banqueChoisie =
+            (document.getElementById("reglement-banque")?.value || "").trim();
+
+        if (!modeReglement) {
+
+            alert(
+                "⚠️ Merci d'indiquer comment vous souhaitez régler " +
+                "la cotisation et le forfait (étape « Règlement »)."
+            );
+
+            return;
+        }
+
+        if (
+            modeReglement === "Chèques" &&
+            (!nbChequesChoisi || !banqueChoisie)
+        ) {
+
+            alert(
+                "⚠️ Pour un règlement par chèques, merci d'indiquer " +
+                "le nombre de chèques et le nom de la banque " +
+                "(étape « Règlement »)."
+            );
+
+            return;
+        }
+
+        if (
+            document.getElementById("materiel")?.value === "oui" &&
+            !document.getElementById("loc-paiement")?.value
+        ) {
+
+            alert(
+                "⚠️ Merci d'indiquer le moyen de paiement de la " +
+                "location de matériel (étape « Location de matériel »)."
+            );
+
+            return;
+        }
+
+
+        // =================================================
         // RECALCUL DU PAIEMENT
         // =================================================
 
@@ -2341,6 +2495,30 @@ document.addEventListener("DOMContentLoaded", () => {
 
             emailTm:
                 (document.getElementById("mail-tm")?.value || "").trim(),
+
+
+            // -----------------------------
+            // REGLEMENT
+            // -----------------------------
+
+            modePaiement:
+                document.getElementById("reglement-mode")?.value || "",
+
+            nombreCheques:
+                document.getElementById("reglement-mode")?.value === "Chèques"
+                    ? (document.getElementById("reglement-nb-cheques")?.value || "")
+                    : "",
+
+            banqueCheques:
+                document.getElementById("reglement-mode")?.value === "Chèques"
+                    ? (document.getElementById("reglement-banque")?.value || "").trim()
+                    : "",
+
+            montantCotisation:
+                Number(paiement.cotisation) || 0,
+
+            montantForfaitLuz:
+                Number(paiement.forfaitLuz) || 0,
 
             // -----------------------------
             // DATE
@@ -2818,6 +2996,139 @@ document.addEventListener("DOMContentLoaded", () => {
 
 <script src="tarifs.js"></script>
 <script src="script.js"></script>
+
+<script>
+// =========================
+// ETAPE REGLEMENT
+// Cotisation + forfait : moyen de paiement, nombre de chèques, banque.
+// (la location de matériel a son propre moyen de paiement)
+// =========================
+(function () {
+
+    const mode = document.getElementById("reglement-mode");
+
+    if (!mode) return;
+
+    const blocCheques = document.getElementById("reglement-cheques");
+    const nbCheques = document.getElementById("reglement-nb-cheques");
+    const banque = document.getElementById("reglement-banque");
+    const detail = document.getElementById("reglement-detail");
+    const totalReglement = document.getElementById("reglement-total");
+    const infoLocation = document.getElementById("reglement-location-info");
+
+    function euros(montant) {
+        return Number(montant).toFixed(2) + " €";
+    }
+
+    // Répartition à l'unité près : 100 € en 3 chèques = 34 / 33 / 33
+    function afficherDetailCheques(montant) {
+
+        if (!detail) return;
+
+        detail.textContent = "";
+
+        const nb = parseInt(nbCheques ? nbCheques.value : "", 10);
+
+        if (!nb || nb < 1 || !montant) return;
+
+        const montantBase = Math.floor(montant / nb);
+        const reste = Math.round(montant - montantBase * nb);
+
+        for (let i = 1; i <= nb; i++) {
+
+            const ligne = document.createElement("div");
+            const fort = document.createElement("strong");
+
+            ligne.textContent = "Chèque " + i + " : ";
+            fort.textContent = (montantBase + (i <= reste ? 1 : 0)) + " €";
+
+            ligne.appendChild(fort);
+            detail.appendChild(ligne);
+        }
+    }
+
+    // Texte du moyen de paiement (avec chèques et banque si besoin)
+    function texteReglement(valeur, nb, nomBanque) {
+
+        let texte = valeur || "À choisir";
+
+        if (valeur === "Chèques" && nb) {
+
+            texte += " — " + nb + (Number(nb) > 1 ? " chèques" : " chèque");
+
+            if (nomBanque) {
+                texte += " (" + nomBanque + ")";
+            }
+        }
+
+        return texte;
+    }
+
+    function rafraichirReglement() {
+
+        if (typeof calculPaiement === "function") {
+            calculPaiement();
+        }
+
+        const paiement = window.DERNIER_PAIEMENT || {};
+        const montantClub = Number(paiement.montantClub) || 0;
+        const montantLocation = Number(paiement.montantLocation) || 0;
+        const total = montantClub + montantLocation;
+        const parCheques = mode.value === "Chèques";
+
+        // Étape Règlement : cotisation + forfait uniquement
+        if (totalReglement) {
+            totalReglement.textContent = montantClub > 0 ? euros(montantClub) : "—";
+        }
+
+        if (infoLocation) {
+            infoLocation.style.display = montantLocation > 0 ? "block" : "none";
+        }
+
+        if (blocCheques) {
+            blocCheques.style.display = parCheques ? "block" : "none";
+        }
+
+        afficherDetailCheques(parCheques ? montantClub : 0);
+
+        // Récapitulatif final
+        const totalGeneral = document.getElementById("paiement-total-general");
+
+        if (totalGeneral) {
+            totalGeneral.textContent = total > 0 ? euros(total) : "-";
+        }
+
+        const modeFinal = document.getElementById("paiement-mode-final");
+
+        if (modeFinal) {
+            modeFinal.textContent = texteReglement(
+                mode.value,
+                nbCheques ? nbCheques.value : "",
+                banque ? banque.value.trim() : ""
+            );
+        }
+
+        const ligneLocation = document.getElementById("paiement-ligne-location");
+        const modeLocation = document.getElementById("paiement-mode-location");
+        const locPaiement = document.getElementById("loc-paiement");
+
+        if (ligneLocation && modeLocation) {
+            ligneLocation.style.display = montantLocation > 0 ? "block" : "none";
+            modeLocation.textContent =
+                locPaiement && locPaiement.value ? locPaiement.value : "À choisir";
+        }
+    }
+
+    document.addEventListener("change", rafraichirReglement);
+
+    if (banque) {
+        banque.addEventListener("input", rafraichirReglement);
+    }
+
+    rafraichirReglement();
+
+})();
+</script>
 
 </body>
 </html>

@@ -896,6 +896,8 @@ function calculPaiement() {
 
     // Dernier calcul disponible pour l'enregistrement Firebase.
     window.DERNIER_PAIEMENT = {
+		cotisation: Number(tarif.cotisation) || 0,
+        forfaitLuz: forfaitClub ? (Number(tarif.forfaitLuz) || 0) : 0,
         montantClub,
         montantLocation,
         total,

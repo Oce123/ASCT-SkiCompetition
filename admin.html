@@ -311,6 +311,12 @@
         <button id="adminLoginBtn">
             Se connecter
         </button>
+		
+		
+            <a href="index.html">
+                    Accueil du site
+            </a>
+        
 
         <div id="loginError"></div>
 
@@ -771,6 +777,167 @@ const urlHttps = valeur => {
     }
 };
 
+// =========================
+// LECTURE D'UNE INSCRIPTION
+// =========================
+// Le formulaire enregistre les informations sous certains noms de champs
+// (forfaitNpy, lienUrgence, locationTaille, modePaiement…).
+// Cette fonction les relit tous au même endroit, avec un repli sur
+// d'anciens noms, afin que la fiche, le PDF et l'export Excel affichent
+// exactement les mêmes informations.
+function infosInscription(person) {
+
+    const premier = (...valeurs) => {
+        for (const v of valeurs) {
+            if (v !== undefined && v !== null && v !== "") return v;
+        }
+        return "";
+    };
+
+    const nombre = valeur => {
+        if (valeur === undefined || valeur === null || valeur === "") return null;
+        const n = Number(valeur);
+        return Number.isFinite(n) ? n : null;
+    };
+
+    const euros = valeur => (valeur === null ? "" : `${valeur} €`);
+
+    // ----- Montants enregistrés par le formulaire
+    const montantClub = nombre(person.montantClub);
+    const montantLocation = nombre(person.montantLocation);
+    const cotisation = nombre(premier(person.montantCotisation, person.cotisation));
+    const forfaitLuzMontant = nombre(premier(person.montantForfaitLuz, person.montantForfait, person.prixForfait));
+    const caution = nombre(person.cautionMateriel);
+
+    let montantTotal = nombre(premier(person.montantTotal, person.total, person.montant));
+
+    if (montantTotal === null && (montantClub !== null || montantLocation !== null)) {
+        montantTotal = (montantClub || 0) + (montantLocation || 0);
+    }
+
+    // ----- Forfait Luz Ardiden (lié à la commande / recharge de la carte N'Py)
+    const forfaitLuz =
+        String(person.forfaitNpy || "").toLowerCase() === "oui" ||
+        String(person.npy || "").toLowerCase() === "oui" ||
+        person.forfaitLuz === true;
+
+    const npyBrut = String(premier(person.forfaitNpy, person.npy)).toLowerCase();
+    const npyTexte = npyBrut === "" ? "" : (npyBrut === "oui" ? "Oui" : "Non");
+
+    // ----- Location de matériel
+    const packBrut = premier(person.locationMateriel, person.pack);
+    const pack = packBrut && packBrut !== "Aucune" ? String(packBrut) : "";
+
+    // ----- Représentants légaux (mineurs)
+    const representants = [];
+
+    [1, 2].forEach(n => {
+        const identite = `${person[`responsableLegal${n}Prenom`] || ""} ${person[`responsableLegal${n}Nom`] || ""}`.trim();
+        const tel = person[`responsableLegal${n}Telephone`];
+        const mail = person[`responsableLegal${n}Email`];
+
+        if (identite) representants.push([`Représentant légal ${n}`, identite]);
+        if (tel) representants.push([`Téléphone (représentant ${n})`, tel]);
+        if (mail) representants.push([`E-mail (représentant ${n})`, mail]);
+    });
+
+    // ----- Documents (stockés dans person.documents : cni, photo, scolarite, safran)
+    const docsObject = person.documents && typeof person.documents === "object" ? person.documents : {};
+
+    // Le certificat scolaire n'est requis que si un niveau de scolarité est renseigné.
+    const niveauScolaire = String(person.scolarite ?? person.niveauScolarite ?? "")
+        .trim().normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase();
+
+    const certificatNonRequis =
+        person.certificatScolaireRequis === false ||
+        ["", "/", "scolarite", "non renseigne", "aucun"].includes(niveauScolaire);
+
+    const definitions = [
+        { cle: "cni", label: "Pièce d'identité", cles: ["cni", "pieceIdentite", "carteIdentite"], requis: true },
+        { cle: "photo", label: "Photo d'identité", cles: ["photo", "photoIdentite"], requis: true },
+        { cle: "scolarite", label: "Certificat scolaire", cles: ["scolarite", "certificatScolaire", "certificatScolarite"], requis: !certificatNonRequis },
+        { cle: "safran", label: "Inscription SAFRAN", cles: ["safran", "inscriptionSafran"], requis: true }
+    ];
+
+    const documents = definitions.map(def => {
+        let valeur;
+
+        for (const cle of def.cles) {
+            if (docsObject[cle] !== undefined && docsObject[cle] !== null && docsObject[cle] !== "") {
+                valeur = docsObject[cle];
+                break;
+            }
+
+            // À la racine, « scolarite » est le NIVEAU scolaire, jamais un fichier
+            if (cle === "scolarite") continue;
+
+            if (person[cle] !== undefined && person[cle] !== null && person[cle] !== "") {
+                valeur = person[cle];
+                break;
+            }
+        }
+
+        const present = docPresent(valeur);
+        const estObjet = valeur && typeof valeur === "object";
+        const url = urlHttps(estObjet ? (valeur.url || valeur.downloadURL || valeur.href || valeur.downloadUrl || "") : (typeof valeur === "string" ? valeur : ""));
+        const fileName = estObjet ? (valeur.nom || valeur.name || valeur.fileName || valeur.filename || "") : "";
+
+        return {
+            cle: def.cle,
+            label: def.label,
+            requis: def.requis,
+            present,
+            url,
+            fileName,
+            statut: present ? "Fourni" : (def.requis ? "À fournir" : "Non requis")
+        };
+    });
+
+    const documentsParCle = {};
+    documents.forEach(d => {
+        documentsParCle[d.cle] = d.statut + (d.present && d.fileName ? ` : ${d.fileName}` : "");
+    });
+
+    return {
+        lien: premier(person.lienUrgence, person.lien),
+        telTM: premier(person.telephoneTm, person.telTM, person.telephoneTM, person.telTm),
+        mailTM: premier(person.emailTm, person.mailTM, person.emailTM, person.mailTm),
+
+        forfaitLuz,
+        forfaitLuzTexte: forfaitLuz ? "Oui" : "Non",
+        npyTexte,
+
+        locationOui: String(person.materiel || "").toLowerCase() === "oui",
+        pack,
+        taille: premier(person.locationTaille, person.locTaille),
+        poids: premier(person.locationPoids, person.locPoids),
+        pointure: premier(person.locationPointure, person.locPointure),
+
+        modePaiement: premier(person.modePaiement, person.paiement, person.moyenPaiement),
+        modePaiementLocation: premier(person.locationModePaiement, person.locPaiement),
+        nombreCheques: premier(person.nombreCheques, person.nbCheques),
+        banque: premier(person.banqueCheques, person.banqueCheque, person.banque),
+        banqueCaution: premier(person.locationBanque),
+
+        montantClub,
+        montantLocation,
+        cotisation,
+        forfaitLuzMontant,
+        caution,
+        montantTotal,
+
+        cotisationTexte: euros(cotisation),
+        forfaitMontantTexte: forfaitLuz ? euros(forfaitLuzMontant) : "0 €",
+        locationMontantTexte: euros(montantLocation),
+        cautionTexte: euros(caution),
+        totalTexte: euros(montantTotal),
+
+        representants,
+        documents,
+        documentsParCle
+    };
+}
+
 function docPresent(value) {
     if (value === true) return true;
     if (value === false || value == null || value === "") return false;
@@ -788,37 +955,14 @@ function openInscriptionModal(person) {
 
     const status = getStatut(person);
     const dateInscription = person.dateInscription || person.createdAt || person.created_at || person.dateCreation || person.inscriptionDate || person.dateValidation || "—";
-    // Les fichiers sont stockés dans l'objet imbriqué person.documents (Storage Firebase),
-    // et non dans des champs de premier niveau comme pieceIdentite/photoIdentite.
-    const docsObject = person.documents && typeof person.documents === "object" ? person.documents : {};
-    const docs = [
-      ["Carte nationale d'identité", ["cni", "pieceIdentite", "carteIdentite"]],
-      ["Photo d'identité", ["photo", "photoIdentite"]],
-      ["Certificat scolaire", ["certificatScolaire", "certificatScolarite"]],
-      ["Document SAFRAN", ["safran", "inscriptionSafran"]]
-    ];
-    const docRows = docs.map(([label, keys]) => {
-      let value;
-      for (const key of keys) {
-        if (docsObject[key] !== undefined && docsObject[key] !== null && docsObject[key] !== "") { value = docsObject[key]; break; }
-        if (person[key] !== undefined && person[key] !== null && person[key] !== "") { value = person[key]; break; }
-      }
-      const present = docPresent(value);
-      const url = urlHttps(value && typeof value === "object" ? (value.url || value.downloadURL || value.href || value.downloadUrl || "") : (typeof value === "string" ? value : ""));
-      const fileName = value && typeof value === "object" ? (value.nom || value.name || value.fileName || value.filename || "") : "";
-      // Le certificat scolaire n'est requis que si un niveau de scolarité est renseigné.
-      // Les valeurs vides ou « / » signifient qu'il n'est pas requis.
-      // Le select HTML conserve « Scolarité » comme valeur par défaut si aucun niveau n'a été choisi.
-      // Ce champ décrit le niveau : il ne doit jamais être interprété comme un fichier téléversé.
-      const scolarite = String(person.scolarite ?? person.niveauScolarite ?? "")
-        .trim().normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase();
-      const notRequired = label === "Certificat scolaire" && (
-        person.certificatScolaireRequis === false ||
-        scolarite === "" || scolarite === "/" || scolarite === "scolarite" ||
-        scolarite === "non renseigne" || scolarite === "non renseigné" || scolarite === "aucun"
-      );
-      const effectivePresent = present && !notRequired;
-      return `<div class="doc-status">${notRequired ? "➖" : effectivePresent ? "✅" : "❌"} <strong>${modalEsc(label)}</strong> — ${notRequired ? "Non requis" : effectivePresent ? `Fourni${fileName ? ` : ${modalEsc(fileName)}` : ""}` : "Manquant"}${!notRequired && url ? ` · <a href="${modalEsc(url)}" target="_blank" rel="noopener">Ouvrir le document</a>` : ""}</div>`;
+    const info = infosInscription(person);
+    const docRows = info.documents.map(d => {
+      const icone = d.present ? "✅" : (d.requis ? "❌" : "➖");
+      const texte = d.present
+        ? `Fourni${d.fileName ? ` : ${modalEsc(d.fileName)}` : ""}`
+        : (d.requis ? "Manquant" : "Non requis");
+      const lien = d.present && d.url ? ` · <a href="${modalEsc(d.url)}" target="_blank" rel="noopener">Ouvrir le document</a>` : "";
+      return `<div class="doc-status">${icone} <strong>${modalEsc(d.label)}</strong> — ${texte}${lien}</div>`;
     }).join("");
 
     const driveState = getDriveState(person);
@@ -836,22 +980,25 @@ function openInscriptionModal(person) {
       ]],
       ["Situation SAFRAN et forfaits", [
         ["Situation SAFRAN", person.safranStatus || person.statutSafran || person.safran], ["Quotient familial", person.qf], ["Service", person.service],
-        ["Correspondant", person.correspondant], ["Téléphone TM", person.telTM], ["E-mail TM", person.mailTM], ["Carte N’Py", person.npy], ["Forfait Luz", person.forfaitLuz], ["Numéro N’Py", person.numeroNpy]
+        ["Correspondant", person.correspondant], ["Téléphone TM", info.telTM], ["E-mail TM", info.mailTM], ["Carte N’Py (commande / recharge)", info.npyTexte], ["Forfait Luz", info.forfaitLuzTexte], ["Numéro N’Py", person.numeroNpy]
       ]],
       ["Contact d'urgence", [
-        ["Nom", person.nomUrgence || person.contactUrgence], ["Prénom", person.prenomUrgence], ["Téléphone", person.telephoneUrgence], ["Lien avec le participant", person.lien || person.lienUrgence]
+        ["Nom", person.nomUrgence || person.contactUrgence], ["Prénom", person.prenomUrgence], ["Téléphone", person.telephoneUrgence], ["Lien avec le participant", info.lien]
       ]],
+      ...(info.representants.length ? [["Représentants légaux", info.representants]] : []),
       ["Informations médicales", [
         ["Allergies", person.allergies], ["Traitement", person.traitement], ["Détails du traitement", person.detailsTraitement], ["Antécédents", person.antecedents],
         ["Recommandations", person.recommandations], ["Groupe sanguin", person.groupeSanguin], ["Médecin", person.medecin]
       ]],
       ["Location de matériel", [
-        ["Pack", person.pack || person.materiel], ["Taille", person.locTaille], ["Poids", person.locPoids], ["Pointure", person.locPointure]
+        ["Location", person.materiel], ["Pack", info.pack], ["Taille", info.taille], ["Poids", info.poids], ["Pointure", info.pointure]
       ]],
       ["Autorisations et paiement", [
-        ["Droit à l’image", person.droitImage || person.droitImageAccord], ["Mode de paiement", person.paiement || person.moyenPaiement || person.locPaiement],
-        ["Nombre de chèques", person.nbCheques], ["Banque", person.banqueCheque || person.banque], ["Cotisation", person.cotisation || person.montantCotisation],
-        ["Montant forfait", person.montantForfait || person.prixForfait], ["Montant total", person.montantTotal || person.total || person.montant]
+        ["Droit à l’image", person.droitImage || person.droitImageAccord], ["Règlement cotisation / forfait", info.modePaiement],
+        ["Nombre de chèques (cotisation)", info.nombreCheques], ["Banque (chèques cotisation)", info.banque],
+        ["Règlement location", info.modePaiementLocation], ["Banque du chèque de caution", info.banqueCaution],
+        ["Cotisation", info.cotisationTexte], ["Montant forfait Luz", info.forfaitMontantTexte], ["Location de matériel", info.locationMontantTexte],
+        ["Caution matériel", info.cautionTexte], ["Montant total", info.totalTexte]
       ]]
     ];
     const sectionHtml = sections.map(([title, fields]) => {
@@ -895,12 +1042,12 @@ function afficherEditionInscription(person) {
       ["prenom","Prénom"],["nom","Nom"],["dateNaissance","Date de naissance"],["email","E-mail"],["telephone","Téléphone"],
       ["adresse","Adresse"],["codePostal","Code postal"],["ville","Ville"],["niveauSki","Niveau ski"],["niveauSnow","Niveau snowboard"],
       ["scolarite","Scolarité"],["federaux","Licence fédérale"],["federauxRole","Rôle fédéral"],["federauxDiscipline","Discipline fédérale"],
-      ["federauxLicence","Numéro de licence"],["federauxCategorie","Catégorie"],["safranStatus","Situation SAFRAN"],["qf","QF"],
-      ["nomUrgence","Nom contact urgence"],["prenomUrgence","Prénom contact urgence"],["telephoneUrgence","Téléphone urgence"],["lien","Lien avec le participant"],
+      ["federauxLicence","Numéro de licence"],["federauxCategorie","Catégorie"],["statutSafran","Situation SAFRAN"],["qf","QF"],
+      ["nomUrgence","Nom contact urgence"],["prenomUrgence","Prénom contact urgence"],["telephoneUrgence","Téléphone urgence"],["lienUrgence","Lien avec le participant"],
       ["allergies","Allergies"],["traitement","Traitement"],["detailsTraitement","Détails traitement"],["antecedents","Antécédents médicaux"],
       ["recommandations","Recommandations médicales"],["groupeSanguin","Groupe sanguin"],["medecin","Médecin"],
-      ["pack","Pack location"],["locTaille","Taille"],["locPoids","Poids"],["locPointure","Pointure"],
-      ["droitImage","Droit à l'image"],["paiement","Mode de paiement"],["nbCheques","Nombre de chèques"],["banqueCheque","Banque des chèques"]
+      ["locationMateriel","Pack location"],["locationTaille","Taille"],["locationPoids","Poids"],["locationPointure","Pointure"],
+      ["droitImageAccord","Droit à l'image"],["modePaiement","Règlement cotisation / forfait"],["nombreCheques","Nombre de chèques (cotisation)"],["banqueCheques","Banque des chèques (cotisation)"],["locationModePaiement","Règlement location"],["locationBanque","Banque du chèque de caution"]
     ];
     modalViewContent.style.display = "none";
     modalEditContent.style.display = "block";
@@ -1590,66 +1737,12 @@ function afficherListe(dataArray){
 
 
 			// =====================================================
-			// TARIF
+			// DONNÉES DE L'INSCRIPTION
 			// =====================================================
 
-			let statutTarif =
-				person.safranStatus ||
-				person.statutSafran ||
-				person.safran ||
-				"exterieur";
-
-			statutTarif =
-				String(statutTarif)
-				.toLowerCase()
-				.normalize("NFD")
-				.replace(/[\u0300-\u036f]/g, "");
-
-			if (
-				statutTarif !== "salarie" &&
-				statutTarif !== "retraite" &&
-				statutTarif !== "exterieur"
-			) {
-
-				statutTarif = "exterieur";
-			}
-
-
-			let tarif = null;
-
-			if (
-				typeof TARIFS !== "undefined" &&
-				TARIFS[typeParticipant.toLowerCase()]
-			) {
-
-				tarif =
-					TARIFS[
-						typeParticipant.toLowerCase()
-					][statutTarif];
-			}
-
-
-			const forfaitLuz =
-				person.npy === "oui" ||
-				person.forfaitLuz === true;
-
-
-			let montantTotal = 0;
-
-			if (tarif) {
-
-				montantTotal =
-					Number(tarif.cotisation || 0);
-
-				if (forfaitLuz) {
-
-					montantTotal +=
-						Number(
-							tarif.forfaitLuz || 0
-						);
-				}
-			}
-
+			// On relit les informations et les montants ENREGISTRÉS
+			// par le formulaire (on ne recalcule plus les tarifs ici).
+			const info = infosInscription(person);
 
 			// =====================================================
 			// HEADER
@@ -1727,6 +1820,16 @@ function afficherListe(dataArray){
 				person.adresse
 			);
 
+			addRow(
+				"Code postal",
+				person.codePostal
+			);
+
+			addRow(
+				"Ville",
+				person.ville
+			);
+
 
 			// =====================================================
 			// SITUATION
@@ -1758,6 +1861,19 @@ function afficherListe(dataArray){
 				"Correspondant",
 				person.correspondant
 			);
+
+			if (info.telTM || info.mailTM) {
+
+				addRow(
+					"Téléphone TM",
+					info.telTM
+				);
+
+				addRow(
+					"E-mail TM",
+					info.mailTM
+				);
+			}
 
 
 			// =====================================================
@@ -1838,8 +1954,28 @@ function afficherListe(dataArray){
 
 			addRow(
 				"Lien",
-				person.lien
+				info.lien
 			);
+
+
+			// =====================================================
+			// REPRÉSENTANTS LÉGAUX (mineurs)
+			// =====================================================
+
+			if (info.representants.length) {
+
+				addSectionTitle(
+					"Représentants légaux"
+				);
+
+				info.representants.forEach(([libelle, valeur]) => {
+
+					addRow(
+						libelle,
+						valeur
+					);
+				});
+			}
 
 
 			// =====================================================
@@ -1903,22 +2039,22 @@ function afficherListe(dataArray){
 
 			addRow(
 				"Pack",
-				person.pack
+				info.pack
 			);
 
 			addRow(
 				"Taille",
-				person.locTaille
+				info.taille
 			);
 
 			addRow(
 				"Poids",
-				person.locPoids
+				info.poids
 			);
 
 			addRow(
 				"Pointure",
-				person.locPointure
+				info.pointure
 			);
 
 
@@ -1961,47 +2097,70 @@ function afficherListe(dataArray){
 
 			addRow(
 				"Forfait Luz Ardiden",
-				forfaitLuz
-					? "Oui"
-					: "Non"
+				info.forfaitLuzTexte
 			);
 
 			addRow(
 				"Cotisation",
-				tarif
-					? `${tarif.cotisation} €`
-					: "-"
+				info.cotisationTexte
 			);
 
 			addRow(
-				"Forfait Luz",
-				forfaitLuz && tarif
-					? `${tarif.forfaitLuz} €`
-					: "0 €"
+				"Montant forfait Luz",
+				info.forfaitMontantTexte
 			);
+
+			addRow(
+				"Location matériel",
+				info.locationMontantTexte
+			);
+
+			if (info.caution) {
+
+				addRow(
+					"Caution matériel",
+					info.cautionTexte
+				);
+			}
 
 			addRow(
 				"Montant total",
-				`${montantTotal} €`
+				info.totalTexte
 			);
 
 			addRow(
-				"Moyen de paiement",
-				person.paiement ||
-				person.moyenPaiement ||
-				person.locPaiement
+				"Règlement cotisation / forfait",
+				info.modePaiement
 			);
 
-			addRow(
-				"Nombre de chèques",
-				person.nbCheques
-			);
+			if (info.nombreCheques || info.banque) {
 
-			addRow(
-				"Banque",
-				person.banqueCheque ||
-				person.banque
-			);
+				addRow(
+					"Nombre de chèques (cotisation)",
+					info.nombreCheques
+				);
+
+				addRow(
+					"Banque (chèques cotisation)",
+					info.banque
+				);
+			}
+
+			if (info.locationOui || info.modePaiementLocation) {
+
+				addRow(
+					"Règlement location",
+					info.modePaiementLocation
+				);
+			}
+
+			if (info.banqueCaution) {
+
+				addRow(
+					"Banque du chèque de caution",
+					info.banqueCaution
+				);
+			}
 
 
 			// =====================================================
@@ -2013,33 +2172,13 @@ function afficherListe(dataArray){
 				"📎"
 			);
 
-			addRow(
-				"Pièce d'identité",
-				person.pieceIdentite
-					? "Fournie"
-					: "À fournir"
-			);
+			info.documents.forEach(pieceDoc => {
 
-			addRow(
-				"Photo d'identité",
-				person.photoIdentite
-					? "Fournie"
-					: "À fournir"
-			);
-
-			addRow(
-				"Certificat scolaire",
-				person.certificatScolaire
-					? "Fourni"
-					: "À fournir"
-			);
-
-			addRow(
-				"Inscription SAFRAN",
-				person.inscriptionSafran
-					? "Fournie"
-					: "À fournir"
-			);
+				addRow(
+					pieceDoc.label,
+					pieceDoc.statut
+				);
+			});
 
 
 			// =====================================================
@@ -2112,7 +2251,7 @@ function afficherListe(dataArray){
 			pdf.setFontSize(14);
 
 			pdf.text(
-				`${montantTotal} €`,
+				`${info.totalTexte || "-"}`,
 				PAGE_WIDTH - MARGIN_RIGHT - 5,
 				y + 16,
 				{
@@ -2395,16 +2534,16 @@ function exporterExcelASCT(participant = null) {
         "Quotient familial (QF)": valeurExport(p.qf),
         "Service": valeurExport(p.service),
         "Correspondant TM": valeurExport(p.correspondant),
-        "Téléphone TM": valeurExport(p.telTM || p.telephoneTM || p.telTm),
-        "E-mail TM": valeurExport(p.mailTM || p.emailTM || p.mailTm),
-        "Inscription SAFRAN / justificatif": valeurExport(p.inscriptionSafran)
+        "Téléphone TM": valeurExport(infosInscription(p).telTM),
+        "E-mail TM": valeurExport(infosInscription(p).mailTM),
+        "Inscription SAFRAN / justificatif": valeurExport(infosInscription(p).documentsParCle.safran)
     })));
 
     creerFeuille(wb, "Carte N'Py", exportRows.map(p => ({
         ...ligneBase(p),
-        "Commande / recharge N'Py": valeurExport(p.npy),
+        "Commande / recharge N'Py": valeurExport(infosInscription(p).npyTexte),
         "Numéro de carte N'Py": valeurExport(p.numeroNpy || p.npyNumber || p.numeroCarteNpy),
-        "Forfait Luz Ardiden": valeurExport(p.forfaitLuz)
+        "Forfait Luz Ardiden": valeurExport(infosInscription(p).forfaitLuz)
     })));
 
     creerFeuille(wb, "Contact urgence", exportRows.map(p => ({
@@ -2412,7 +2551,19 @@ function exporterExcelASCT(participant = null) {
         "Nom contact urgence": valeurExport(p.nomUrgence || p.contactUrgence),
         "Prénom contact urgence": valeurExport(p.prenomUrgence),
         "Téléphone contact urgence": valeurExport(p.telephoneUrgence),
-        "Lien avec le participant": valeurExport(p.lien || p.lienUrgence)
+        "Lien avec le participant": valeurExport(infosInscription(p).lien)
+    })));
+
+    creerFeuille(wb, "Représentants légaux", exportRows.map(p => ({
+        ...ligneBase(p),
+        "Représentant 1 — nom": valeurExport(p.responsableLegal1Nom),
+        "Représentant 1 — prénom": valeurExport(p.responsableLegal1Prenom),
+        "Représentant 1 — téléphone": valeurExport(p.responsableLegal1Telephone),
+        "Représentant 1 — e-mail": valeurExport(p.responsableLegal1Email),
+        "Représentant 2 — nom": valeurExport(p.responsableLegal2Nom),
+        "Représentant 2 — prénom": valeurExport(p.responsableLegal2Prenom),
+        "Représentant 2 — téléphone": valeurExport(p.responsableLegal2Telephone),
+        "Représentant 2 — e-mail": valeurExport(p.responsableLegal2Email)
     })));
 
     creerFeuille(wb, "Informations médicales", exportRows.map(p => ({
@@ -2430,11 +2581,14 @@ function exporterExcelASCT(participant = null) {
     creerFeuille(wb, "Location matériel", exportRows.map(p => ({
         ...ligneBase(p),
         "Location matériel": valeurExport(p.materiel),
-        "Pack": valeurExport(p.pack),
-        "Taille": valeurExport(p.locTaille),
-        "Poids": valeurExport(p.locPoids),
-        "Pointure": valeurExport(p.locPointure),
-        "Paiement location": valeurExport(p.locPaiement)
+        "Pack": valeurExport(infosInscription(p).pack),
+        "Taille": valeurExport(infosInscription(p).taille),
+        "Poids": valeurExport(infosInscription(p).poids),
+        "Pointure": valeurExport(infosInscription(p).pointure),
+        "Paiement location": valeurExport(p.locationModePaiement || p.locPaiement),
+        "Banque (caution)": valeurExport(p.locationBanque),
+        "Montant location": valeurExport(infosInscription(p).montantLocation),
+        "Caution matériel": valeurExport(infosInscription(p).caution)
     })));
 
     creerFeuille(wb, "Autorisations", exportRows.map(p => ({
@@ -2449,23 +2603,27 @@ function exporterExcelASCT(participant = null) {
         ...ligneBase(p),
         "Type de participant": valeurExport(p.typeParticipant || (p.dateNaissance ? (calculerAgeExport(p.dateNaissance) < 18 ? "Enfant" : "Adulte") : "")),
         "Statut SAFRAN / tarif": valeurExport(p.safranStatus || p.statutSafran || p.safran),
-        "Forfait Luz Ardiden": valeurExport(p.npy === "oui" || p.forfaitLuz === true),
-        "Cotisation enregistrée": valeurExport(p.cotisation || p.montantCotisation),
-        "Montant forfait enregistré": valeurExport(p.montantForfait || p.prixForfait),
-        "Montant total enregistré": valeurExport(p.montantTotal || p.total || p.montant),
-        "Moyen de paiement": valeurExport(p.paiement || p.moyenPaiement || p.locPaiement),
-        "Nombre de chèques": valeurExport(p.nbCheques),
-        "Banque des chèques": valeurExport(p.banqueCheque || p.banque),
+        "Forfait Luz Ardiden": valeurExport(infosInscription(p).forfaitLuz),
+        "Cotisation enregistrée": valeurExport(infosInscription(p).cotisation),
+        "Montant forfait enregistré": valeurExport(infosInscription(p).forfaitLuzMontant),
+        "Montant club (cotisation + forfait)": valeurExport(infosInscription(p).montantClub),
+        "Montant location": valeurExport(infosInscription(p).montantLocation),
+        "Montant total enregistré": valeurExport(infosInscription(p).montantTotal),
+        "Moyen de paiement (cotisation / forfait)": valeurExport(infosInscription(p).modePaiement),
+        "Nombre de chèques (cotisation)": valeurExport(infosInscription(p).nombreCheques),
+        "Banque des chèques (cotisation)": valeurExport(infosInscription(p).banque),
+        "Moyen de paiement (location)": valeurExport(infosInscription(p).modePaiementLocation),
+        "Banque du chèque de caution": valeurExport(infosInscription(p).banqueCaution),
         "Statut du paiement": valeurExport(p.statutPaiement || p.paiementStatut),
         "Commentaire paiement": valeurExport(p.commentairePaiement)
     })));
 
     creerFeuille(wb, "Documents", exportRows.map(p => ({
         ...ligneBase(p),
-        "Pièce d'identité": valeurExport(p.pieceIdentite),
-        "Photo d'identité": valeurExport(p.photoIdentite),
-        "Certificat scolaire": valeurExport(p.certificatScolaire),
-        "Justificatif SAFRAN": valeurExport(p.inscriptionSafran),
+        "Pièce d'identité": valeurExport(infosInscription(p).documentsParCle.cni),
+        "Photo d'identité": valeurExport(infosInscription(p).documentsParCle.photo),
+        "Certificat scolaire": valeurExport(infosInscription(p).documentsParCle.scolarite),
+        "Justificatif SAFRAN": valeurExport(infosInscription(p).documentsParCle.safran),
         "Autres documents": valeurExport(p.documents || p.fichiers),
         "État archivage Drive": valeurExport(p.driveArchive),
         "Erreur archivage Drive": valeurExport(p.driveArchiveError)
