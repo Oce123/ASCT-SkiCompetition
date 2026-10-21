@@ -1,0 +1,17 @@
+Images des exercices extraites du PDF fourni.
+À importer dans le dépôt GitHub dans un dossier `images/exercices/`.
+Correspondance avec les exercices :
+01 — Bâtons tendus devant
+02 — Traîner les deux bâtons dans la neige
+03 — Passage du bâton d'une main à l'autre
+04 — Robocop
+05 — Short ski poles
+06 — Superman
+07 — Mains sur les hanches
+08 — Skier sur un ski
+09 — Javelin turn
+10 — Position de recherche
+11 — Bâtons derrière la nuque
+12 — Superman inverse
+
+Les photos proviennent du PDF fourni et restent en résolution modeste.
