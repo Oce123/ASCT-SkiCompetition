@@ -40,9 +40,36 @@
     <!-- INTRO -->
     <div class="form-intro">
         <h2>Inscription au Club</h2>
-        <p>
-            Petit texte explicatif à compléter plus tard.
-        </p>
+        <div class="form-intro-text">
+
+            <p class="form-intro-alerte">
+                📎 <strong>Préparez tous vos documents avant de commencer.</strong>
+                Ils sont demandés à la dernière étape : sans eux, l'inscription
+                ne pourra pas être transmise et vous serez bloqué en fin de parcours.
+            </p>
+
+            <p>Documents nécessaires :</p>
+
+            <ul>
+                <li><strong>Pièce d'identité (CNI)</strong> du participant</li>
+                <li><strong>Photo d'identité</strong> du participant</li>
+                <li>
+                    <strong>Certificat de scolarité</strong>, si une scolarité
+                    est indiquée dans le formulaire (École, Collège, Lycée, Étudiant)
+                </li>
+                <li>
+                    <strong>Capture d'écran de votre inscription à l'ASCT</strong>,
+                    ou le <strong>mail d'inscription</strong> reçu après votre adhésion
+                </li>
+            </ul>
+
+            <p class="form-intro-note">
+                Formats acceptés : PDF, JPG ou PNG, 10 Mo maximum par fichier.
+                L'adhésion à l'ASCT doit être faite <strong>avant</strong> cette
+                inscription (voir <a href="infos.html">Infos saison</a>).
+            </p>
+
+        </div>
     </div>
 
     <!-- PROGRESSION -->
@@ -71,8 +98,9 @@
                 <input type="date" id="birthdate" required>
 				<select id="sexe">
 					<option value="">Sexe</option>
-					<option value="F">F</option>
-					<option value="M">M</option>
+					<option value="F">Féminin</option>
+					<option value="M">Masculin</option>
+					<option value="N">Neutre</option>
 				</select>
             </div>
 
@@ -1088,20 +1116,7 @@
 
 				</div>
 
-				<!-- Calendrier -->
-				<div class="accord-row">
-
-					<label>Accès au calendrier</label>
-
-					<select class="accord-select" id="calendrier-accord">
-						<option value="">Choisir</option>
-						<option value="AUTORISE">Autorise</option>
-						<option value="REFUSE">Refuse</option>
-					</select>
-
-				</div>
-
-				<!-- Photos / vidéos -->
+<!-- Photos / vidéos -->
 				<div class="accord-row">
 
 					<label>Utilisation des photos / vidéos</label>
@@ -1231,10 +1246,16 @@
 							<option value="CB">CB</option>
 							<option value="Espèces">Espèces</option>
 							<option value="Chèques">Chèques</option>
+							<option value="Virement bancaire (mandat SEPA CSE Turbo)">Virement bancaire (mandat SEPA CSE Turbo)</option>
 						</select>
 					</div>
 
 				</div>
+
+				<p id="reglement-virement-info" style="display:none;">
+					🏦 Règlement par virement bancaire avec le mandat SEPA CSE Turbo :
+					consultez la page « Infos saison » pour la marche à suivre.
+				</p>
 
 				<div id="reglement-cheques" style="display:none;">
 
@@ -1594,7 +1615,7 @@
 						<div class="document-upload-row" id="document-safran-row">
 							<div class="document-label">
 								<input type="checkbox" id="doc-safran-check" disabled>
-								<label for="doc-safran">Inscription SAFRAN</label>
+								<label for="doc-safran">Inscription ASCT (capture d'écran de l'inscription ou du mail d'inscription)</label>
 							</div>
 							<label class="file-select-btn">
 								<span>📎 Sélectionner un fichier</span>
@@ -1631,8 +1652,19 @@
 
             <h3>Validation</h3>
 
+            <p class="valider-info">
+                ⚠️ Appuyez <strong>une seule fois</strong> sur « Valider », puis
+                <strong>patientez quelques secondes</strong> jusqu'à l'affichage du
+                message de validation ou d'erreur. Ne fermez pas la page et ne
+                cliquez pas une seconde fois : cela pourrait créer des doublons.
+            </p>
+
             <button type="button" class="prev btn-secondary">Précédent</button>
-            <button type="submit" class="btn-submit">Valider</button>
+            <button type="submit" class="btn-submit" id="valider-button">Valider</button>
+
+            <p id="envoi-statut" class="envoi-statut" style="display:none;">
+                ⏳ Envoi en cours… merci de patienter quelques secondes.
+            </p>
 
         </div>
 
@@ -1654,7 +1686,10 @@ import {
     updateDoc,
     doc,
 	setDoc,
-	getDoc
+	getDoc,
+	getDocs,
+	query,
+	where
 } from "https://www.gstatic.com/firebasejs/12.12.0/firebase-firestore.js";
 
 import {
@@ -1711,6 +1746,81 @@ const membreIdParam = params.get("membreId");
 // PRE REMPLIR LE FORMULAIRE
 // =====================================================
 
+// =====================================================
+// COMPLETER LA FICHE MEMBRE AVEC SA DERNIERE INSCRIPTION
+// (fiche ancienne ou incomplète : adresse, téléphone, e-mail, licence…)
+// =====================================================
+
+async function completerAvecDerniereInscription(familleId, membreId, membre) {
+
+    const complet = Object.assign({}, membre);
+
+    try {
+
+        const resultat = await getDocs(
+            query(
+                collection(db, "inscriptions"),
+                where("familleId", "==", familleId)
+            )
+        );
+
+        let derniere = null;
+
+        resultat.forEach(docSnap => {
+
+            const donnees = docSnap.data();
+
+            if (donnees.membreId !== membreId) {
+                return;
+            }
+
+            if (
+                !derniere ||
+                String(donnees.dateInscription || "") >
+                String(derniere.dateInscription || "")
+            ) {
+                derniere = donnees;
+            }
+        });
+
+        if (derniere) {
+
+            [
+                "email",
+                "telephone",
+                "adresse",
+                "codePostal",
+                "ville",
+                "sexe",
+                "statutSafran",
+                "nomUrgence",
+                "prenomUrgence",
+                "telephoneUrgence",
+                "lienUrgence"
+            ].forEach(cle => {
+
+                if (!complet[cle] && derniere[cle]) {
+                    complet[cle] = derniere[cle];
+                }
+            });
+
+            if (!complet.licence && derniere.federauxLicence) {
+                complet.licence = derniere.federauxLicence;
+            }
+        }
+
+    } catch (erreur) {
+
+        console.warn(
+            "⚠️ Complément depuis la dernière inscription impossible :",
+            erreur
+        );
+    }
+
+    return complet;
+}
+
+
 async function chargerMembreExistant(user) {
 
     if (!membreIdParam) {
@@ -1734,7 +1844,14 @@ async function chargerMembreExistant(user) {
             return;
         }
 
-        const membre = membreSnap.data();
+        let membre = membreSnap.data();
+
+        // Complète ce qui manque avec la dernière inscription de ce membre
+        membre = await completerAvecDerniereInscription(
+            user.uid,
+            membreSnap.id,
+            membre
+        );
 
         membreIdExistant = membreSnap.id;
 
@@ -1846,6 +1963,14 @@ async function chargerMembreExistant(user) {
 
 		if (champLienUrgence) {
 			champLienUrgence.value = membre.lienUrgence || "";
+		}
+
+		// Licence (fédéraux)
+		const champLicence =
+			document.getElementById("federaux-licence");
+
+		if (champLicence) {
+			champLicence.value = membre.licence || "";
 		}
 		
 		// ==========================================
@@ -1997,7 +2122,7 @@ document.addEventListener("DOMContentLoaded", () => {
     // ENVOI DU FORMULAIRE
     // =================================================
 
-    form.addEventListener("submit", async (e) => {
+    async function envoyerInscription(e) {
 
         
         e.preventDefault();
@@ -2356,11 +2481,6 @@ document.addEventListener("DOMContentLoaded", () => {
 					"cloud-accord"
 				)?.value || "",
 
-			calendrierAccord:
-				document.getElementById(
-					"calendrier-accord"
-				)?.value || "",
-
 			photosVideosAccord:
 				document.getElementById(
 					"photos-videos-accord"
@@ -2602,6 +2722,7 @@ document.addEventListener("DOMContentLoaded", () => {
 						prenomUrgence: data.prenomUrgence || "",
 						telephoneUrgence: data.telephoneUrgence || "",
 						lienUrgence: data.lienUrgence || "",
+						...(data.federauxLicence ? { licence: data.federauxLicence } : {}),
 
 						updatedAt: new Date().toISOString()
 					}
@@ -2647,6 +2768,7 @@ document.addEventListener("DOMContentLoaded", () => {
 						prenomUrgence: data.prenomUrgence || "",
 						telephoneUrgence: data.telephoneUrgence || "",
 						lienUrgence: data.lienUrgence || "",
+						...(data.federauxLicence ? { licence: data.federauxLicence } : {}),
 						createdAt: new Date().toISOString(),
 						updatedAt: new Date().toISOString()
 					}
@@ -2988,6 +3110,56 @@ document.addEventListener("DOMContentLoaded", () => {
             );
         }
 
+    }
+
+
+    // =================================================
+    // ANTI DOUBLE CLIC
+    // Un seul envoi à la fois : le bouton est bloqué
+    // pendant le traitement.
+    // =================================================
+
+    let envoiEnCours = false;
+
+    form.addEventListener("submit", async (e) => {
+
+        e.preventDefault();
+
+        if (envoiEnCours) {
+            return;
+        }
+
+        envoiEnCours = true;
+
+        const boutonValider = document.getElementById("valider-button");
+        const statutEnvoi = document.getElementById("envoi-statut");
+
+        if (boutonValider) {
+            boutonValider.disabled = true;
+            boutonValider.textContent = "Envoi en cours…";
+        }
+
+        if (statutEnvoi) {
+            statutEnvoi.style.display = "block";
+        }
+
+        try {
+
+            await envoyerInscription(e);
+
+        } finally {
+
+            envoiEnCours = false;
+
+            if (boutonValider) {
+                boutonValider.disabled = false;
+                boutonValider.textContent = "Valider";
+            }
+
+            if (statutEnvoi) {
+                statutEnvoi.style.display = "none";
+            }
+        }
     });
 
 });
@@ -3015,6 +3187,7 @@ document.addEventListener("DOMContentLoaded", () => {
     const detail = document.getElementById("reglement-detail");
     const totalReglement = document.getElementById("reglement-total");
     const infoLocation = document.getElementById("reglement-location-info");
+    const infoVirement = document.getElementById("reglement-virement-info");
 
     function euros(montant) {
         return Number(montant).toFixed(2) + " €";
@@ -3087,6 +3260,11 @@ document.addEventListener("DOMContentLoaded", () => {
 
         if (blocCheques) {
             blocCheques.style.display = parCheques ? "block" : "none";
+        }
+
+        if (infoVirement) {
+            infoVirement.style.display =
+                mode.value.indexOf("Virement") === 0 ? "block" : "none";
         }
 
         afficherDetailCheques(parCheques ? montantClub : 0);

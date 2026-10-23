@@ -856,7 +856,7 @@ function infosInscription(person) {
         { cle: "cni", label: "Pièce d'identité", cles: ["cni", "pieceIdentite", "carteIdentite"], requis: true },
         { cle: "photo", label: "Photo d'identité", cles: ["photo", "photoIdentite"], requis: true },
         { cle: "scolarite", label: "Certificat scolaire", cles: ["scolarite", "certificatScolaire", "certificatScolarite"], requis: !certificatNonRequis },
-        { cle: "safran", label: "Inscription SAFRAN", cles: ["safran", "inscriptionSafran"], requis: true }
+        { cle: "safran", label: "Inscription ASCT (capture / mail)", cles: ["safran", "inscriptionSafran"], requis: true }
     ];
 
     const documents = definitions.map(def => {
