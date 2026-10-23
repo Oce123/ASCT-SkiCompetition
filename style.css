@@ -5530,4 +5530,56 @@ body.lightbox-open {
     }
 }
 
+/* ==============================
+   TEXTE D'INTRODUCTION DU FORMULAIRE
+   + MESSAGES D'AIDE (Valider / envoi)
+============================== */
 
+.form-intro-text {
+    max-width: 760px;
+    margin: 0 auto 25px;
+    text-align: left;
+    line-height: 1.6;
+}
+
+.form-intro-text ul {
+    padding-left: 22px;
+}
+
+.form-intro-text li {
+    margin-bottom: 6px;
+}
+
+.form-intro-alerte {
+    padding: 12px 15px;
+    border-radius: 10px;
+    background: #fff3cd;
+    border-left: 4px solid #f0ad00;
+    color: #5f4b00;
+}
+
+.form-intro-note {
+    font-size: 0.95rem;
+    color: #555;
+}
+
+.valider-info {
+    padding: 12px 15px;
+    margin-bottom: 18px;
+    border-radius: 10px;
+    background: #fff3cd;
+    border-left: 4px solid #f0ad00;
+    color: #5f4b00;
+    line-height: 1.5;
+}
+
+.envoi-statut {
+    margin-top: 15px;
+    font-weight: 600;
+    color: #004080;
+}
+
+.btn-submit:disabled {
+    opacity: 0.6;
+    cursor: wait;
+}
