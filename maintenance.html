@@ -1,0 +1,343 @@
+<!DOCTYPE html>
+<html lang="fr">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Petit fartage en cours — ASCT Ski Compétition</title>
+    <meta name="robots" content="noindex, nofollow">
+
+    <style>
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 25px;
+
+            font-family: Arial, Helvetica, sans-serif;
+            color: #f3f8ff;
+            text-align: center;
+
+            background:
+                radial-gradient(
+                    ellipse at 15% 20%,
+                    rgba(54, 151, 224, 0.20),
+                    transparent 40%
+                ),
+                radial-gradient(
+                    ellipse at 85% 80%,
+                    rgba(30, 104, 177, 0.20),
+                    transparent 40%
+                ),
+                linear-gradient(
+                    135deg,
+                    #07111d 0%,
+                    #10243a 48%,
+                    #081522 100%
+                );
+        }
+
+        .maintenance-card {
+            position: relative;
+            overflow: hidden;
+            width: 100%;
+            max-width: 720px;
+            padding: 55px 35px;
+
+            background: rgba(255, 255, 255, 0.045);
+            border: 1px solid rgba(140, 207, 255, 0.20);
+            border-radius: 24px;
+
+            box-shadow: 0 25px 80px rgba(0, 0, 0, 0.25);
+            backdrop-filter: blur(12px);
+
+            animation: apparition 0.7s ease both;
+        }
+
+        .maintenance-card::before {
+            content: "";
+            position: absolute;
+            top: 0;
+            left: 15%;
+            right: 15%;
+            height: 2px;
+
+            background: linear-gradient(
+                90deg,
+                transparent,
+                #8ccfff,
+                transparent
+            );
+        }
+
+        .logo {
+            width: 95px;
+            height: 95px;
+            object-fit: contain;
+            margin-bottom: 25px;
+
+            filter: drop-shadow(
+                0 0 25px rgba(140, 207, 255, 0.16)
+            );
+        }
+
+        .club-name {
+            color: #8ccfff;
+            font-size: 12px;
+            font-weight: 700;
+            letter-spacing: 3px;
+            text-transform: uppercase;
+            margin-bottom: 25px;
+        }
+
+        .ski-icon {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+
+            width: 76px;
+            height: 76px;
+            margin-bottom: 20px;
+
+            font-size: 37px;
+            border-radius: 22px;
+            background: rgba(140, 207, 255, 0.09);
+            border: 1px solid rgba(140, 207, 255, 0.16);
+
+            animation: flottement 3s ease-in-out infinite;
+        }
+
+        h1 {
+            margin: 0 auto 20px;
+            max-width: 580px;
+
+            font-size: clamp(29px, 5vw, 43px);
+            line-height: 1.15;
+            letter-spacing: -1px;
+        }
+
+        h1 span {
+            color: #8ccfff;
+        }
+
+        .message {
+            max-width: 520px;
+            margin: 0 auto;
+
+            color: #c6d5e4;
+            font-size: 16px;
+            line-height: 1.8;
+        }
+
+        .signature {
+            margin-top: 24px;
+            color: #8ccfff;
+            font-weight: 700;
+            font-size: 15px;
+        }
+		
+		.ps {
+            max-width: 520px;
+            margin: 0 auto;
+
+            color: #c6d5e4;
+            font-size: 12px;
+            line-height: 1.8;
+        }
+
+        .status {
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+
+            margin-top: 35px;
+            padding: 12px 17px;
+
+            border: 1px solid rgba(140, 207, 255, 0.16);
+            border-radius: 30px;
+
+            background: rgba(140, 207, 255, 0.06);
+            color: #c6d5e4;
+            font-size: 13px;
+        }
+
+        .status-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: #8ccfff;
+            box-shadow: 0 0 12px rgba(140, 207, 255, 0.8);
+            animation: pulsation 1.8s ease-in-out infinite;
+        }
+
+        .retry-button {
+            display: inline-block;
+            margin-top: 27px;
+            padding: 13px 23px;
+
+            color: #081522;
+            background: #8ccfff;
+            border: none;
+            border-radius: 10px;
+
+            font-size: 14px;
+            font-weight: 700;
+            text-decoration: none;
+            cursor: pointer;
+
+            transition:
+                transform 0.2s ease,
+                box-shadow 0.2s ease;
+        }
+
+        .retry-button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(140, 207, 255, 0.20);
+        }
+
+        .footer {
+            margin-top: 35px;
+            color: #8095a9;
+            font-size: 12px;
+            line-height: 1.7;
+        }
+
+        .footer a {
+            color: #8ccfff;
+            text-decoration: none;
+        }
+
+        @keyframes apparition {
+            from {
+                opacity: 0;
+                transform: translateY(15px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes flottement {
+            0%, 100% {
+                transform: translateY(0);
+            }
+
+            50% {
+                transform: translateY(-6px);
+            }
+        }
+
+        @keyframes pulsation {
+            0%, 100% {
+                opacity: 1;
+            }
+
+            50% {
+                opacity: 0.35;
+            }
+        }
+
+        @media (max-width: 600px) {
+            .maintenance-card {
+                padding: 40px 23px;
+                border-radius: 18px;
+            }
+
+            .logo {
+                width: 78px;
+                height: 78px;
+            }
+
+            .message {
+                font-size: 15px;
+            }
+        }
+
+        @media (prefers-reduced-motion: reduce) {
+            *,
+            *::before,
+            *::after {
+                animation: none !important;
+                transition: none !important;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <main class="maintenance-card">
+
+        <img
+            src="logo.png"
+            alt="Logo ASCT Ski Compétition"
+            class="logo"
+        >
+
+        <div class="club-name">
+            ASCT Ski Compétition
+        </div>
+
+        <div class="ski-icon" aria-hidden="true">
+            🎿
+        </div>
+
+        <h1>
+            Petit fartage du site <span>en cours !</span>
+        </h1>
+
+        <p class="message">
+            Pas de panique, tout schuss ! 🏔️<br><br>
+
+            Océ bricole dans les coulisses pour corriger quelques
+            petits trucs et vous préparer quelques améliorations.
+
+            <br><br>
+
+            Le temps de resserrer les fixes, d'affûter les carres
+            et on revient très vite ! Si elle casse pas tout entre temps ^^
+        </p>
+
+        <div class="signature">
+            Merci pour votre patience 💙
+        </div>
+		
+		<p class="ps">
+            PS : n'hésitez pas à m'envoyer un message si c'est trop long
+			<br>
+			J'ai peut être oublié de désactiver la maintenance
+        </p>
+
+        <div class="status">
+            <span class="status-dot"></span>
+            Maintenance en cours
+        </div>
+
+        <br>
+
+        <button
+            class="retry-button"
+            onclick="window.location.reload()"
+        >
+            Réessayer l'accès
+        </button>
+		
+
+        <div class="footer">
+            En attendant, profitez-en pour farter vos skis !<br>
+            © ASCT Ski Compétition
+        </div>
+
+    </main>
+
+</body>
+</html>
