@@ -248,7 +248,18 @@
         .non-reinscrit-note { background:#fff7e6; color:#8a4b08; border:1px solid #f6d99a; padding:10px 12px; border-radius:10px; margin:8px 0 14px; font-size:13px; }
         .empty-state { background:#fff; border:1px dashed #cbd5e1; border-radius:16px; padding:32px; text-align:center; color:#667085; }
         .dashboard-loading { max-width:1250px; margin:16px auto; color:#667085; }
-        @media(max-width:900px){ .stats-grid{grid-template-columns:repeat(2,minmax(0,1fr));} }
+        .repartition-card { max-width:1250px; margin:0 auto 22px; background:#fff; border:1px solid #e5eaf0; border-radius:16px; padding:18px; box-shadow:0 4px 14px rgba(16,24,40,.05); }
+.repartition-head { display:flex; justify-content:space-between; align-items:baseline; gap:6px 14px; flex-wrap:wrap; }
+.repartition-note { color:#667085; font-size:12px; }
+.repartition-bar { display:flex; height:30px; margin-top:12px; border-radius:999px; overflow:hidden; background:#eef2f6; }
+.repartition-seg { display:flex; align-items:center; justify-content:center; min-width:0; overflow:hidden; white-space:nowrap; color:#fff; font-size:13px; font-weight:700; transition:width .4s ease; }
+.seg-salaries { background:#123b63; }
+.seg-exterieurs { background:#f0a500; color:#3d2a00; }
+.repartition-legend { display:flex; flex-wrap:wrap; gap:8px 24px; margin-top:12px; color:#344054; font-size:13px; }
+.repartition-legend .dot { display:inline-block; width:10px; height:10px; margin-right:6px; border-radius:50%; }
+.dot-salaries { background:#123b63; }
+.dot-exterieurs { background:#f0a500; }
+@media(max-width:900px){ .stats-grid{grid-template-columns:repeat(2,minmax(0,1fr));} }
         @media(max-width:520px){ .stats-grid{grid-template-columns:1fr 1fr; gap:8px;} .stat-card{padding:12px;} .stat-value{font-size:24px;} .dashboard-tools{padding:12px;} .filter-row select{width:100%;} }
 
 
@@ -343,6 +354,21 @@
     <div class="stat-card"><div class="stat-label">Validées</div><div class="stat-value" id="statValidees">0</div><div class="stat-note">Statut administratif</div></div>
     <div class="stat-card"><div class="stat-label">À traiter</div><div class="stat-value" id="statATraiter">0</div><div class="stat-note">En attente de décision</div></div>
     <div class="stat-card"><div class="stat-label">Incomplètes</div><div class="stat-value" id="statIncompletes">0</div><div class="stat-note">Statut administratif</div></div>
+</section>
+
+<section class="repartition-card" aria-label="Répartition des inscrits entre salariés et extérieurs">
+    <div class="repartition-head">
+        <div class="stat-label">Répartition des inscrits cette saison</div>
+        <div class="repartition-note" id="repartitionNote"></div>
+    </div>
+    <div class="repartition-bar" id="repartitionBar" role="img" aria-label="Répartition des inscrits">
+        <div class="repartition-seg seg-salaries" id="segSalaries"></div>
+        <div class="repartition-seg seg-exterieurs" id="segExterieurs"></div>
+    </div>
+    <div class="repartition-legend">
+        <span><i class="dot dot-salaries"></i>Salariés &amp; retraités TM : <strong id="repSalariesTexte">0</strong></span>
+        <span><i class="dot dot-exterieurs"></i>Extérieurs TM &amp; Régie : <strong id="repExterieursTexte">0</strong></span>
+    </div>
 </section>
 
 <section class="dashboard-tools">
@@ -674,7 +700,62 @@ function construireDonneesDashboard() {
     updateKpis();
 }
 
+// =========================
+// REPARTITION SALARIES / EXTERIEURS
+// Salariés & retraités TM d'un côté, extérieurs & régie de l'autre
+// (même regroupement que les tarifs). Seuls les inscrits de la saison
+// sont comptés : les « non réinscrits » ne le sont pas.
+// =========================
+function groupeStatutParticipant(person) {
+    const statut = String(person.statutSafran || person.safranStatus || "")
+        .normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase();
+
+    if (statut.includes("salari") || statut.includes("retrait")) return "salaries";
+    if (statut.includes("exterieur") || statut.includes("regie")) return "exterieurs";
+    return "inconnu";
+}
+
+function mettreAJourRepartition() {
+    const inscrits = dashboardData.filter(p => !p.isNonReinscrit);
+    const compte = { salaries: 0, exterieurs: 0, inconnu: 0 };
+
+    inscrits.forEach(p => { compte[groupeStatutParticipant(p)]++; });
+
+    const classes = compte.salaries + compte.exterieurs;
+    const partSalaries = classes ? (compte.salaries / classes) * 100 : 0;
+    const partExterieurs = classes ? 100 - partSalaries : 0;
+    const pctSalaries = Math.round(partSalaries);
+    const pctExterieurs = classes ? 100 - pctSalaries : 0;
+
+    const segSalaries = document.getElementById("segSalaries");
+    const segExterieurs = document.getElementById("segExterieurs");
+
+    segSalaries.style.width = partSalaries + "%";
+    segExterieurs.style.width = partExterieurs + "%";
+    segSalaries.textContent = pctSalaries >= 8 ? pctSalaries + " %" : "";
+    segExterieurs.textContent = pctExterieurs >= 8 ? pctExterieurs + " %" : "";
+
+    document.getElementById("repSalariesTexte").textContent =
+        `${compte.salaries} (${pctSalaries} %)`;
+    document.getElementById("repExterieursTexte").textContent =
+        `${compte.exterieurs} (${pctExterieurs} %)`;
+
+    let note = `${inscrits.length} inscrit${inscrits.length > 1 ? "s" : ""}`;
+
+    if (compte.inconnu) {
+        note += ` · ${compte.inconnu} sans statut renseigné (non compté${compte.inconnu > 1 ? "s" : ""})`;
+    }
+
+    document.getElementById("repartitionNote").textContent = note;
+
+    document.getElementById("repartitionBar").setAttribute(
+        "aria-label",
+        `Salariés et retraités TM : ${pctSalaries} %, extérieurs et régie : ${pctExterieurs} %`
+    );
+}
+
 function updateKpis() {
+    mettreAJourRepartition();
     document.getElementById("statTotal").textContent = dashboardData.length;
     document.getElementById("statValidees").textContent = dashboardData.filter(p => normaliserTexte(getStatut(p)) === "validée" || normaliserTexte(getStatut(p)) === "validee").length;
     document.getElementById("statATraiter").textContent = dashboardData.filter(p => normaliserTexte(getStatut(p)) === "à traiter").length;
@@ -898,6 +979,31 @@ function infosInscription(person) {
         documentsParCle[d.cle] = d.statut + (d.present && d.fileName ? ` : ${d.fileName}` : "");
     });
 
+    // ----- Signature électronique (image PNG enregistrée par le formulaire)
+    const sigBrute = person.signatureElectronique && typeof person.signatureElectronique === "object"
+        ? person.signatureElectronique
+        : null;
+
+    const sigImage = sigBrute &&
+        /^data:image\/png;base64,[A-Za-z0-9+/=]+$/.test(String(sigBrute.image || "")) &&
+        String(sigBrute.image).length < 500000
+        ? String(sigBrute.image)
+        : "";
+
+    let sigDate = "";
+
+    if (sigBrute && sigBrute.dateHeure) {
+        const d = new Date(sigBrute.dateHeure);
+        sigDate = isNaN(d.getTime()) ? "" : d.toLocaleString("fr-FR");
+    }
+
+    const signature = {
+        present: !!(sigBrute && (sigImage || sigBrute.nom)),
+        nom: sigBrute ? String(sigBrute.nom || "") : "",
+        dateTexte: sigDate,
+        image: sigImage
+    };
+
     return {
         lien: premier(person.lienUrgence, person.lien),
         telTM: premier(person.telephoneTm, person.telTM, person.telephoneTM, person.telTm),
@@ -934,7 +1040,8 @@ function infosInscription(person) {
 
         representants,
         documents,
-        documentsParCle
+        documentsParCle,
+        signature
     };
 }
 
@@ -968,6 +1075,11 @@ function openInscriptionModal(person) {
     const driveState = getDriveState(person);
     const driveUrl = urlHttps(person.drivePdfUrl || person.pdfUrl || person.driveFileUrl || person.fichePdfUrl || person.ficheInscriptionUrl || person.driveUrl || person.pdfURL || "");
     const driveHtml = driveUrl ? `<a href="${modalEsc(driveUrl)}" target="_blank" rel="noopener">📄 Voir le PDF</a>` : `<span class="modal-notice">Lien du PDF non enregistré dans les données de cette inscription.</span>`;
+
+    const sig = info.signature;
+    const signatureHtml = sig.present
+      ? `<div class="modal-section"><h3>Signature électronique</h3><div class="doc-status">✍️ <strong>${modalEsc(sig.nom || "Signataire non précisé")}</strong>${sig.dateTexte ? ` — signée le ${modalEsc(sig.dateTexte)}` : ""}</div>${sig.image ? `<img src="${sig.image}" alt="Signature" style="max-width:260px;background:#fff;border:1px solid #d0d5dd;border-radius:8px;margin-top:8px;">` : ""}</div>`
+      : `<div class="modal-section"><h3>Signature électronique</h3><div class="doc-status">➖ Pas de signature électronique enregistrée</div></div>`;
 
     const sections = [
       ["Coordonnées", [
@@ -1015,6 +1127,7 @@ function openInscriptionModal(person) {
       </div></div>
       ${sectionHtml}
       <div class="modal-section"><h3>Documents transmis</h3>${docRows}</div>
+      ${signatureHtml}
       <div class="modal-section"><h3>Fiche d'inscription</h3>${driveHtml}</div>
       <div class="modal-section"><h3>Google Drive</h3><div>${driveState === "archivée" ? "✅ Archivée" : driveState === "erreur" ? "❌ Erreur d'archivage" : `⏳ ${modalEsc(person.driveArchive || "En attente d'archivage")}`}</div>${person.driveArchiveError ? `<div class="modal-notice">${modalEsc(person.driveArchiveError)}</div>` : ""}</div>
       <div class="modal-actions">
@@ -2182,6 +2295,56 @@ function afficherListe(dataArray){
 
 
 			// =====================================================
+			// SIGNATURE ÉLECTRONIQUE
+			// =====================================================
+
+			if (info.signature.present) {
+
+				checkPageSpace(50);
+
+				addSectionTitle(
+					"Signature électronique"
+				);
+
+				addRow(
+					"Signataire",
+					info.signature.nom
+				);
+
+				addRow(
+					"Signée le",
+					info.signature.dateTexte
+				);
+
+				if (info.signature.image) {
+
+					checkPageSpace(32);
+
+					try {
+
+						pdf.addImage(
+							info.signature.image,
+							"PNG",
+							MARGIN_LEFT,
+							y,
+							70,
+							23
+						);
+
+						y += 27;
+
+					} catch (erreurSignature) {
+
+						console.warn(
+							"⚠️ Signature illisible dans le PDF :",
+							erreurSignature
+						);
+					}
+				}
+			}
+
+
+			// =====================================================
 			// RÉSUMÉ FINAL
 			// =====================================================
 
@@ -2631,10 +2794,11 @@ function exporterExcelASCT(participant = null) {
 
     creerFeuille(wb, "Signature", exportRows.map(p => ({
         ...ligneBase(p),
-        "Nom signataire": valeurExport(p.nomSignataire || p.signataireNom),
-        "Prénom signataire": valeurExport(p.prenomSignataire || p.signatairePrenom),
-        "Signature": valeurExport(p.signature || p.signatureResponsable || p.signatureParent),
-        "Date de signature": valeurExport(p.dateSignature || p.signatureDate),
+        "Signataire": valeurExport(infosInscription(p).signature.nom),
+        "Signature électronique enregistrée": valeurExport(infosInscription(p).signature.present),
+        "Date et heure de signature": valeurExport(infosInscription(p).signature.dateTexte),
+        "Ville (fiche sanitaire)": valeurExport(p.signatureVille),
+        "Accord fiche sanitaire": valeurExport(p.signatureAccord),
         "Date de soumission": valeurExport(p.dateCreation || p.createdAt || p.dateInscription || p.created_at)
     })));
 

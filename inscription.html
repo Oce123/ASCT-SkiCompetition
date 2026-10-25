@@ -588,6 +588,7 @@
 						<option value="">Choisir</option>
 						<option value="Ski">Ski</option>
 						<option value="Snow">Snow</option>
+						<option value="SkiSnow">Ski et Snow</option>
 					</select>
 				</div>
 
@@ -1466,31 +1467,43 @@
 						<div>
 							Formulaire
 							<span id="verif-formulaire"></span>
+							<small class="verif-detail" id="verif-formulaire-detail"></small>
 						</div>
 
 						<div>
 							Fiche sanitaire
 							<span id="verif-sanitaire"></span>
+							<small class="verif-detail" id="verif-sanitaire-detail"></small>
 						</div>
 
 						<div>
 							Location matériel
 							<span id="verif-location"></span>
+							<small class="verif-detail" id="verif-location-detail"></small>
 						</div>
 
 						<div>
 							Droit à l'image
 							<span id="verif-image"></span>
+							<small class="verif-detail" id="verif-image-detail"></small>
 						</div>
 
 						<div>
 							Participation fédéraux
 							<span id="verif-federaux"></span>
+							<small class="verif-detail" id="verif-federaux-detail"></small>
 						</div>
 
 						<div>
 							Documents
 							<span id="verif-documents"></span>
+							<small class="verif-detail" id="verif-documents-detail"></small>
+						</div>
+
+						<div>
+							Règlement
+							<span id="verif-reglement"></span>
+							<small class="verif-detail" id="verif-reglement-detail"></small>
 						</div>
 
 					</div>
@@ -1651,6 +1664,50 @@
         <div class="form-step">
 
             <h3>Validation</h3>
+
+            <div class="signature-electronique" id="signature-electronique">
+
+                <h4>Signature</h4>
+
+                <p>
+                    En signant ci-dessous, je certifie l'exactitude des informations
+                    transmises dans ce dossier d'inscription. Pour un participant
+                    mineur, la signature est celle du <strong>responsable légal</strong>.
+                </p>
+
+                <div class="form-group">
+                    <label for="signature-signataire">
+                        Nom et prénom du signataire
+                    </label>
+
+                    <input
+                        type="text"
+                        id="signature-signataire"
+                        placeholder="Nom et prénom du signataire"
+                        autocomplete="name"
+                    >
+                </div>
+
+                <p class="signature-consigne">
+                    ✍️ Signez dans le cadre ci-dessous, avec le doigt
+                    (téléphone, tablette) ou avec la souris.
+                </p>
+
+                <canvas
+                    id="signature-canvas"
+                    class="signature-canvas"
+                    width="600"
+                    height="200"
+                    aria-label="Zone de signature"
+                ></canvas>
+
+                <button type="button" class="btn-secondary" id="signature-effacer">
+                    Effacer la signature
+                </button>
+
+                <p id="signature-erreur" class="erreur-accord" role="alert" style="display:none;"></p>
+
+            </div>
 
             <p class="valider-info">
                 ⚠️ Appuyez <strong>une seule fois</strong> sur « Valider », puis
@@ -2233,6 +2290,50 @@ document.addEventListener("DOMContentLoaded", () => {
 
 
         // =================================================
+        // VERIFICATION DE LA SIGNATURE
+        // =================================================
+
+        const signataire =
+            (document.getElementById("signature-signataire")?.value || "").trim();
+
+        const imageSignature =
+            typeof window.signatureImage === "function"
+                ? window.signatureImage()
+                : "";
+
+        if (!signataire || !imageSignature) {
+
+            const messageSignature =
+                document.getElementById("signature-erreur");
+
+            const zoneSignature =
+                document.getElementById("signature-canvas");
+
+            if (messageSignature) {
+
+                messageSignature.textContent =
+                    !signataire
+                        ? "⚠️ Merci d'indiquer le nom et le prénom du signataire, puis de signer dans le cadre."
+                        : "⚠️ Merci de signer dans le cadre avant de valider.";
+
+                messageSignature.style.display = "block";
+            }
+
+            if (zoneSignature) {
+
+                zoneSignature.classList.add("champ-invalide");
+
+                zoneSignature.scrollIntoView({
+                    behavior: "smooth",
+                    block: "center"
+                });
+            }
+
+            return;
+        }
+
+
+        // =================================================
         // RECALCUL DU PAIEMENT
         // =================================================
 
@@ -2511,6 +2612,25 @@ document.addEventListener("DOMContentLoaded", () => {
 
 			signatureVille:
 				document.getElementById("signature-ville")?.value || "",
+
+            signatureElectronique: {
+
+                image:
+                    typeof window.signatureImage === "function"
+                        ? window.signatureImage()
+                        : "",
+
+                nom:
+                    (document.getElementById("signature-signataire")?.value || "").trim(),
+
+                dateHeure:
+                    new Date().toISOString(),
+
+                attestation: true,
+
+                type:
+                    "signature dessinée (signature électronique simple)"
+            },
 
 
             // -----------------------------
@@ -3050,6 +3170,18 @@ document.addEventListener("DOMContentLoaded", () => {
                 window.reinitialiserDocuments();
             }
 
+            // La signature est effacée après un envoi réussi
+            if (typeof window.effacerSignature === "function") {
+                window.effacerSignature();
+            }
+
+            const champSignataire =
+                document.getElementById("signature-signataire");
+
+            if (champSignataire) {
+                champSignataire.value = "";
+            }
+
 
             // =================================================
             // MESSAGE FINAL
@@ -3304,6 +3436,109 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 
     rafraichirReglement();
+
+})();
+</script>
+
+<script>
+// =========================
+// SIGNATURE ELECTRONIQUE (signature dessinée)
+// Le tracé est conservé sous forme d'image PNG dans le dossier.
+// =========================
+(function () {
+
+    const canvas = document.getElementById("signature-canvas");
+
+    if (!canvas) return;
+
+    const contexte = canvas.getContext("2d");
+    const boutonEffacer = document.getElementById("signature-effacer");
+    const messageErreur = document.getElementById("signature-erreur");
+
+    let enTrain = false;
+    let aTrace = false;
+
+    contexte.lineWidth = 2.5;
+    contexte.lineCap = "round";
+    contexte.lineJoin = "round";
+    contexte.strokeStyle = "#111111";
+
+    function position(evenement) {
+
+        const cadre = canvas.getBoundingClientRect();
+
+        return {
+            x: (evenement.clientX - cadre.left) * (canvas.width / cadre.width),
+            y: (evenement.clientY - cadre.top) * (canvas.height / cadre.height)
+        };
+    }
+
+    function masquerErreur() {
+        if (messageErreur) {
+            messageErreur.style.display = "none";
+            messageErreur.textContent = "";
+        }
+        canvas.classList.remove("champ-invalide");
+    }
+
+    canvas.addEventListener("pointerdown", (evenement) => {
+
+        evenement.preventDefault();
+
+        if (canvas.setPointerCapture) {
+            canvas.setPointerCapture(evenement.pointerId);
+        }
+
+        enTrain = true;
+
+        const point = position(evenement);
+
+        contexte.beginPath();
+        contexte.moveTo(point.x, point.y);
+        // un simple appui laisse un point
+        contexte.lineTo(point.x + 0.1, point.y + 0.1);
+        contexte.stroke();
+
+        aTrace = true;
+        masquerErreur();
+    });
+
+    canvas.addEventListener("pointermove", (evenement) => {
+
+        if (!enTrain) return;
+
+        evenement.preventDefault();
+
+        const point = position(evenement);
+
+        contexte.lineTo(point.x, point.y);
+        contexte.stroke();
+    });
+
+    function arreter() {
+        enTrain = false;
+    }
+
+    canvas.addEventListener("pointerup", arreter);
+    canvas.addEventListener("pointercancel", arreter);
+    canvas.addEventListener("pointerleave", arreter);
+
+    function effacer() {
+        contexte.clearRect(0, 0, canvas.width, canvas.height);
+        aTrace = false;
+    }
+
+    if (boutonEffacer) {
+        boutonEffacer.addEventListener("click", effacer);
+    }
+
+    // Image PNG de la signature ("" si rien n'a été tracé)
+    window.signatureImage = function () {
+        return aTrace ? canvas.toDataURL("image/png") : "";
+    };
+
+    // Utilisé après un envoi réussi
+    window.effacerSignature = effacer;
 
 })();
 </script>

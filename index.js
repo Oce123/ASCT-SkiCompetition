@@ -1067,6 +1067,70 @@ async function generateRegistrationPdf(
                 inscription.signatureAccord
             );
 
+            // Signature électronique (signature dessinée)
+            const signature = inscription.signatureElectronique;
+
+            if (signature && signature.nom) {
+
+                field(
+                    "Signataire",
+                    signature.nom
+                );
+            }
+
+            if (signature && signature.dateHeure) {
+
+                field(
+                    "Signé électroniquement le",
+                    new Date(signature.dateHeure).toLocaleString(
+                        "fr-FR",
+                        { timeZone: "Europe/Paris" }
+                    )
+                );
+            }
+
+            if (
+                signature &&
+                /^data:image\/png;base64,[A-Za-z0-9+/=]+$/.test(
+                    String(signature.image || "")
+                )
+            ) {
+
+                try {
+
+                    const bufferSignature = Buffer.from(
+                        String(signature.image).split(",")[1],
+                        "base64"
+                    );
+
+                    // Nouvelle page s'il ne reste pas assez de place
+                    if (
+                        doc.y >
+                        doc.page.height - doc.page.margins.bottom - 110
+                    ) {
+                        doc.addPage();
+                    }
+
+                    const yImage = doc.y + 6;
+
+                    doc.image(
+                        bufferSignature,
+                        doc.x,
+                        yImage,
+                        { fit: [220, 80] }
+                    );
+
+                    doc.y = yImage + 88;
+
+                } catch (erreurSignature) {
+
+                    field(
+                        "Signature",
+                        "image non lisible"
+                    );
+                }
+            }
+
 
             doc
                 .moveDown(2)

@@ -1158,7 +1158,7 @@ function updateRecapFinal() {
 // VERIFICATIONS
 // =========================
 
-function setVerif(id, ok) {
+function setVerif(id, ok, intro, manquants) {
 
     const element =
         document.getElementById(id);
@@ -1176,35 +1176,67 @@ function setVerif(id, ok) {
     element.classList.add(
         ok ? "ok" : "ko"
     );
+
+    // Explication sous le KO : ce qu'il faut faire pour passer à OK
+    const detail =
+        document.getElementById(id + "-detail");
+
+    if (detail) {
+
+        if (!ok && manquants && manquants.length) {
+
+            detail.textContent =
+                "Pour passer à OK, il faut " +
+                intro + " : " +
+                manquants.join(", ") + ".";
+
+            detail.classList.add("visible");
+
+        } else {
+
+            detail.textContent = "";
+            detail.classList.remove("visible");
+        }
+    }
 }
 
 
 function verificationFinale() {
 
+    // Retourne les libellés des champs encore vides
+    function vides(liste) {
+        return liste
+            .filter(([id]) => !getValue(id))
+            .map(([id, libelle]) => libelle);
+    }
+
     // -------------------------
     // FORMULAIRE
     // -------------------------
 
-    const formulaireOK =
-        !!(
-            getValue("nom") &&
-            getValue("prenom") &&
-            getValue("email") &&
-            getValue("telephone") &&
-            getValue("birthdate") &&
-            getValue("adresse") &&
-            getValue("niveau_ski") &&
-            getValue("niveau_snow") &&
-            getValue("materiel") &&
-            getValue("federaux") &&
-            getValue("encadrant") &&
-            getValue("safran-status") &&
-            getValue("npy")
-        );
+    const manqueFormulaire = vides([
+        ["nom", "le nom"],
+        ["prenom", "le prénom"],
+        ["email", "l'adresse e-mail"],
+        ["telephone", "le téléphone"],
+        ["birthdate", "la date de naissance"],
+        ["adresse", "l'adresse"],
+        ["niveau_ski", "le niveau de ski"],
+        ["niveau_snow", "le niveau de snow"],
+        ["materiel", "la location de matériel (oui / non)"],
+        ["federaux", "la participation aux fédéraux (oui / non)"],
+        ["encadrant", "l'encadrement (oui / non)"],
+        ["safran-status", "le statut (salarié, retraité, extérieur…)"],
+        ["npy", "la commande / recharge de la carte N'Py (oui / non)"]
+    ]);
+
+    const formulaireOK = manqueFormulaire.length === 0;
 
     setVerif(
         "verif-formulaire",
-        formulaireOK
+        formulaireOK,
+        "renseigner",
+        manqueFormulaire
     );
 
 
@@ -1212,25 +1244,36 @@ function verificationFinale() {
     // FICHE SANITAIRE
     // -------------------------
 
-    const sanitaireOK =
-        !!(
-            getValue("sanitaire-nom") &&
-            getValue("sanitaire-prenom") &&
-            getValue("sanitaire-tel") &&
-            getValue("sanitaire-adresse") &&
+    const manqueSanitaire = vides([
+        ["sanitaire-nom", "le nom (recopié du formulaire)"],
+        ["sanitaire-prenom", "le prénom (recopié du formulaire)"],
+        ["sanitaire-tel", "le téléphone (recopié du formulaire)"],
+        ["sanitaire-adresse", "l'adresse (recopiée du formulaire)"]
+    ]);
 
-            getNameValue("vaccins") &&
-            getNameValue("traitement") &&
+    if (!getNameValue("vaccins")) {
+        manqueSanitaire.push("les vaccins");
+    }
 
-            getValue("nom-urgence") &&
-            getValue("prenom-urgence") &&
-            getValue("telephone-urgence") &&
-            getValue("lien")
-        );
+    if (!getNameValue("traitement")) {
+        manqueSanitaire.push("le traitement en cours (oui / non)");
+    }
+
+    manqueSanitaire.push(...vides([
+        ["nom-urgence", "le nom du contact d'urgence"],
+        ["prenom-urgence", "le prénom du contact d'urgence"],
+        ["telephone-urgence", "le téléphone du contact d'urgence"],
+        ["lien", "le lien avec le contact d'urgence"],
+        ["accord-select", "le « Bon pour accord » (ou le refus) en bas de la fiche sanitaire"]
+    ]));
+
+    const sanitaireOK = manqueSanitaire.length === 0;
 
     setVerif(
         "verif-sanitaire",
-        sanitaireOK
+        sanitaireOK,
+        "renseigner",
+        manqueSanitaire
     );
 
 
@@ -1241,7 +1284,7 @@ function verificationFinale() {
     const materiel =
         getValue("materiel");
 
-    let locationOK = true;
+    const manqueLocation = [];
 
     if (materiel === "oui") {
 
@@ -1250,18 +1293,25 @@ function verificationFinale() {
                 'input[name="pack"]:checked'
             );
 
-        locationOK =
-            !!(
-                pack &&
-                getValue("loc-taille") &&
-                getValue("loc-poids") &&
-                getValue("loc-pointure")
-            );
+        if (!pack) {
+            manqueLocation.push("le pack choisi");
+        }
+
+        manqueLocation.push(...vides([
+            ["loc-taille", "la taille"],
+            ["loc-poids", "le poids"],
+            ["loc-pointure", "la pointure"],
+            ["loc-paiement", "le moyen de paiement de la location"]
+        ]));
     }
+
+    const locationOK = manqueLocation.length === 0;
 
     setVerif(
         "verif-location",
-        locationOK
+        locationOK,
+        "renseigner",
+        manqueLocation
     );
 
 
@@ -1269,9 +1319,13 @@ function verificationFinale() {
     // DROIT IMAGE
     // -------------------------
 
+    const imageOK = !!getValue("droit-image-accord");
+
     setVerif(
         "verif-image",
-        !!getValue("droit-image-accord")
+        imageOK,
+        "choisir",
+        ["« Bon pour accord » ou « Refus pour accord » en bas de l'étape « Droit à l'image »"]
     );
 
 
@@ -1279,42 +1333,116 @@ function verificationFinale() {
     // FEDERAUX
     // -------------------------
 
-    let federauxOK = true;
+    const manqueFederaux = [];
 
-    if (
-        getValue("federaux") === "oui"
-    ) {
+    if (getValue("federaux") === "oui") {
 
-        federauxOK =
-            !!(
-                getValue("federaux-role") &&
-                getValue("federaux-discipline") &&
-                getValue("federaux-licence") &&
-                getValue("federaux-categorie")
-            );
+        manqueFederaux.push(...vides([
+            ["federaux-role", "le rôle"],
+            ["federaux-discipline", "la discipline"],
+            ["federaux-licence", "le numéro de licence"],
+            ["federaux-categorie", "la catégorie (calculée selon la date de naissance, le rôle et la discipline)"]
+        ]));
     }
+
+    const federauxOK = manqueFederaux.length === 0;
 
     setVerif(
         "verif-federaux",
-        federauxOK
+        federauxOK,
+        "renseigner",
+        manqueFederaux
     );
+
+
+    // -------------------------
+    // DOCUMENTS
+    // -------------------------
+
+    const libellesDocuments = {
+        "doc-cni": "la pièce d'identité",
+        "doc-photo": "la photo d'identité",
+        "doc-scolarite": "le certificat de scolarité",
+        "doc-safran": "la capture d'écran ou le mail d'inscription ASCT"
+    };
 
     const documentsOK =
         typeof window.verifierDocuments === "function"
             ? window.verifierDocuments()
             : false;
 
+    const manqueDocuments = [];
+
+    documentConfig.forEach(doc => {
+
+        const input = document.getElementById(doc.input);
+
+        if (!input) return;
+
+        if (doc.input === "doc-scolarite" && !scolariteSelectionnee()) return;
+
+        const aFichier = !!(input.files && input.files.length > 0);
+
+        if (!aFichier) {
+
+            const libelle = libellesDocuments[doc.input] || doc.input;
+
+            manqueDocuments.push(
+                input.dataset.erreur
+                    ? libelle + " (fichier refusé : " + input.dataset.erreur + ")"
+                    : libelle
+            );
+        }
+    });
+
     setVerif(
         "verif-documents",
-        documentsOK
+        documentsOK,
+        "ajouter",
+        manqueDocuments
+    );
+
+
+    // -------------------------
+    // REGLEMENT (cotisation et forfait)
+    // -------------------------
+
+    const manqueReglement = [];
+
+    const modeReglement = getValue("reglement-mode");
+
+    if (!modeReglement) {
+
+        manqueReglement.push("le moyen de paiement de la cotisation et du forfait");
+
+    } else if (modeReglement === "Chèques") {
+
+        if (!getValue("reglement-nb-cheques")) {
+            manqueReglement.push("le nombre de chèques");
+        }
+
+        if (!getValue("reglement-banque")) {
+            manqueReglement.push("le nom de la banque");
+        }
+    }
+
+    const reglementOK = manqueReglement.length === 0;
+
+    setVerif(
+        "verif-reglement",
+        reglementOK,
+        "indiquer",
+        manqueReglement
     );
 
     return {
         formulaireOK,
         sanitaireOK,
         locationOK,
+        imageOK,
         federauxOK,
-        documentsOK
+        documentsOK,
+        reglementOK
     };
 }
 
@@ -1593,9 +1721,86 @@ if (steps.length > 0) {
     updateProgress();
 }
 
+    // =========================
+    // BON POUR ACCORD OBLIGATOIRE
+    // (fiche sanitaire et droit à l'image) :
+    // on ne passe pas à la suite sans accord OU refus.
+    // =========================
+
+    const SELECTS_ACCORD = ["accord-select", "droit-image-accord"];
+
+    const MESSAGE_ACCORD =
+        "⚠️ Vous devez indiquer votre accord ou votre refus " +
+        "(« Bon pour accord » ou « Refus pour accord ») " +
+        "pour passer à la suite.";
+
+    function masquerErreurAccord(select) {
+
+        select.classList.remove("champ-invalide");
+
+        const message = select.parentElement
+            ? select.parentElement.querySelector(".erreur-accord")
+            : null;
+
+        if (message) message.remove();
+    }
+
+    function afficherErreurAccord(select) {
+
+        masquerErreurAccord(select);
+
+        const message = document.createElement("p");
+
+        message.className = "erreur-accord";
+        message.setAttribute("role", "alert");
+        message.textContent = MESSAGE_ACCORD;
+
+        select.classList.add("champ-invalide");
+        select.insertAdjacentElement("afterend", message);
+
+        select.focus();
+
+        if (select.scrollIntoView) {
+            select.scrollIntoView({ behavior: "smooth", block: "center" });
+        }
+    }
+
+    SELECTS_ACCORD.forEach(id => {
+
+        const select = document.getElementById(id);
+
+        if (select) {
+            select.addEventListener("change", () => {
+                if (select.value) masquerErreurAccord(select);
+            });
+        }
+    });
+
+    function verifierAccordEtape(etape) {
+
+        if (!etape) return true;
+
+        for (const id of SELECTS_ACCORD) {
+
+            const select = etape.querySelector("#" + id);
+
+            if (select && !select.value) {
+                afficherErreurAccord(select);
+                return false;
+            }
+        }
+
+        return true;
+    }
+
     // NEXT
     nextBtns.forEach(btn => {
         btn.addEventListener("click", () => {
+
+            // Accord (ou refus) obligatoire pour continuer
+            if (!verifierAccordEtape(steps[currentStep])) {
+                return;
+            }
 
             if (steps[currentStep] && steps[currentStep].id === "recap-step") {
                 if (!window.verifierDocuments()) {

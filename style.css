@@ -5583,3 +5583,78 @@ body.lightbox-open {
     opacity: 0.6;
     cursor: wait;
 }
+
+/* ==============================
+   VERIFICATIONS : ce qu'il manque pour passer à OK
+   + BON POUR ACCORD OBLIGATOIRE
+============================== */
+
+.verif-grid > div {
+    flex-wrap: wrap;
+}
+
+.verif-detail {
+    display: none;
+    flex-basis: 100%;
+    margin-top: 8px;
+    font-size: 14px;
+    font-weight: 400;
+    line-height: 1.4;
+    color: #8a2d2d;
+}
+
+.verif-detail.visible {
+    display: block;
+}
+
+.erreur-accord {
+    margin: 8px 0 0;
+    padding: 10px 12px;
+    border-radius: 8px;
+    background: #fdecea;
+    border-left: 4px solid #d32f2f;
+    color: #8a2d2d;
+    font-size: 14px;
+    line-height: 1.4;
+}
+
+.champ-invalide {
+    border-color: #d32f2f !important;
+    box-shadow: 0 0 0 2px rgba(211, 47, 47, 0.15);
+}
+
+/* ==============================
+   SIGNATURE ELECTRONIQUE
+============================== */
+
+.signature-electronique {
+    margin: 0 0 25px;
+    padding: 18px;
+    border: 1px solid #d0d5dd;
+    border-radius: 12px;
+    background: #ffffff;
+    color: #1d2a3a;
+}
+
+.signature-electronique h4 {
+    margin: 0 0 10px;
+}
+
+.signature-consigne {
+    margin: 12px 0 8px;
+    font-size: 14px;
+    color: #555;
+}
+
+.signature-canvas {
+    display: block;
+    width: 100%;
+    max-width: 600px;
+    height: auto;
+    margin: 0 auto 10px;
+    border: 2px dashed #8a99ab;
+    border-radius: 10px;
+    background: #ffffff;
+    cursor: crosshair;
+    touch-action: none;
+}

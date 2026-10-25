@@ -1194,6 +1194,23 @@
 			}
 
 		}
+
+		/* Photo d'identité dans les pastilles (à la place des initiales) */
+
+		.member-avatar,
+		.member-profile-avatar,
+		.inscription-avatar {
+			overflow: hidden;
+		}
+
+		.avatar-photo {
+			width: 100%;
+			height: 100%;
+			object-fit: cover;
+			object-position: center 20%;
+			display: block;
+		}
+
     </style>
 </head>
 
@@ -1531,6 +1548,95 @@
 		   CHARGEMENT DES MEMBRES
 		========================================== */
 
+		/* =====================================================
+		   PHOTOS D'IDENTITE
+		   (photo transmise lors de l'inscription)
+		===================================================== */
+
+		let photosFamillePromise = null;
+
+		/* Retourne une Map : identifiant du membre -> URL de sa photo la plus récente */
+		function photosFamille(user) {
+
+			if (!photosFamillePromise) {
+
+				photosFamillePromise = (async () => {
+
+					const photos = new Map();
+					const dates = new Map();
+
+					try {
+
+						const resultat = await getDocs(
+							query(
+								collection(db, "inscriptions"),
+								where("familleId", "==", user.uid)
+							)
+						);
+
+						resultat.forEach(docSnap => {
+
+							const donnees = docSnap.data();
+
+							const url = urlHttps(
+								donnees.documents && donnees.documents.photo
+									? donnees.documents.photo.url
+									: ""
+							);
+
+							if (!url || !donnees.membreId) {
+								return;
+							}
+
+							const date = String(donnees.dateInscription || "");
+
+							if (
+								!dates.has(donnees.membreId) ||
+								date > dates.get(donnees.membreId)
+							) {
+								dates.set(donnees.membreId, date);
+								photos.set(donnees.membreId, url);
+							}
+						});
+
+					} catch (erreur) {
+
+						console.warn(
+							"⚠️ Photos d'identité indisponibles :",
+							erreur
+						);
+					}
+
+					return photos;
+
+				})();
+			}
+
+			return photosFamillePromise;
+		}
+
+		/* Contenu d'une pastille : la photo si elle existe, sinon les initiales */
+		function contenuAvatar(photoUrl, initiales) {
+
+			return photoUrl
+				? html`<img class="avatar-photo" src="${photoUrl}" alt="" loading="lazy" data-initiales="${initiales}">`
+				: initiales;
+		}
+
+		/* Si une photo ne se charge pas, on remet les initiales */
+		function activerSecoursPhotos(conteneur) {
+
+			conteneur.querySelectorAll("img.avatar-photo").forEach(img => {
+
+				img.addEventListener("error", () => {
+					img.replaceWith(
+						document.createTextNode(img.dataset.initiales || "?")
+					);
+				});
+			});
+		}
+
+
 		async function chargerMembres(user) {
 
 			if (!membresContainer) {
@@ -1600,6 +1706,8 @@
 
 				membresContainer.appendChild(compteur);
 
+				const photos = await photosFamille(user);
+
 
 				snapshot.forEach((membreSnap) => {
 
@@ -1643,7 +1751,7 @@
 						<div class="member-main">
 
 							<div class="member-avatar">
-								${initiales || "?"}
+								${contenuAvatar(photos.get(membreSnap.id), initiales || "?")}
 							</div>
 
 							<div class="member-info">
@@ -1674,6 +1782,8 @@
 						</button>
 
 					`;
+
+					activerSecoursPhotos(membreElement);
 
 					/* ==========================================
 					   OUVERTURE DU DOSSIER MEMBRE
@@ -1721,6 +1831,8 @@
 									Chargement du dossier...
 								</div>
 							`;
+
+					activerSecoursPhotos(dossier);
 
 							membreElement.appendChild(dossier);
 
@@ -1855,7 +1967,7 @@
 										<div
 											class="member-profile-avatar"
 										>
-											${initiales || "?"}
+											${contenuAvatar(photos.get(membreSnap.id), initiales || "?")}
 										</div>
 
 										<div class="member-profile-title">
@@ -2301,6 +2413,8 @@
 
 				container.innerHTML = "";
 
+				const photos = await photosFamille(user);
+
 				snapshot.forEach((docSnap) => {
 
 					const inscription = docSnap.data();
@@ -2348,7 +2462,14 @@
 							<div class="inscription-person">
 
 								<div class="inscription-avatar">
-									${prenom.charAt(0).toUpperCase()}
+									${contenuAvatar(
+										urlHttps(
+											inscription.documents && inscription.documents.photo
+												? inscription.documents.photo.url
+												: ""
+										) || photos.get(inscription.membreId),
+										prenom.charAt(0).toUpperCase() || "?"
+									)}
 								</div>
 
 								<div>
@@ -2385,6 +2506,8 @@
 							<span>→</span>
 						</button>
 					`;
+
+					activerSecoursPhotos(carte);
 
 					container.appendChild(carte);
 					
