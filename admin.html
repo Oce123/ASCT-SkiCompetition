@@ -54,6 +54,44 @@
             color:white;
         }
 
+        .export-menu{
+            position:relative;
+            display:inline-block;
+        }
+
+        .export-menu-liste{
+            display:none;
+            position:absolute;
+            right:0;
+            top:calc(100% + 6px);
+            z-index:50;
+            min-width:270px;
+            padding:6px;
+            background:#fff;
+            border:1px solid #d0d5dd;
+            border-radius:12px;
+            box-shadow:0 10px 30px rgba(16,24,40,.18);
+        }
+
+        .export-menu-liste.ouvert{
+            display:block;
+        }
+
+        .export-menu-liste button{
+            display:block;
+            width:100%;
+            padding:10px 12px;
+            text-align:left;
+            background:transparent;
+            color:#1d2a3a;
+            border-radius:8px;
+            font-weight:600;
+        }
+
+        .export-menu-liste button:hover{
+            background:#eef3fa;
+        }
+
         .card{
             background:white;
             border-radius:20px;
@@ -343,7 +381,17 @@
         <p>Suivi des adhésions, des statuts administratifs et de l'archivage Google Drive.</p>
     </div>
     <div class="topbar" style="margin:0;">
-        <button id="exportPDF" class="export">📄 Export PDF</button>
+        <div class="export-menu">
+            <button id="exportPDF" class="export" aria-haspopup="true" aria-expanded="false">📄 Export PDF ▾</button>
+            <div class="export-menu-liste" id="exportMenuListe" role="menu">
+                <button type="button" role="menuitem" data-rapport="globale">📋 Inscription globale</button>
+                <button type="button" role="menuitem" data-rapport="npy">🎟️ Recharge forfait N'Py</button>
+                <button type="button" role="menuitem" data-rapport="section">⛷️ Inscription ASCT Ski Comp</button>
+                <button type="button" role="menuitem" data-rapport="federaux">🏆 Inscription fédéraux</button>
+                <button type="button" role="menuitem" data-rapport="location">🎿 Location de matériel</button>
+                <button type="button" role="menuitem" data-rapport="sanitaire">🩺 Fiches sanitaires</button>
+            </div>
+        </div>
         <button id="exportCSV" class="csv">📊 Export Excel (.xlsx)</button>
         <button id="logoutAdmin" class="logout">🚪 Déconnexion</button>
     </div>
@@ -418,6 +466,8 @@
 </div>
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+<script>if (window.jspdf && window.jspdf.jsPDF && !window.jsPDF) { window.jsPDF = window.jspdf.jsPDF; }</script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.8.2/jspdf.plugin.autotable.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
 
 <script type="module">
@@ -859,6 +909,32 @@ const urlHttps = valeur => {
 };
 
 // =========================
+// FORMATS D'AFFICHAGE (PDF, fiche, export)
+// =========================
+
+// 2014-06-01 -> 01/06/2014 (sans décalage de fuseau horaire)
+function formaterDate(valeur) {
+    const m = /^(\d{4})-(\d{2})-(\d{2})/.exec(String(valeur || ""));
+    return m ? `${m[3]}/${m[2]}/${m[1]}` : String(valeur || "");
+}
+
+// F / M / N (valeurs enregistrées) -> Féminin / Masculin / Neutre
+function libelleSexe(valeur) {
+    const v = String(valeur || "").trim();
+    if (v === "F") return "Féminin";
+    if (v === "M") return "Masculin";
+    if (v === "N") return "Neutre";
+    return v;
+}
+
+// SkiSnow (valeur enregistrée) -> Ski et Snow
+function libelleDiscipline(valeur) {
+    const v = String(valeur || "").trim();
+    if (v === "SkiSnow") return "Ski et Snow";
+    return v;
+}
+
+// =========================
 // LECTURE D'UNE INSCRIPTION
 // =========================
 // Le formulaire enregistre les informations sous certains noms de champs
@@ -1005,6 +1081,10 @@ function infosInscription(person) {
     };
 
     return {
+        sexeTexte: libelleSexe(person.sexe),
+        disciplineTexte: libelleDiscipline(person.federauxDiscipline),
+        dateNaissanceTexte: formaterDate(person.dateNaissance),
+
         lien: premier(person.lienUrgence, person.lien),
         telTM: premier(person.telephoneTm, person.telTM, person.telephoneTM, person.telTm),
         mailTM: premier(person.emailTm, person.mailTM, person.emailTM, person.mailTm),
@@ -1083,12 +1163,12 @@ function openInscriptionModal(person) {
 
     const sections = [
       ["Coordonnées", [
-        ["Nom", person.nom], ["Prénom", person.prenom], ["Date de naissance", person.dateNaissance], ["E-mail", person.email], ["Téléphone", person.telephone],
+        ["Nom", person.nom], ["Prénom", person.prenom], ["Date de naissance", info.dateNaissanceTexte], ["Sexe", info.sexeTexte], ["E-mail", person.email], ["Téléphone", person.telephone],
         ["Adresse", person.adresse], ["Code postal", person.codePostal], ["Ville", person.ville]
       ]],
       ["Activités et niveau", [
         ["Niveau ski", person.niveauSki], ["Niveau snowboard", person.niveauSnow], ["Scolarité", person.scolarite], ["Encadrant", person.encadrant],
-        ["Licence fédérale", person.federaux], ["Rôle fédéral", person.federauxRole], ["Discipline fédérale", person.federauxDiscipline], ["Numéro de licence", person.federauxLicence], ["Catégorie", person.federauxCategorie]
+        ["Licence fédérale", person.federaux], ["Rôle fédéral", person.federauxRole], ["Discipline fédérale", info.disciplineTexte], ["Numéro de licence", person.federauxLicence], ["Catégorie", person.federauxCategorie]
       ]],
       ["Situation SAFRAN et forfaits", [
         ["Situation SAFRAN", person.safranStatus || person.statutSafran || person.safran], ["Quotient familial", person.qf], ["Service", person.service],
@@ -1894,7 +1974,7 @@ function afficherListe(dataArray){
 
 			addField(
 				"Date de naissance",
-				person.dateNaissance,
+				info.dateNaissanceTexte,
 				MARGIN_LEFT,
 				colWidth
 			);
@@ -1903,6 +1983,15 @@ function afficherListe(dataArray){
 				"Catégorie",
 				typeParticipant,
 				MARGIN_LEFT + colWidth + 6,
+				colWidth
+			);
+
+			y += 15;
+
+			addField(
+				"Sexe",
+				info.sexeTexte,
+				MARGIN_LEFT,
 				colWidth
 			);
 
@@ -2026,7 +2115,7 @@ function afficherListe(dataArray){
 
 			addRow(
 				"Discipline",
-				person.federauxDiscipline
+				info.disciplineTexte
 			);
 
 			addRow(
@@ -2524,51 +2613,691 @@ filterTabs.addEventListener("click", event => {
 // EXPORT PDF GLOBAL
 // =========================
 
-exportPDF.addEventListener("click", () => {
+// =========================
+// EXPORTS PDF : liste déroulante et rapports
+// =========================
 
-    const { jsPDF } = window.jspdf;
+const LOGO_GAUCHE = "logo-asct2.jpeg";
+const LOGO_DROITE = "logo.png";
+const MARGE_PDF = 12;
+const COULEUR_PDF = [0, 64, 128];
 
-    const pdf = new jsPDF();
+// Retire les caractères que les polices standard du PDF ne savent pas dessiner (emoji…)
+function pdfTexte(valeur) {
+    if (valeur === null || valeur === undefined) return "";
+    return String(valeur)
+        .replace(/[^\u0020-\u007E\u00A0-\u00FF\u0152\u0153\u0160\u0161\u0178\u017D\u017E\u2013\u2014\u2018\u2019\u201C\u201D\u2022\u2026\u20AC\n]/g, "")
+        .trim();
+}
 
-    let y = 20;
+function pdfOuTiret(valeur) {
+    return pdfTexte(valeur) || "—";
+}
 
-    pdf.setFontSize(18);
+function nomPrenomPdf(person) {
+    return pdfTexte(`${String(person.nom || "").toUpperCase()} ${person.prenom || ""}`) || "—";
+}
 
-    pdf.text(
-        "Suivi des inscriptions ASCT",
-        20,
-        y
-    );
+function ageEnAnnees(iso) {
+    const m = /^(\d{4})-(\d{2})-(\d{2})/.exec(String(iso || ""));
+    if (!m) return null;
 
-    y += 20;
+    const aujourdhui = new Date();
+    let age = aujourdhui.getFullYear() - Number(m[1]);
+    const mois = aujourdhui.getMonth() + 1 - Number(m[2]);
 
-    visibleData.forEach(person => {
+    if (mois < 0 || (mois === 0 && aujourdhui.getDate() < Number(m[3]))) age--;
 
-        pdf.setFontSize(12);
+    return age >= 0 && age < 130 ? age : null;
+}
 
-        pdf.text(
-            `${person.prenom} ${person.nom}`,
-            20,
-            y
-        );
+function categorieAgeLibelle(person) {
+    const age = ageEnAnnees(person.dateNaissance);
+    if (age === null) return "";
+    return age < 18 ? "Enfant" : "Adulte";
+}
 
-        pdf.text(
-            `${person.email || "-"}`,
-            90,
-            y
-        );
+function adresseComplete(person) {
+    const ville = [person.codePostal, person.ville].filter(Boolean).join(" ");
+    return [person.adresse, ville].filter(Boolean).join(", ");
+}
 
-        y += 10;
+function statutSafranLibelle(person) {
+    const brut = String(person.statutSafran || person.safranStatus || "")
+        .normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase();
 
-        if(y > 270){
+    if (brut.includes("salari")) return "Salarié";
+    if (brut.includes("retrait")) return "Retraité";
+    if (brut.includes("exterieur")) return "Extérieur";
+    if (brut.includes("regie")) return "Régie";
+    return "";
+}
 
-            pdf.addPage();
+function ouiNonLibelle(valeur) {
+    const v = String(valeur || "").trim().toLowerCase();
+    if (v === "oui") return "Oui";
+    if (v === "non") return "Non";
+    return v ? pdfTexte(valeur) : "—";
+}
 
-            y = 20;
-        }
+function euros(valeur) {
+    return valeur === null || valeur === undefined ? "—" : `${valeur} €`;
+}
+
+function pourcentage(partie, total) {
+    return total ? Math.round((partie / total) * 100) : 0;
+}
+
+function comparerNomPrenom(a, b) {
+    return String(a.nom || "").localeCompare(String(b.nom || ""), "fr", { sensitivity: "base" }) ||
+        String(a.prenom || "").localeCompare(String(b.prenom || ""), "fr", { sensitivity: "base" });
+}
+
+// Les inscrits de la saison : tout le monde sauf les « non réinscrits »
+// Les inscriptions annulées ou refusées ne figurent dans aucun PDF
+function inscriptionExclueDesPdf(person) {
+    const statut = normaliserTexte(getStatut(person));
+    return statut.startsWith("annul") || statut.startsWith("refus");
+}
+
+function personnesDuRapport() {
+    const precedente = seasonFilter.value === "previous" || activeQuickFilter === "previous-season";
+
+    const source = precedente
+        ? allData.filter(p => normaliserSaison(p.saison || p.driveSaison) === PREVIOUS_SEASON)
+        : dashboardData.filter(p => !p.isNonReinscrit);
+
+    return {
+        saison: precedente ? PREVIOUS_SEASON : CURRENT_SEASON,
+        personnes: source.filter(p => !inscriptionExclueDesPdf(p)).sort(comparerNomPrenom)
+    };
+}
+
+// ----- Les six rapports
+// Chaque fonction renvoie { bilan, entetes, largeurs, lignes } (ou { fiches } pour les fiches sanitaires)
+
+function construireRapportGlobal(personnes) {
+    const lignes = [];
+    let montantCumule = 0;
+    const compte = { validee: 0, traiter: 0, incomplete: 0 };
+
+    personnes.forEach(p => {
+        const info = infosInscription(p);
+        const statut = normaliserTexte(getStatut(p));
+
+        if (statut.startsWith("valid")) compte.validee++;
+        else if (statut.startsWith("incompl")) compte.incomplete++;
+        else if (statut === "à traiter") compte.traiter++;
+
+        montantCumule += info.montantTotal || 0;
+
+        lignes.push([
+            nomPrenomPdf(p),
+            pdfOuTiret(info.sexeTexte),
+            pdfOuTiret(info.dateNaissanceTexte),
+            pdfOuTiret(categorieAgeLibelle(p)),
+            pdfOuTiret(p.email),
+            pdfOuTiret(p.telephone),
+            pdfOuTiret(statutSafranLibelle(p)),
+            pdfOuTiret(getStatut(p)),
+            info.montantTotal === null ? "—" : euros(info.montantTotal),
+            ouiNonLibelle(p.federaux),
+            ouiNonLibelle(p.materiel),
+            info.npyTexte || "—"
+        ]);
     });
 
-    pdf.save("inscriptions_ASCT.pdf");
+    return {
+        bilan: [
+            ["Inscrits", personnes.length],
+            ["Validées", compte.validee],
+            ["À traiter", compte.traiter],
+            ["Incomplètes", compte.incomplete],
+            ["Total encaissable", euros(montantCumule)]
+        ],
+        entetes: ["Nom / Prénom", "Sexe", "Né(e) le", "Catégorie", "E-mail", "Téléphone", "Statut", "Dossier", "Total", "Fédéraux", "Location", "N'Py"],
+        largeurs: [36, 17, 20, 19, "auto", 24, 20, 20, 17, 16, 16, 12],
+        lignes,
+        tailleTexte: 7.5
+    };
+}
+
+function construireRapportNpy(personnes) {
+    const concernes = personnes.filter(p => infosInscription(p).forfaitLuz);
+    let adultes = 0;
+    let enfants = 0;
+
+    const lignes = concernes.map(p => {
+        const categorie = categorieAgeLibelle(p);
+        if (categorie === "Adulte") adultes++;
+        if (categorie === "Enfant") enfants++;
+
+        const age = ageEnAnnees(p.dateNaissance);
+
+        return [
+            nomPrenomPdf(p),
+            pdfOuTiret(infosInscription(p).sexeTexte),
+            pdfOuTiret(infosInscription(p).dateNaissanceTexte),
+            age === null ? "—" : `${age} ans`,
+            pdfOuTiret(adresseComplete(p)),
+            ouiNonLibelle(p.encadrant),
+            pdfOuTiret(p.scolarite),
+            pdfOuTiret(categorie),
+            pdfOuTiret(p.numeroNpy || p.npyNumber || p.numeroCarteNpy)
+        ];
+    });
+
+    const sansAge = concernes.length - adultes - enfants;
+
+    const bilan = [
+        ["Forfaits (total)", concernes.length],
+        ["Forfaits adulte", adultes],
+        ["Forfaits enfant", enfants]
+    ];
+
+    if (sansAge) bilan.push(["Âge inconnu", sansAge]);
+
+    return {
+        bilan,
+        entetes: ["Nom / Prénom", "Sexe", "Né(e) le", "Âge", "Adresse complète", "Encadrant", "Scolarité", "Type de forfait", "N° carte N'Py"],
+        largeurs: [38, 18, 22, 16, "auto", 20, 24, 24, 34],
+        lignes,
+        tailleTexte: 8,
+        vide: "Aucune personne n'a demandé la recharge du forfait N'Py."
+    };
+}
+
+function construireRapportSection(personnes) {
+    const compte = { Salarié: 0, Retraité: 0, Extérieur: 0, Régie: 0, autre: 0 };
+
+    const lignes = personnes.map(p => {
+        const info = infosInscription(p);
+        const statut = statutSafranLibelle(p);
+
+        compte[statut || "autre"]++;
+
+        const age = ageEnAnnees(p.dateNaissance);
+        const categorie = categorieAgeLibelle(p);
+
+        // Statut + informations associées
+        const detailsStatut = [pdfOuTiret(statut)];
+        if (p.service) detailsStatut.push(`Service : ${pdfTexte(p.service)}`);
+        if (p.correspondant) detailsStatut.push(`Correspondant : ${pdfTexte(p.correspondant)}`);
+        if (info.telTM) detailsStatut.push(`Tél. TM : ${pdfTexte(info.telTM)}`);
+        if (info.mailTM) detailsStatut.push(`E-mail TM : ${pdfTexte(info.mailTM)}`);
+        if (p.qf) detailsStatut.push(`QF : ${pdfTexte(p.qf)}`);
+
+        // Représentants légaux (mineurs)
+        const representants = [];
+        [1, 2].forEach(n => {
+            const identite = pdfTexte(`${p[`responsableLegal${n}Prenom`] || ""} ${String(p[`responsableLegal${n}Nom`] || "").toUpperCase()}`);
+            if (identite) {
+                const ligne = [identite];
+                if (p[`responsableLegal${n}Telephone`]) ligne.push(pdfTexte(p[`responsableLegal${n}Telephone`]));
+                if (p[`responsableLegal${n}Email`]) ligne.push(pdfTexte(p[`responsableLegal${n}Email`]));
+                representants.push(ligne.join("\n"));
+            }
+        });
+
+        // Cotisation (cotisation + forfait Luz Ardiden)
+        const cotisationTexte = [`Total : ${euros(info.montantClub)}`];
+        if (info.cotisation !== null) cotisationTexte.push(`Cotisation : ${euros(info.cotisation)}`);
+        if (info.cotisation !== null) cotisationTexte.push(`Forfait Luz : ${euros(info.forfaitLuz ? info.forfaitLuzMontant : 0)}`);
+
+        return [
+            `${nomPrenomPdf(p)}\n${pdfOuTiret(info.sexeTexte)}`,
+            `${pdfOuTiret(p.email)}\n${pdfOuTiret(p.telephone)}`,
+            `${pdfOuTiret(categorie)} — né(e) le ${pdfOuTiret(info.dateNaissanceTexte)}${age === null ? "" : ` (${age} ans)`}\n${pdfOuTiret(adresseComplete(p))}`,
+            detailsStatut.join("\n"),
+            pdfOuTiret(p.scolarite),
+            ouiNonLibelle(p.encadrant),
+            ouiNonLibelle(p.federaux),
+            representants.length ? representants.join("\n") : "—",
+            cotisationTexte.join("\n")
+        ];
+    });
+
+    const salaries = compte.Salarié + compte.Retraité;
+    const exterieurs = compte.Extérieur + compte.Régie;
+    const classes = salaries + exterieurs;
+
+    return {
+        bilan: [
+            ["Inscrits", personnes.length],
+            ["Salariés", compte.Salarié],
+            ["Retraités", compte.Retraité],
+            ["Extérieurs", compte.Extérieur],
+            ["Régie", compte.Régie],
+            ["Salariés & retraités", `${pourcentage(salaries, classes)} %`],
+            ["Extérieurs & régie", `${classes ? 100 - pourcentage(salaries, classes) : 0} %`]
+        ],
+        notes: compte.autre ? [`${compte.autre} inscrit(s) sans statut renseigné (non compté(s) dans les pourcentages).`] : [],
+        entetes: ["Participant", "Contact", "Catégorie, naissance et adresse", "Statut et informations", "Scolarité", "Encadrant", "Fédéraux", "Représentant légal (mineur)", "Cotisation"],
+        largeurs: [34, 42, 52, 40, 20, 17, 16, 32, 20],
+        lignes,
+        tailleTexte: 7
+    };
+}
+
+function construireRapportFederaux(personnes) {
+    const concernes = personnes.filter(p => String(p.federaux || "").toLowerCase() === "oui");
+    const parRole = {};
+
+    const lignes = concernes.map(p => {
+        const info = infosInscription(p);
+        const age = ageEnAnnees(p.dateNaissance);
+        const role = pdfTexte(p.federauxRole) || "Non précisé";
+
+        parRole[role] = (parRole[role] || 0) + 1;
+
+        return [
+            nomPrenomPdf(p),
+            pdfOuTiret(info.sexeTexte),
+            `${pdfOuTiret(categorieAgeLibelle(p))}\nné(e) le ${pdfOuTiret(info.dateNaissanceTexte)}${age === null ? "" : ` (${age} ans)`}`,
+            pdfOuTiret(info.disciplineTexte),
+            pdfOuTiret(p.federauxLicence),
+            pdfOuTiret(p.federauxRole)
+        ];
+    });
+
+    return {
+        bilan: [["Participants fédéraux", concernes.length], ...Object.entries(parRole).map(([role, nb]) => [role, nb])],
+        entetes: ["Nom / Prénom", "Sexe", "Adulte / Enfant et naissance", "Discipline", "Licence", "Rôle"],
+        largeurs: [50, 24, 56, 36, 42, "auto"],
+        lignes,
+        tailleTexte: 8.5,
+        vide: "Aucune personne n'est inscrite aux fédéraux."
+    };
+}
+
+function construireRapportLocation(personnes) {
+    const concernes = personnes.filter(p => String(p.materiel || "").toLowerCase() === "oui");
+    const parPack = {};
+
+    const lignes = concernes.map(p => {
+        const info = infosInscription(p);
+        const age = ageEnAnnees(p.dateNaissance);
+        const pack = pdfTexte(info.pack) || "Pack non précisé";
+
+        parPack[pack] = (parPack[pack] || 0) + 1;
+
+        return [
+            nomPrenomPdf(p),
+            pdfOuTiret(info.sexeTexte),
+            `${pdfOuTiret(categorieAgeLibelle(p))}\nné(e) le ${pdfOuTiret(info.dateNaissanceTexte)}${age === null ? "" : ` (${age} ans)`}`,
+            pdfOuTiret(info.taille),
+            pdfOuTiret(info.poids),
+            pdfOuTiret(info.pointure),
+            pdfOuTiret(info.pack)
+        ];
+    });
+
+    return {
+        bilan: [["Locations", concernes.length], ...Object.entries(parPack).map(([pack, nb]) => [pack, nb])],
+        entetes: ["Nom / Prénom", "Sexe", "Adulte / Enfant et naissance", "Taille", "Poids", "Pointure", "Pack"],
+        largeurs: [50, 24, 56, 24, 24, 24, "auto"],
+        lignes,
+        tailleTexte: 8.5,
+        vide: "Aucune personne n'a demandé de location de matériel."
+    };
+}
+
+function construireRapportSanitaire(personnes) {
+    const fiches = personnes.map(p => {
+        const info = infosInscription(p);
+        const age = ageEnAnnees(p.dateNaissance);
+
+        const contact = pdfTexte(
+            `${p.prenomUrgence || ""} ${String(p.nomUrgence || "").toUpperCase()}`
+        ) || pdfTexte(p.contactUrgence);
+
+        const contactDetail = [
+            contact,
+            p.lienUrgence ? `(${pdfTexte(p.lienUrgence)})` : "",
+            p.telephoneUrgence ? `— ${pdfTexte(p.telephoneUrgence)}` : ""
+        ].filter(Boolean).join(" ");
+
+        return {
+            titre: nomPrenomPdf(p),
+            sousTitre: `Né(e) le ${pdfOuTiret(info.dateNaissanceTexte)}${age === null ? "" : ` — ${age} ans`} — Sexe : ${pdfOuTiret(info.sexeTexte)}`,
+            lignes: [
+                ["Vaccins à jour", pdfOuTiret(p.vaccins)],
+                ["Traitement en cours", pdfOuTiret(p.traitement)],
+                ["Détails du traitement", pdfOuTiret(p.detailsTraitement)],
+                ["Maladies", pdfOuTiret(p.maladies)],
+                ["Allergies", pdfOuTiret(p.allergies)],
+                ["Détails des allergies", pdfOuTiret(p.allergiesDetails)],
+                ["Antécédents médicaux", pdfOuTiret(p.antecedents)],
+                ["Recommandations médicales", pdfOuTiret(p.recommandations)],
+                ["Groupe sanguin", pdfOuTiret(p.groupeSanguin)],
+                ["Médecin traitant", pdfOuTiret(p.medecin)],
+                ["Contact d'urgence", pdfOuTiret(contactDetail)],
+                ["Accord (fiche sanitaire)", pdfOuTiret(p.signatureAccord)]
+            ]
+        };
+    });
+
+    return { fiches, vide: "Aucune fiche sanitaire à éditer." };
+}
+
+const RAPPORTS_PDF = {
+    globale: { titre: "Inscriptions — liste globale", fichier: "inscriptions_ASCT_globale", paysage: true, construire: construireRapportGlobal },
+    npy: { titre: "Recharge du forfait N'Py — Forfait saison", fichier: "forfaits_NPY", paysage: true, construire: construireRapportNpy },
+    section: { titre: "Inscriptions ASCT Ski Compétition", fichier: "inscriptions_section_ski", paysage: true, construire: construireRapportSection },
+    federaux: { titre: "Inscriptions aux fédéraux", fichier: "inscriptions_federaux", paysage: true, construire: construireRapportFederaux },
+    location: { titre: "Location de matériel", fichier: "location_materiel", paysage: true, construire: construireRapportLocation },
+    sanitaire: { titre: "Fiches sanitaires", fichier: "fiches_sanitaires", paysage: false, confidentiel: true, construire: construireRapportSanitaire }
+};
+
+// ----- Bibliothèques et dessin du PDF
+
+// Chargement d'une image du site (logo) : null si elle est introuvable
+async function chargerImagePdf(url) {
+    try {
+        const reponse = await fetch(url, { cache: "force-cache" });
+        if (!reponse.ok) return null;
+
+        const blob = await reponse.blob();
+
+        const data = await new Promise((ok, ko) => {
+            const lecteur = new FileReader();
+            lecteur.onload = () => ok(lecteur.result);
+            lecteur.onerror = ko;
+            lecteur.readAsDataURL(blob);
+        });
+
+        const dimensions = await new Promise((ok, ko) => {
+            const image = new Image();
+            image.onload = () => ok({ largeur: image.naturalWidth, hauteur: image.naturalHeight });
+            image.onerror = ko;
+            image.src = data;
+        });
+
+        return {
+            data,
+            format: /^data:image\/png/i.test(data) ? "PNG" : "JPEG",
+            largeur: dimensions.largeur,
+            hauteur: dimensions.hauteur
+        };
+
+    } catch (erreur) {
+        console.warn("⚠️ Logo introuvable pour le PDF :", url, erreur);
+        return null;
+    }
+}
+
+function appliquerAutoTable(doc, options) {
+    if (typeof doc.autoTable === "function") {
+        doc.autoTable(options);
+        return;
+    }
+
+    const plugin = window["jspdf-autotable"];
+
+    if (plugin && typeof plugin.autoTable === "function") {
+        plugin.autoTable(doc, options);
+        return;
+    }
+
+    if (window.jspdf && typeof window.jspdf.autoTable === "function") {
+        window.jspdf.autoTable(doc, options);
+        return;
+    }
+
+    throw new Error("La bibliothèque de tableaux (jspdf-autotable) n'est pas chargée. Rechargez la page.");
+}
+
+function dessinerLogo(doc, logo, xAncre, y, hauteurMax, alignement) {
+    if (!logo) return;
+
+    let hauteur = hauteurMax;
+    let largeur = hauteur * (logo.largeur / logo.hauteur);
+
+    if (largeur > 42) {
+        largeur = 42;
+        hauteur = largeur * (logo.hauteur / logo.largeur);
+    }
+
+    const x = alignement === "droite" ? xAncre - largeur : xAncre;
+
+    try {
+        doc.addImage(logo.data, logo.format, x, y, largeur, hauteur);
+    } catch (erreur) {
+        console.warn("⚠️ Logo illisible dans le PDF :", erreur);
+    }
+}
+
+// En-tête : logo ASCT à gauche, logo du club à droite, titre au centre
+function dessinerEntete(doc, logos, titre, sousTitre) {
+    const largeurPage = doc.internal.pageSize.getWidth();
+
+    dessinerLogo(doc, logos.gauche, MARGE_PDF, 7, 16, "gauche");
+    dessinerLogo(doc, logos.droite, largeurPage - MARGE_PDF, 7, 16, "droite");
+
+    doc.setFont("helvetica", "bold");
+    doc.setFontSize(15);
+    doc.setTextColor(COULEUR_PDF[0], COULEUR_PDF[1], COULEUR_PDF[2]);
+    doc.text(pdfTexte(titre), largeurPage / 2, 15, { align: "center" });
+
+    doc.setFont("helvetica", "normal");
+    doc.setFontSize(9);
+    doc.setTextColor(90, 90, 90);
+    doc.text(pdfTexte(sousTitre), largeurPage / 2, 21, { align: "center" });
+
+    doc.setDrawColor(COULEUR_PDF[0], COULEUR_PDF[1], COULEUR_PDF[2]);
+    doc.setLineWidth(0.4);
+    doc.line(MARGE_PDF, 27, largeurPage - MARGE_PDF, 27);
+
+    doc.setTextColor(0, 0, 0);
+}
+
+function dessinerPiedsDePage(doc, texteGauche) {
+    const total = doc.getNumberOfPages();
+    const largeurPage = doc.internal.pageSize.getWidth();
+    const hauteurPage = doc.internal.pageSize.getHeight();
+
+    for (let page = 1; page <= total; page++) {
+        doc.setPage(page);
+        doc.setFont("helvetica", "normal");
+        doc.setFontSize(8);
+        doc.setTextColor(120, 120, 120);
+        doc.text(pdfTexte(texteGauche), MARGE_PDF, hauteurPage - 6);
+        doc.text(`Page ${page} / ${total}`, largeurPage - MARGE_PDF, hauteurPage - 6, { align: "right" });
+    }
+
+    doc.setTextColor(0, 0, 0);
+}
+
+function derniereYTableau(doc, parDefaut) {
+    return doc.lastAutoTable && doc.lastAutoTable.finalY ? doc.lastAutoTable.finalY : parDefaut;
+}
+
+// Bilan en haut du PDF : une ligne de cases
+function dessinerBilan(doc, bilan, notes, y) {
+    if (!bilan || !bilan.length) return y;
+
+    appliquerAutoTable(doc, {
+        head: [bilan.map(([libelle]) => pdfTexte(libelle))],
+        body: [bilan.map(([, valeur]) => pdfTexte(valeur))],
+        startY: y,
+        margin: { top: 32, left: MARGE_PDF, right: MARGE_PDF, bottom: 14 },
+        theme: "grid",
+        styles: { font: "helvetica", halign: "center", valign: "middle", fontSize: 8, cellPadding: 2, lineColor: [200, 208, 220], lineWidth: 0.1 },
+        headStyles: { fillColor: [230, 238, 248], textColor: COULEUR_PDF, fontStyle: "bold" },
+        bodyStyles: { fontSize: 13, fontStyle: "bold", textColor: COULEUR_PDF }
+    });
+
+    let yFin = derniereYTableau(doc, y + 20) + 3;
+
+    (notes || []).forEach(note => {
+        doc.setFont("helvetica", "italic");
+        doc.setFontSize(8);
+        doc.setTextColor(110, 110, 110);
+        doc.text(pdfTexte(note), MARGE_PDF, yFin + 2);
+        yFin += 5;
+    });
+
+    doc.setTextColor(0, 0, 0);
+
+    return yFin + 3;
+}
+
+function styleColonnes(largeurs) {
+    const styles = {};
+
+    largeurs.forEach((largeur, index) => {
+        styles[index] = { cellWidth: largeur };
+    });
+
+    return styles;
+}
+
+function dessinerRapportTableau(doc, logos, definition, rapport, sousTitre) {
+    dessinerEntete(doc, logos, definition.titre, sousTitre);
+
+    const yTableau = dessinerBilan(doc, rapport.bilan, rapport.notes, 32);
+
+    appliquerAutoTable(doc, {
+        head: [rapport.entetes.map(pdfTexte)],
+        body: rapport.lignes,
+        startY: yTableau,
+        margin: { top: 32, left: MARGE_PDF, right: MARGE_PDF, bottom: 14 },
+        theme: "grid",
+        styles: { font: "helvetica", fontSize: rapport.tailleTexte || 8, cellPadding: 1.6, valign: "top", overflow: "linebreak", lineColor: [200, 208, 220], lineWidth: 0.1 },
+        headStyles: { fillColor: COULEUR_PDF, textColor: 255, fontStyle: "bold" },
+        alternateRowStyles: { fillColor: [244, 247, 251] },
+        columnStyles: styleColonnes(rapport.largeurs),
+        rowPageBreak: "avoid",
+        didDrawPage: data => {
+            if (data.pageNumber > 1) {
+                dessinerEntete(doc, logos, definition.titre, sousTitre);
+            }
+        }
+    });
+}
+
+function dessinerFichesSanitaires(doc, logos, definition, rapport, sousTitre) {
+    rapport.fiches.forEach((fiche, index) => {
+
+        if (index > 0) doc.addPage();
+
+        dessinerEntete(doc, logos, definition.titre, sousTitre);
+
+        doc.setFont("helvetica", "bold");
+        doc.setFontSize(14);
+        doc.setTextColor(0, 0, 0);
+        doc.text(fiche.titre, MARGE_PDF, 37);
+
+        doc.setFont("helvetica", "normal");
+        doc.setFontSize(10);
+        doc.setTextColor(90, 90, 90);
+        doc.text(fiche.sousTitre, MARGE_PDF, 43);
+
+        appliquerAutoTable(doc, {
+            head: [["Information", "Réponse"]],
+            body: fiche.lignes,
+            startY: 49,
+            margin: { top: 32, left: MARGE_PDF, right: MARGE_PDF, bottom: 14 },
+            theme: "grid",
+            styles: { font: "helvetica", fontSize: 10, cellPadding: 2.5, valign: "top", overflow: "linebreak", lineColor: [200, 208, 220], lineWidth: 0.1 },
+            headStyles: { fillColor: COULEUR_PDF, textColor: 255, fontStyle: "bold" },
+            columnStyles: { 0: { cellWidth: 52, fontStyle: "bold", fillColor: [244, 247, 251] }, 1: { cellWidth: "auto" } },
+            didDrawPage: data => {
+                if (data.pageNumber > 1) {
+                    dessinerEntete(doc, logos, definition.titre, sousTitre);
+                }
+            }
+        });
+    });
+}
+
+async function genererRapportPdf(type) {
+    const definition = RAPPORTS_PDF[type];
+
+    if (!definition) return;
+
+    const libelleInitial = exportPDF.textContent;
+
+    exportPDF.disabled = true;
+    exportPDF.textContent = "⏳ Génération du PDF…";
+
+    try {
+        const { jsPDF } = window.jspdf;
+        const { saison, personnes } = personnesDuRapport();
+        const rapport = definition.construire(personnes, saison);
+
+        const nombre = rapport.fiches ? rapport.fiches.length : rapport.lignes.length;
+
+        if (!nombre) {
+            alert("ℹ️ " + (rapport.vide || "Aucune personne concernée pour ce PDF."));
+            return;
+        }
+
+        const doc = new jsPDF({
+            orientation: definition.paysage ? "landscape" : "portrait",
+            unit: "mm",
+            format: "a4"
+        });
+
+        const logos = {
+            gauche: await chargerImagePdf(LOGO_GAUCHE),
+            droite: await chargerImagePdf(LOGO_DROITE)
+        };
+
+        const sousTitre = `Saison ${saison} — édité le ${new Date().toLocaleDateString("fr-FR")} — hors inscriptions annulées ou refusées`;
+
+        if (rapport.fiches) {
+            dessinerFichesSanitaires(doc, logos, definition, rapport, sousTitre);
+        } else {
+            dessinerRapportTableau(doc, logos, definition, rapport, sousTitre);
+        }
+
+        dessinerPiedsDePage(
+            doc,
+            definition.confidentiel
+                ? "ASCT Ski Compétition — Document confidentiel (données de santé)"
+                : "ASCT Ski Compétition"
+        );
+
+        doc.save(`${definition.fichier}_${saison.replace("/", "-")}.pdf`);
+
+    } catch (erreur) {
+        console.error("❌ Génération du PDF impossible :", erreur);
+        alert("⚠️ Impossible de générer le PDF : " + (erreur && erreur.message ? erreur.message : erreur));
+
+    } finally {
+        exportPDF.disabled = false;
+        exportPDF.textContent = libelleInitial;
+    }
+}
+
+// ----- Liste déroulante du bouton « Export PDF »
+
+const exportMenuListe = document.getElementById("exportMenuListe");
+
+function fermerMenuExport() {
+    exportMenuListe.classList.remove("ouvert");
+    exportPDF.setAttribute("aria-expanded", "false");
+}
+
+exportPDF.addEventListener("click", (evenement) => {
+    evenement.stopPropagation();
+
+    const ouvert = exportMenuListe.classList.toggle("ouvert");
+    exportPDF.setAttribute("aria-expanded", ouvert ? "true" : "false");
+});
+
+document.addEventListener("click", fermerMenuExport);
+
+document.addEventListener("keydown", (evenement) => {
+    if (evenement.key === "Escape") fermerMenuExport();
+});
+
+exportMenuListe.querySelectorAll("button[data-rapport]").forEach(bouton => {
+    bouton.addEventListener("click", () => {
+        fermerMenuExport();
+        genererRapportPdf(bouton.dataset.rapport);
+    });
 });
 
 // =========================
@@ -2665,7 +3394,7 @@ function exporterExcelASCT(participant = null) {
         ...ligneBase(p),
         "Date de naissance": valeurExport(p.dateNaissance),
         "Catégorie calculée": p.dateNaissance ? (calculerAgeExport(p.dateNaissance) < 18 ? "Enfant" : "Adulte") : "",
-        "Sexe": valeurExport(p.sexe),
+        "Sexe": valeurExport(libelleSexe(p.sexe)),
         "Famille / responsable": valeurExport(p.nomResponsable || p.responsable || p.familleNom)
     })));
 
@@ -2685,7 +3414,7 @@ function exporterExcelASCT(participant = null) {
         "Scolarité": valeurExport(p.scolarite),
         "Participation aux fédéraux": valeurExport(p.federaux || p.participationFederaux),
         "Rôle fédéraux": valeurExport(p.federauxRole),
-        "Discipline fédéraux": valeurExport(p.federauxDiscipline),
+        "Discipline fédéraux": valeurExport(libelleDiscipline(p.federauxDiscipline)),
         "Licence fédéraux": valeurExport(p.federauxLicence),
         "Catégorie course": valeurExport(p.federauxCategorie),
         "Encadrant": valeurExport(p.encadrant)

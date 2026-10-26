@@ -450,6 +450,28 @@ async function prepareDriveFolders(
 // GENERATION DU PDF
 // ============================================================
 
+// 2014-06-01 -> 01/06/2014
+function formaterDateFr(valeur) {
+    const m = /^(\d{4})-(\d{2})-(\d{2})/.exec(String(valeur || ""));
+    return m ? `${m[3]}/${m[2]}/${m[1]}` : String(valeur || "");
+}
+
+// F / M / N -> Féminin / Masculin / Neutre
+function libelleSexe(valeur) {
+    const v = String(valeur || "").trim();
+    if (v === "F") return "Féminin";
+    if (v === "M") return "Masculin";
+    if (v === "N") return "Neutre";
+    return v;
+}
+
+// SkiSnow -> Ski et Snow
+function libelleDiscipline(valeur) {
+    const v = String(valeur || "").trim();
+    if (v === "SkiSnow") return "Ski et Snow";
+    return v;
+}
+
 async function generateRegistrationPdf(
     inscription
 ) {
@@ -584,12 +606,12 @@ async function generateRegistrationPdf(
 
             field(
                 "Date de naissance",
-                inscription.dateNaissance
+                formaterDateFr(inscription.dateNaissance)
             );
 
             field(
                 "Sexe",
-                inscription.sexe
+                libelleSexe(inscription.sexe)
             );
 
 
@@ -689,7 +711,7 @@ async function generateRegistrationPdf(
 
                 field(
                     "Fédéraux : discipline",
-                    inscription.federauxDiscipline
+                    libelleDiscipline(inscription.federauxDiscipline)
                 );
 
                 field(
