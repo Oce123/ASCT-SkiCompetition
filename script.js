@@ -208,20 +208,70 @@ if (safranStatus) {
 }
 
 // =========================
-// NPY
+// NPY : FORFAIT OBLIGATOIRE
 // =========================
 
 const npy = document.getElementById("npy");
 const npyNumber = document.getElementById("npy-number");
 
-if (npy) {
+function forfaitNpyObligatoire() {
+    const age = getAge();
+    const statut = getValue("safran-status");
 
-    npy.addEventListener("change", function () {
+    if (age === null || !statut) return false;
 
+    const enfant = age < 18;
+
+    return (
+        statut === "salarie" ||
+        statut === "retraite" ||
+        statut === "regie" ||
+        enfant
+    );
+}
+
+function mettreAJourNpy() {
+    if (!npy) return;
+
+    const obligatoire = forfaitNpyObligatoire();
+
+    if (obligatoire) {
+        npy.value = "oui";
+
+        // Verrouille le choix, sans bloquer le numéro de carte.
+        npy.disabled = true;
+    } else {
+        npy.disabled = false;
+    }
+
+    if (npyNumber) {
         npyNumber.style.display =
-            this.value === "oui" ? "flex" : "none";
+            npy.value === "oui" ? "flex" : "none";
+    }
+
+    calculPaiement();
+}
+
+if (npy) {
+    npy.addEventListener("change", () => {
+        mettreAJourNpy();
+        updateRecapFinal();
     });
 }
+
+["birthdate", "safran-status", "scolarite"].forEach(id => {
+    const element = document.getElementById(id);
+
+    if (element) {
+        element.addEventListener("change", () => {
+            mettreAJourNpy();
+            updateRecapFinal();
+        });
+    }
+});
+
+// Initialisation
+mettreAJourNpy();
 
 // =========================
 // FICHE SANITAIRE AUTO
@@ -801,10 +851,8 @@ function getStatutSafran() {
 // =========================
 
 function calculPaiement() {
-
     const age = getAge();
     const statut = getValue("safran-status");
-    const npy = getValue("npy");
     const materiel = getValue("materiel");
 
     const paiementType = document.getElementById("paiement-type");
@@ -814,11 +862,10 @@ function calculPaiement() {
     const paiementTotal = document.getElementById("paiement-total");
     const paiementCaution = document.getElementById("paiement-caution");
 
-    let categorie = "";
+    const tarifs = window.TARIFS;
 
-    if (age !== null) {
-        categorie = age < 18 ? "enfant" : "adulte";
-    }
+    const categorie =
+        age === null ? "" : age < 18 ? "enfant" : "adulte";
 
     if (paiementType) {
         paiementType.textContent =
@@ -831,44 +878,77 @@ function calculPaiement() {
         paiementStatut.textContent = getStatutSafran();
     }
 
-    const forfaitClub = npy === "oui";
+    if (!categorie || !statut || !tarifs || !tarifs.inscription) {
+        if (paiementTotal) paiementTotal.textContent = "Tarif non disponible";
+        if (paiementLocation) paiementLocation.textContent = "Aucune";
+        if (paiementCaution) paiementCaution.style.display = "none";
+
+        window.DERNIER_PAIEMENT = null;
+        return 0;
+    }
+
+    // Le forfait est obligatoire pour tous les profils sauf
+    // l'adulte extérieur, qui peut choisir de ne pas le prendre.
+    const obligatoire = forfaitNpyObligatoire();
+
+    if (obligatoire && npy) {
+        npy.value = "oui";
+    }
+
+    const forfaitClub = obligatoire || getValue("npy") === "oui";
 
     if (paiementForfait) {
         paiementForfait.textContent = forfaitClub ? "Oui" : "Non";
     }
 
-    if (!categorie || !statut) {
-        if (paiementTotal) paiementTotal.textContent = "Tarif non disponible";
-        if (paiementLocation) paiementLocation.textContent = "Aucune";
-        if (paiementCaution) paiementCaution.style.display = "none";
-        return 0;
+    // Tarifs d'inscription forfait inclus :
+    // on ne rajoute jamais le prix du forfait à ces montants.
+    const grille = tarifs.inscription;
+    let montantClub = 0;
+    let libelleTarif = "";
+
+    if (statut === "salarie" || statut === "retraite") {
+        const etudiant = scolariteSelectionnee();
+
+        if (etudiant && categorie === "adulte") {
+            montantClub = grille.etudiantTurbo;
+            libelleTarif = "Étudiant Turbo — forfait Luz inclus";
+        } else if (categorie === "enfant") {
+            montantClub = grille.enfantTurbo;
+            libelleTarif = "Enfant Turbo — forfait Luz inclus";
+        } else {
+            montantClub = grille.adulteTurbo;
+            libelleTarif = "Adulte Turbo — forfait Luz inclus";
+        }
+    } else if (statut === "regie") {
+        montantClub = categorie === "enfant"
+            ? grille.enfantExterieur
+            : grille.adulteRegie;
+
+        libelleTarif = categorie === "enfant"
+            ? "Enfant régie — forfait Luz inclus"
+            : "Adulte régie — forfait Luz inclus";
+    } else if (statut === "exterieur") {
+        if (categorie === "enfant") {
+            montantClub = grille.enfantExterieur;
+            libelleTarif = "Enfant extérieur — forfait Luz inclus";
+        } else if (forfaitClub) {
+            montantClub = grille.adulteExterieurAvecForfait;
+            libelleTarif = "Adulte extérieur — forfait Luz inclus";
+        } else {
+            montantClub = grille.adulteExterieurSansForfait;
+            libelleTarif = "Adulte extérieur — sans forfait Luz";
+        }
     }
 
-    const tarifs = window.TARIFS;
-
-    if (!tarifs || !tarifs[categorie] || !tarifs[categorie][statut]) {
-        console.warn("Tarif introuvable pour :", categorie, statut);
-        if (paiementTotal) paiementTotal.textContent = "Tarif non trouvé";
-        return 0;
-    }
-
-    const tarif = tarifs[categorie][statut];
-
-    let montantClub = Number(tarif.cotisation) || 0;
-
-    if (forfaitClub) {
-        montantClub += Number(tarif.forfaitLuz) || 0;
-    }
-
+    // Location de matériel en supplément
     let montantLocation = 0;
     let libelleLocation = "Aucune";
 
     if (materiel === "oui") {
-
         const pack = document.querySelector('input[name="pack"]:checked');
 
         if (pack && tarifs.location && tarifs.location[categorie]) {
-
             montantLocation =
                 Number(tarifs.location[categorie][pack.value]) || 0;
 
@@ -879,7 +959,7 @@ function calculPaiement() {
             };
 
             libelleLocation =
-                `${libelles[pack.value] || pack.value} — ${montantLocation.toFixed(2)} €`;
+                `${libelles[pack.value] || pack.value} — ${montantLocation} €`;
         }
     }
 
@@ -891,18 +971,27 @@ function calculPaiement() {
 
     if (paiementTotal) {
         paiementTotal.textContent =
-            `${montantClub.toFixed(2)} € hors loc. matériel`;
+            `${montantClub} € (${libelleTarif})` +
+            (montantLocation > 0
+                ? ` + ${montantLocation} € de location`
+                : "");
     }
 
-    // Dernier calcul disponible pour l'enregistrement Firebase.
+    // Le tarif club est enregistré en un seul montant.
+    // forfaitLuz = 0 évite de compter une seconde fois le forfait
+    // dans les systèmes qui utilisent ces deux champs.
     window.DERNIER_PAIEMENT = {
-		cotisation: Number(tarif.cotisation) || 0,
-        forfaitLuz: forfaitClub ? (Number(tarif.forfaitLuz) || 0) : 0,
+        cotisation: montantClub,
+        forfaitLuz: 0,
         montantClub,
         montantLocation,
         total,
         location: libelleLocation,
-        caution: montantLocation > 0 ? 100 : 0
+        caution: montantLocation > 0
+            ? Number(tarifs.cautionMateriel) || 100
+            : 0,
+        libelleTarif,
+        forfaitInclus: forfaitClub
     };
 
     if (paiementCaution) {
