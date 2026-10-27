@@ -2673,6 +2673,12 @@ function statutSafranLibelle(person) {
     return "";
 }
 
+function scolariteLibelle(valeur) {
+    const v = String(valeur || "").trim();
+    if (!v || v === "/" || v.toLowerCase() === "scolarité" || v.toLowerCase() === "scolarite") return "—";
+    return pdfTexte(v);
+}
+
 function ouiNonLibelle(valeur) {
     const v = String(valeur || "").trim().toLowerCase();
     if (v === "oui") return "Oui";
@@ -2781,7 +2787,7 @@ function construireRapportNpy(personnes) {
             age === null ? "—" : `${age} ans`,
             pdfOuTiret(adresseComplete(p)),
             ouiNonLibelle(p.encadrant),
-            pdfOuTiret(p.scolarite),
+            scolariteLibelle(p.scolarite),
             pdfOuTiret(categorie),
             pdfOuTiret(p.numeroNpy || p.npyNumber || p.numeroCarteNpy)
         ];
@@ -2849,7 +2855,7 @@ function construireRapportSection(personnes) {
             `${pdfOuTiret(p.email)}\n${pdfOuTiret(p.telephone)}`,
             `${pdfOuTiret(categorie)} — né(e) le ${pdfOuTiret(info.dateNaissanceTexte)}${age === null ? "" : ` (${age} ans)`}\n${pdfOuTiret(adresseComplete(p))}`,
             detailsStatut.join("\n"),
-            pdfOuTiret(p.scolarite),
+            scolariteLibelle(p.scolarite),
             ouiNonLibelle(p.encadrant),
             ouiNonLibelle(p.federaux),
             representants.length ? representants.join("\n") : "—",
@@ -2873,7 +2879,7 @@ function construireRapportSection(personnes) {
         ],
         notes: compte.autre ? [`${compte.autre} inscrit(s) sans statut renseigné (non compté(s) dans les pourcentages).`] : [],
         entetes: ["Participant", "Contact", "Catégorie, naissance et adresse", "Statut et informations", "Scolarité", "Encadrant", "Fédéraux", "Représentant légal (mineur)", "Cotisation"],
-        largeurs: [34, 42, 52, 40, 20, 17, 16, 32, 20],
+        largeurs: [30, 50, 46, 40, 16, 15, 15, 36, 25],
         lignes,
         tailleTexte: 7
     };
@@ -2991,37 +2997,45 @@ const RAPPORTS_PDF = {
 
 // ----- Bibliothèques et dessin du PDF
 
-// Chargement d'une image du site (logo) : null si elle est introuvable
+// Erreurs de logos rencontrées pendant la génération (affichées à la fin)
+let erreursLogosPdf = [];
+
+// Chargement d'une image du site (logo) : null si elle est introuvable.
+// L'image est redessinée sur un canvas puis convertie en JPEG : format le plus sûr pour jsPDF,
+// quel que soit le fichier d'origine (PNG, JPEG progressif, transparence…).
 async function chargerImagePdf(url) {
     try {
-        const reponse = await fetch(url, { cache: "force-cache" });
-        if (!reponse.ok) return null;
-
-        const blob = await reponse.blob();
-
-        const data = await new Promise((ok, ko) => {
-            const lecteur = new FileReader();
-            lecteur.onload = () => ok(lecteur.result);
-            lecteur.onerror = ko;
-            lecteur.readAsDataURL(blob);
+        const image = await new Promise((ok, ko) => {
+            const img = new Image();
+            img.onload = () => ok(img);
+            img.onerror = () => ko(new Error("fichier introuvable ou illisible"));
+            img.src = url;
         });
 
-        const dimensions = await new Promise((ok, ko) => {
-            const image = new Image();
-            image.onload = () => ok({ largeur: image.naturalWidth, hauteur: image.naturalHeight });
-            image.onerror = ko;
-            image.src = data;
-        });
+        const largeurMax = 600;
+        const ratio = Math.min(1, largeurMax / image.naturalWidth);
+        const canvas = document.createElement("canvas");
+
+        canvas.width = Math.max(1, Math.round(image.naturalWidth * ratio));
+        canvas.height = Math.max(1, Math.round(image.naturalHeight * ratio));
+
+        const contexte = canvas.getContext("2d");
+
+        // Fond blanc : évite un fond noir pour les images transparentes
+        contexte.fillStyle = "#ffffff";
+        contexte.fillRect(0, 0, canvas.width, canvas.height);
+        contexte.drawImage(image, 0, 0, canvas.width, canvas.height);
 
         return {
-            data,
-            format: /^data:image\/png/i.test(data) ? "PNG" : "JPEG",
-            largeur: dimensions.largeur,
-            hauteur: dimensions.hauteur
+            data: canvas.toDataURL("image/jpeg", 0.92),
+            format: "JPEG",
+            largeur: canvas.width,
+            hauteur: canvas.height
         };
 
     } catch (erreur) {
         console.warn("⚠️ Logo introuvable pour le PDF :", url, erreur);
+        erreursLogosPdf.push(`${url} : ${erreur && erreur.message ? erreur.message : erreur}`);
         return null;
     }
 }
@@ -3064,6 +3078,7 @@ function dessinerLogo(doc, logo, xAncre, y, hauteurMax, alignement) {
         doc.addImage(logo.data, logo.format, x, y, largeur, hauteur);
     } catch (erreur) {
         console.warn("⚠️ Logo illisible dans le PDF :", erreur);
+        erreursLogosPdf.push(`logo : ${erreur && erreur.message ? erreur.message : erreur}`);
     }
 }
 
@@ -3220,6 +3235,7 @@ async function genererRapportPdf(type) {
 
     exportPDF.disabled = true;
     exportPDF.textContent = "⏳ Génération du PDF…";
+    erreursLogosPdf = [];
 
     try {
         const { jsPDF } = window.jspdf;
@@ -3260,6 +3276,15 @@ async function genererRapportPdf(type) {
         );
 
         doc.save(`${definition.fichier}_${saison.replace("/", "-")}.pdf`);
+
+        if (erreursLogosPdf.length) {
+            alert(
+                "⚠️ Le PDF a été généré, mais sans logo :\n\n" +
+                [...new Set(erreursLogosPdf)].join("\n") +
+                "\n\nVérifiez que les fichiers " + LOGO_GAUCHE + " et " + LOGO_DROITE +
+                " sont bien à la racine du site."
+            );
+        }
 
     } catch (erreur) {
         console.error("❌ Génération du PDF impossible :", erreur);
