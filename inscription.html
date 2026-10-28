@@ -2760,6 +2760,13 @@ document.addEventListener("DOMContentLoaded", () => {
             montantForfaitLuz:
                 Number(paiement.forfaitLuz) || 0,
 
+            // Tarif d'inscription : un seul montant, forfait Luz inclus ou non
+            libelleTarif:
+                paiement.libelleTarif || "",
+
+            forfaitInclus:
+                paiement.forfaitInclus === true,
+
             // -----------------------------
             // DATE
             // -----------------------------

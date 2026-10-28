@@ -993,7 +993,36 @@ async function generateRegistrationPdf(
                 "8. Paiement"
             );
 
-            if (inscription.montantCotisation !== undefined) {
+            // Tarif d'inscription : un seul montant, forfait Luz inclus ou non
+            // (les inscriptions intermédiaires — forfait « oui » à 0 € et cotisation = total — sont reconnues aussi)
+            const tarifUnique =
+                !!inscription.libelleTarif ||
+                (
+                    inscription.forfaitNpy === "oui" &&
+                    inscription.montantCotisation !== undefined &&
+                    Number(inscription.montantCotisation) === Number(inscription.montantClub) &&
+                    !Number(inscription.montantForfaitLuz)
+                );
+
+            if (tarifUnique) {
+
+                const forfaitInclus =
+                    inscription.libelleTarif
+                        ? inscription.forfaitInclus === true
+                        : inscription.forfaitNpy === "oui";
+
+                field(
+                    "Tarif d'inscription",
+                    `${inscription.montantClub || 0} € — ` +
+                    (inscription.libelleTarif || "forfait Luz inclus")
+                );
+
+                field(
+                    "Forfait Luz Ardiden",
+                    forfaitInclus ? "Inclus dans le tarif" : "Non"
+                );
+
+            } else if (inscription.montantCotisation !== undefined) {
 
                 field(
                     "Cotisation",

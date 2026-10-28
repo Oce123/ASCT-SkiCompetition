@@ -1055,6 +1055,24 @@ function infosInscription(person) {
         documentsParCle[d.cle] = d.statut + (d.present && d.fileName ? ` : ${d.fileName}` : "");
     });
 
+    // ----- Tarif d'inscription
+    // Nouveau modèle : un seul montant, forfait Luz inclus (libelleTarif enregistré).
+    // Les inscriptions intermédiaires (forfait « oui » à 0 € et cotisation = total) sont reconnues aussi.
+    const tarifUnique =
+        !!person.libelleTarif ||
+        (forfaitLuz && cotisation !== null && montantClub !== null &&
+         cotisation === montantClub && !forfaitLuzMontant);
+
+    const tarifLibelle = String(person.libelleTarif || "").trim() ||
+        (tarifUnique ? "forfait Luz inclus" : "");
+
+    const lignesTarif = tarifUnique
+        ? [["Tarif d'inscription", `${euros(montantClub)}${tarifLibelle ? " — " + tarifLibelle : ""}`]]
+        : [
+            ["Cotisation", euros(cotisation)],
+            ["Montant forfait Luz", forfaitLuz ? euros(forfaitLuzMontant) : "0 €"]
+        ];
+
     // ----- Signature électronique (image PNG enregistrée par le formulaire)
     const sigBrute = person.signatureElectronique && typeof person.signatureElectronique === "object"
         ? person.signatureElectronique
@@ -1121,7 +1139,10 @@ function infosInscription(person) {
         representants,
         documents,
         documentsParCle,
-        signature
+        signature,
+        tarifUnique,
+        tarifLibelle,
+        lignesTarif
     };
 }
 
@@ -1189,7 +1210,7 @@ function openInscriptionModal(person) {
         ["Droit à l’image", person.droitImage || person.droitImageAccord], ["Règlement cotisation / forfait", info.modePaiement],
         ["Nombre de chèques (cotisation)", info.nombreCheques], ["Banque (chèques cotisation)", info.banque],
         ["Règlement location", info.modePaiementLocation], ["Banque du chèque de caution", info.banqueCaution],
-        ["Cotisation", info.cotisationTexte], ["Montant forfait Luz", info.forfaitMontantTexte], ["Location de matériel", info.locationMontantTexte],
+        ...info.lignesTarif, ["Location de matériel", info.locationMontantTexte],
         ["Caution matériel", info.cautionTexte], ["Montant total", info.totalTexte]
       ]]
     ];
@@ -2302,15 +2323,13 @@ function afficherListe(dataArray){
 				info.forfaitLuzTexte
 			);
 
-			addRow(
-				"Cotisation",
-				info.cotisationTexte
-			);
+			info.lignesTarif.forEach(([libelleTarif, valeurTarif]) => {
 
-			addRow(
-				"Montant forfait Luz",
-				info.forfaitMontantTexte
-			);
+				addRow(
+					libelleTarif,
+					valeurTarif
+				);
+			});
 
 			addRow(
 				"Location matériel",
@@ -2847,8 +2866,13 @@ function construireRapportSection(personnes) {
 
         // Cotisation (cotisation + forfait Luz Ardiden)
         const cotisationTexte = [`Total : ${euros(info.montantClub)}`];
-        if (info.cotisation !== null) cotisationTexte.push(`Cotisation : ${euros(info.cotisation)}`);
-        if (info.cotisation !== null) cotisationTexte.push(`Forfait Luz : ${euros(info.forfaitLuz ? info.forfaitLuzMontant : 0)}`);
+
+        if (info.tarifUnique) {
+            cotisationTexte.push(pdfTexte(info.tarifLibelle || "forfait Luz inclus"));
+        } else if (info.cotisation !== null) {
+            cotisationTexte.push(`Cotisation : ${euros(info.cotisation)}`);
+            cotisationTexte.push(`Forfait Luz : ${euros(info.forfaitLuz ? info.forfaitLuzMontant : 0)}`);
+        }
 
         return [
             `${nomPrenomPdf(p)}\n${pdfOuTiret(info.sexeTexte)}`,
@@ -3035,7 +3059,13 @@ async function chargerImagePdf(url) {
 
     } catch (erreur) {
         console.warn("⚠️ Logo introuvable pour le PDF :", url, erreur);
-        erreursLogosPdf.push(`${url} : ${erreur && erreur.message ? erreur.message : erreur}`);
+
+        // Page ouverte directement depuis le disque : le navigateur interdit de lire les images
+        const explication = window.location.protocol === "file:"
+            ? "la page est ouverte directement depuis le disque (file://), le navigateur interdit alors de lire les logos. Utilisez le site en ligne ou un serveur local (http://localhost)."
+            : (erreur && erreur.message ? erreur.message : erreur);
+
+        erreursLogosPdf.push(`${url} : ${explication}`);
         return null;
     }
 }
@@ -3521,8 +3551,9 @@ function exporterExcelASCT(participant = null) {
         "Type de participant": valeurExport(p.typeParticipant || (p.dateNaissance ? (calculerAgeExport(p.dateNaissance) < 18 ? "Enfant" : "Adulte") : "")),
         "Statut SAFRAN / tarif": valeurExport(p.safranStatus || p.statutSafran || p.safran),
         "Forfait Luz Ardiden": valeurExport(infosInscription(p).forfaitLuz),
+        "Tarif d'inscription (libellé)": valeurExport(infosInscription(p).tarifLibelle),
         "Cotisation enregistrée": valeurExport(infosInscription(p).cotisation),
-        "Montant forfait enregistré": valeurExport(infosInscription(p).forfaitLuzMontant),
+        "Montant forfait enregistré": valeurExport(infosInscription(p).tarifUnique ? "Inclus dans le tarif" : infosInscription(p).forfaitLuzMontant),
         "Montant club (cotisation + forfait)": valeurExport(infosInscription(p).montantClub),
         "Montant location": valeurExport(infosInscription(p).montantLocation),
         "Montant total enregistré": valeurExport(infosInscription(p).montantTotal),
