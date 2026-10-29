@@ -703,12 +703,23 @@ function getStatut(person) {
     const raw = person.isNonReinscrit
         ? (person.adminStatus || "Non réinscrit")
         : (person.statutInscription || person.adminStatus || "À traiter");
-    const value = normaliserTexte(raw);
-    if (value === "en attente" || value === "en cours" || value === "à valider" || value === "a valider") return "À traiter";
-    if (value === "validee") return "Validée";
-    if (value === "incomplete") return "Incomplète";
-    if (value === "non reinscrit") return "Non réinscrit";
-    return raw;
+    return canoniserStatut(raw);
+}
+
+// Ramène toutes les variantes (casse, accents, anciens libellés) au libellé officiel
+// de la liste STATUSES : « validée », « Validee », « reçue »… deviennent « Validée », « À traiter »…
+function canoniserStatut(raw) {
+    const valeur = String(raw || "")
+        .normalize("NFD").replace(/[\u0300-\u036f]/g, "")
+        .trim().toLowerCase();
+
+    if (!valeur || ["a traiter", "recue", "recu", "en attente", "en cours", "a valider", "nouvelle", "nouveau"].includes(valeur)) return "À traiter";
+    if (valeur.startsWith("valid")) return "Validée";
+    if (valeur.startsWith("incompl")) return "Incomplète";
+    if (valeur.startsWith("non reinscrit")) return "Non réinscrit";
+    if (valeur.startsWith("refus")) return "Refusée";
+    if (valeur.startsWith("annul")) return "Annulée";
+    return String(raw);
 }
 
 function getDriveState(person) {

@@ -1637,6 +1637,40 @@
 		}
 
 
+		/* =====================================================
+		   STATUT D'UNE INSCRIPTION
+		   (identique à celui de l'administration)
+		===================================================== */
+
+		function statutAffiche(brut) {
+
+			const valeur = String(brut || "")
+				.normalize("NFD")
+				.replace(/[\u0300-\u036f]/g, "")
+				.trim()
+				.toLowerCase();
+
+			if (valeur.startsWith("valid")) {
+				return { libelle: "Validée", classe: "status-valid" };
+			}
+
+			if (valeur.startsWith("incompl")) {
+				return { libelle: "Incomplète", classe: "status-pending" };
+			}
+
+			if (valeur.startsWith("refus")) {
+				return { libelle: "Refusée", classe: "status-error" };
+			}
+
+			if (valeur.startsWith("annul")) {
+				return { libelle: "Annulée", classe: "status-error" };
+			}
+
+			// « À traiter » (ou statut encore inconnu) : en attente de l'administrateur
+			return { libelle: "À traiter par l'administrateur", classe: "status-pending" };
+		}
+
+
 		async function chargerMembres(user) {
 
 			if (!membresContainer) {
@@ -1912,9 +1946,7 @@
 													inscription.saison ||
 													"Saison 2026/2027";
 
-												const statut =
-													inscription.statutInscription ||
-													"En attente";
+												const statut = statutAffiche(inscription.statutInscription).libelle;
 
 												return html`
 													<div class="member-inscription">
@@ -2259,7 +2291,7 @@
 					<div>
 						<span>Statut</span>
 						<strong>
-							${inscription.statutInscription || "—"}
+							${statutAffiche(inscription.statutInscription).libelle}
 						</strong>
 					</div>
 
@@ -2421,7 +2453,8 @@
 
 					const nom = inscription.nom || "";
 					const prenom = inscription.prenom || "";
-					const statut = inscription.statutInscription || "En attente";
+					const infoStatut = statutAffiche(inscription.statutInscription);
+					const statut = infoStatut.libelle;
 					const saison = inscription.saison || "2026/2027";
 
 					// Date de l'inscription
@@ -2436,21 +2469,8 @@
 						dateInscription = date.toLocaleDateString("fr-FR");
 					}
 
-					// Détermination de la classe du statut
-					let statutClass = "status-pending";
-
-					if (
-						statut.toLowerCase().includes("valid")
-					) {
-						statutClass = "status-valid";
-					}
-
-					if (
-						statut.toLowerCase().includes("refus") ||
-						statut.toLowerCase().includes("annul")
-					) {
-						statutClass = "status-error";
-					}
+					// Couleur du statut (alignée sur l'administration)
+					const statutClass = infoStatut.classe;
 
 					const carte = document.createElement("div");
 
