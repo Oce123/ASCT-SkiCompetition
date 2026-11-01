@@ -1,5 +1,6 @@
 const {
-    onDocumentCreated
+    onDocumentCreated,
+    onDocumentDeleted
 } = require("firebase-functions/v2/firestore");
 
 const {
@@ -1301,6 +1302,9 @@ async function archiveDocuments(
     const documents =
         inscription.documents || {};
 
+    // Identifiants des fichiers créés sur Drive (pour pouvoir les supprimer plus tard)
+    const idsFichiers = [];
+
 
     for (
         const [key, documentInfo]
@@ -1363,7 +1367,7 @@ async function archiveDocuments(
             `${names[key] || key}${extension}`;
 
 		
-		await uploadBufferToDrive(
+		const fichierDrive = await uploadBufferToDrive(
 			drive,
 			downloaded.buffer,
 			fileName,
@@ -1371,12 +1375,17 @@ async function archiveDocuments(
 			folderId
 		);
 
+		if (fichierDrive && fichierDrive.id) {
+			idsFichiers.push(fichierDrive.id);
+		}
+
 		console.log(
 			"✅ Document archivé :",
 			fileName
 		);
     }
 
+    return idsFichiers;
 }
 
 
@@ -1534,7 +1543,7 @@ exports.archiverInscription =
                 // DOCUMENTS
                 // ------------------------------------------------
 
-                await archiveDocuments(
+                const idsDocuments = await archiveDocuments(
 
                     drive,
 
@@ -1558,7 +1567,10 @@ exports.archiverInscription =
 						driveSaison: SAISON,
 
 						drivePdfId: pdfFile.id,
-						drivePdfUrl: pdfFile.webViewLink
+						drivePdfUrl: pdfFile.webViewLink,
+
+						// Tous les fichiers archivés (PDF + justificatifs)
+						driveFileIds: [pdfFile.id, ...idsDocuments]
 					});
 
                 console.log("=================================");
@@ -1589,5 +1601,205 @@ exports.archiverInscription =
                 throw error;
             }
 
+        }
+    );
+
+
+// ============================================================
+// NETTOYAGE APRÈS SUPPRESSION D'UNE INSCRIPTION
+// (supprimée par la famille ou par l'administration)
+// ============================================================
+
+exports.nettoyerInscriptionSupprimee =
+    onDocumentDeleted(
+
+        {
+            document:
+                "inscriptions/{inscriptionId}",
+
+            region:
+                "europe-west1",
+
+            secrets: [
+
+                GOOGLE_CLIENT_ID,
+
+                GOOGLE_CLIENT_SECRET,
+
+                GOOGLE_DRIVE_REFRESH_TOKEN
+
+            ]
+        },
+
+        async event => {
+
+            const snapshot =
+                event.data;
+
+            if (!snapshot) {
+                return;
+            }
+
+            const inscription =
+                snapshot.data() || {};
+
+            const inscriptionId =
+                event.params.inscriptionId;
+
+            const resultat = {
+                storage: "ignoré",
+                drive: "ignoré"
+            };
+
+
+            // ------------------------------------------------
+            // 1. Justificatifs du Storage
+            // ------------------------------------------------
+
+            try {
+
+                const familleId =
+                    String(inscription.familleId || "");
+
+                const dossier =
+                    String(inscription.dossier || "");
+
+                // Garde-fou : on ne supprime jamais un dossier « vide » ou douteux
+                const valeurSure = valeur =>
+                    valeur.length > 3 &&
+                    !valeur.includes("/") &&
+                    !valeur.includes("..");
+
+                if (valeurSure(familleId) && valeurSure(dossier)) {
+
+                    await admin
+                        .storage()
+                        .bucket()
+                        .deleteFiles({
+                            prefix:
+                                `inscriptions/${familleId}/${dossier}/`
+                        });
+
+                    resultat.storage = "supprimé";
+                }
+
+            } catch (erreur) {
+
+                console.error(
+                    "❌ Suppression Storage :",
+                    erreur
+                );
+
+                resultat.storage =
+                    "erreur : " + erreur.message;
+            }
+
+
+            // ------------------------------------------------
+            // 2. Fichiers archivés sur Drive (mis à la corbeille)
+            // ------------------------------------------------
+
+            try {
+
+                const ids =
+                    Array.isArray(inscription.driveFileIds) &&
+                    inscription.driveFileIds.length
+                        ? inscription.driveFileIds
+                        : (
+                            inscription.drivePdfId
+                                ? [inscription.drivePdfId]
+                                : []
+                        );
+
+                if (ids.length) {
+
+                    const drive =
+                        getGoogleDrive();
+
+                    let corbeille = 0;
+
+                    for (const fileId of ids) {
+
+                        try {
+
+                            await drive.files.update({
+                                fileId,
+                                requestBody: { trashed: true }
+                            });
+
+                            corbeille++;
+
+                        } catch (erreurFichier) {
+
+                            // Fichier déjà supprimé à la main : on continue
+                            console.warn(
+                                "⚠️ Fichier Drive non supprimé :",
+                                fileId,
+                                erreurFichier.message
+                            );
+                        }
+                    }
+
+                    resultat.drive =
+                        `${corbeille}/${ids.length} fichier(s) mis à la corbeille`;
+                }
+
+            } catch (erreur) {
+
+                console.error(
+                    "❌ Suppression Drive :",
+                    erreur
+                );
+
+                resultat.drive =
+                    "erreur : " + erreur.message;
+            }
+
+
+            // ------------------------------------------------
+            // 3. Trace (sans donnée personnelle)
+            // ------------------------------------------------
+
+            try {
+
+                await db
+                    .collection("journal")
+                    .add({
+
+                        type: "suppression_inscription",
+
+                        inscriptionId,
+
+                        familleId:
+                            inscription.familleId || "",
+
+                        membreId:
+                            inscription.membreId || "",
+
+                        statut:
+                            inscription.statutInscription || "",
+
+                        saison:
+                            inscription.driveSaison || "",
+
+                        date:
+                            new Date().toISOString(),
+
+                        resultat
+                    });
+
+            } catch (erreur) {
+
+                console.error(
+                    "❌ Écriture du journal :",
+                    erreur
+                );
+            }
+
+            console.log(
+                "🧹 Inscription supprimée :",
+                inscriptionId,
+                resultat
+            );
         }
     );
