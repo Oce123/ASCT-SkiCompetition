@@ -511,6 +511,64 @@ async function generateRegistrationPdf(
 
 
             // ------------------------------------------------
+            // PHOTO D'IDENTITE (miniature enregistrée avec l'inscription)
+            // ------------------------------------------------
+
+            if (
+                /^data:image\/jpeg;base64,[A-Za-z0-9+/=]+$/.test(
+                    String(inscription.photoMiniature || "")
+                )
+            ) {
+
+                try {
+
+                    const bufferPhoto = Buffer.from(
+                        String(inscription.photoMiniature).split(",")[1],
+                        "base64"
+                    );
+
+                    const xPhoto =
+                        doc.page.width -
+                        doc.page.margins.right -
+                        72;
+
+                    const yPhoto =
+                        doc.page.margins.top;
+
+                    const xAvant = doc.x;
+                    const yAvant = doc.y;
+
+                    doc.image(
+                        bufferPhoto,
+                        xPhoto,
+                        yPhoto,
+                        { fit: [72, 90] }
+                    );
+
+                    // L'image ne doit pas déplacer le texte qui suit
+                    doc.x = xAvant;
+                    doc.y = yAvant;
+
+                    // Fin cadre gris autour de la photo
+                    doc
+                        .lineWidth(0.5)
+                        .strokeColor("#B0B7C3")
+                        .rect(xPhoto, yPhoto, 72, 90)
+                        .stroke();
+
+                    doc.fillColor("#000000");
+
+                } catch (erreurPhoto) {
+
+                    console.warn(
+                        "⚠️ Photo illisible dans le PDF :",
+                        erreurPhoto.message
+                    );
+                }
+            }
+
+
+            // ------------------------------------------------
             // TITRE
             // ------------------------------------------------
 

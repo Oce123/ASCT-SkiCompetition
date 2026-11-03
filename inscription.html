@@ -1808,6 +1808,71 @@ const membreIdParam = params.get("membreId");
 // (fiche ancienne ou incomplète : adresse, téléphone, e-mail, licence…)
 // =====================================================
 
+// =====================================================
+// MINIATURE DE LA PHOTO D'IDENTITE (pour les PDF)
+// Cadre 4:5 (240 x 300), photo recadrée au centre, JPEG léger.
+// =====================================================
+
+async function creerMiniaturePhoto(fichier) {
+
+    if (!fichier) return "";
+
+    try {
+
+        const adresse = URL.createObjectURL(fichier);
+
+        const image = await new Promise((ok, ko) => {
+            const img = new Image();
+            img.onload = () => ok(img);
+            img.onerror = () => ko(new Error("photo illisible"));
+            img.src = adresse;
+        });
+
+        URL.revokeObjectURL(adresse);
+
+        const largeur = 240;
+        const hauteur = 300;
+
+        const canvas = document.createElement("canvas");
+
+        canvas.width = largeur;
+        canvas.height = hauteur;
+
+        const contexte = canvas.getContext("2d");
+
+        contexte.fillStyle = "#ffffff";
+        contexte.fillRect(0, 0, largeur, hauteur);
+
+        // Recadrage « cover » : centré en largeur, plutôt vers le haut en hauteur (visage)
+        const ratioCadre = largeur / hauteur;
+        const ratioImage = image.naturalWidth / image.naturalHeight;
+
+        let sx = 0;
+        let sy = 0;
+        let sw = image.naturalWidth;
+        let sh = image.naturalHeight;
+
+        if (ratioImage > ratioCadre) {
+            sw = image.naturalHeight * ratioCadre;
+            sx = (image.naturalWidth - sw) / 2;
+        } else {
+            sh = image.naturalWidth / ratioCadre;
+            sy = (image.naturalHeight - sh) * 0.2;
+        }
+
+        contexte.drawImage(image, sx, sy, sw, sh, 0, 0, largeur, hauteur);
+
+        return canvas.toDataURL("image/jpeg", 0.85);
+
+    } catch (erreur) {
+
+        console.warn("⚠️ Miniature de la photo impossible :", erreur);
+
+        return "";
+    }
+}
+
+
 async function completerAvecDerniereInscription(familleId, membreId, membre) {
 
     const complet = Object.assign({}, membre);
@@ -2799,6 +2864,11 @@ document.addEventListener("DOMContentLoaded", () => {
 
 
             data.dossier = dossier;
+
+            // Miniature de la photo d'identité (affichée sur les PDF)
+            data.photoMiniature = await creerMiniaturePhoto(
+                document.getElementById("doc-photo")?.files?.[0]
+            );
 
             data.documents = {};
 

@@ -1084,6 +1084,13 @@ function infosInscription(person) {
             ["Montant forfait Luz", forfaitLuz ? euros(forfaitLuzMontant) : "0 €"]
         ];
 
+    // ----- Photo d'identité (miniature JPEG enregistrée par le formulaire)
+    const photoMiniature =
+        /^data:image\/jpeg;base64,[A-Za-z0-9+/=]+$/.test(String(person.photoMiniature || "")) &&
+        String(person.photoMiniature).length < 200000
+            ? String(person.photoMiniature)
+            : "";
+
     // ----- Signature électronique (image PNG enregistrée par le formulaire)
     const sigBrute = person.signatureElectronique && typeof person.signatureElectronique === "object"
         ? person.signatureElectronique
@@ -1151,6 +1158,7 @@ function infosInscription(person) {
         documents,
         documentsParCle,
         signature,
+        photoMiniature,
         tarifUnique,
         tarifLibelle,
         lignesTarif
@@ -1655,7 +1663,7 @@ function afficherListe(dataArray){
 				);
 
 				pdf.text(
-					"Saison 2025 / 2026",
+					`Saison ${normaliserSaison(person.saison || person.driveSaison).replace("/", " / ")}`,
 					43,
 					26
 				);
@@ -1974,6 +1982,36 @@ function afficherListe(dataArray){
 			// =====================================================
 
 			addPageHeader();
+
+			// Photo d'identité dans le bandeau (première page uniquement)
+			if (info.photoMiniature) {
+
+				try {
+
+					const xPhoto = PAGE_WIDTH - MARGIN_RIGHT - 24;
+
+					pdf.addImage(
+						info.photoMiniature,
+						"JPEG",
+						xPhoto,
+						1,
+						24,
+						30
+					);
+
+					// Fin cadre blanc autour de la photo
+					pdf.setDrawColor(255, 255, 255);
+					pdf.setLineWidth(0.5);
+					pdf.rect(xPhoto, 1, 24, 30);
+
+				} catch (erreurPhoto) {
+
+					console.warn(
+						"⚠️ Photo illisible dans le PDF :",
+						erreurPhoto
+					);
+				}
+			}
 
 
 			// =====================================================
